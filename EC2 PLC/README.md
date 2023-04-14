@@ -1,4 +1,4 @@
-# thinkBrave / 22DRX001 / Python Scripts
+# thinkBrave / 22DRX001
 
 > Drexel Project
 
