@@ -1,0 +1,141 @@
+# Copia LFS defaults (version: 4)
+
+## Generic
+
+### *.xml
+*.[xX][mM][lL] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zip
+*.[zZ][iI][pP] filter=lfs diff=lfs merge=lfs -diff -text
+
+
+## Rockwell: Studio 5000/Logix Designer
+
+### *.acd
+*.[aA][cC][dD] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.acd.recovery
+*.[aA][cC][dD].[rR][eE][cC][oO][vV][eE][rR][yY] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.l5k
+*.[lL]5[kK] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.l5x
+*.[lL]5[xX] filter=lfs diff=lfs merge=lfs -diff -text
+
+
+## Siemens: TIA
+
+### *.zal14
+*.[zZ][aA][lL]14 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zal15_1
+*.[zZ][aA][lL]15_1 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zal15
+*.[zZ][aA][lL]15 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zal16
+*.[zZ][aA][lL]16 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zal17
+*.[zZ][aA][lL]17 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zal18
+*.[zZ][aA][lL]18 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zap14
+*.[zZ][aA][pP]14 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zap15_1
+*.[zZ][aA][pP]15_1 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zap15
+*.[zZ][aA][pP]15 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zap16
+*.[zZ][aA][pP]16 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zap17
+*.[zZ][aA][pP]17 filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zap18
+*.[zZ][aA][pP]18 filter=lfs diff=lfs merge=lfs -diff -text
+
+
+## Schneider: EcoStruxure Control Expert/Unity
+
+### *.stu
+*.[sS][tT][uU] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.xef
+*.[xX][eE][fF] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.zef
+*.[zZ][eE][fF] filter=lfs diff=lfs merge=lfs -diff -text
+
+
+## Codesys
+
+### *.archive
+*.[aA][rR][cC][hH][iI][vV][eE] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.export
+*.[eE][xX][pP][oO][rR][tT] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.library
+*.[lL][iI][bB][rR][aA][rR][yY] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.project
+*.[pP][rR][oO][jJ][eE][cC][tT] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.ecp
+*.[eE][cC][pP] filter=lfs diff=lfs merge=lfs -diff -text
+
+
+## Beckhoff: TwinCat3
+
+### *.plcproj
+*.[pP][lL][cC][pP][rR][oO][jJ] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.splcproj
+*.[sS][pP][lL][cC][pP][rR][oO][jJ] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcDUT
+*.[tT][cC][dD][uU][tT] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcGTLO
+*.[tT][cC][gG][tT][lL][oO] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcGVL
+*.[tT][cC][gG][vV][lL] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcIO
+*.[tT][cC][iI][oO] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcPOU
+*.[tT][cC][pP][oO][uU] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcTTO
+*.[tT][cC][tT][tT][oO] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcVIS
+*.[tT][cC][vV][iI][sS] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tcVMO
+*.[tT][cC][vV][mM][oO] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tnzip
+*.[tT][nN][zZ][iI][pP] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tspproj
+*.[tT][sS][pP][pP][rR][oO][jJ] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.tsproj
+*.[tT][sS][pP][rR][oO][jJ] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.vcxproj
+*.[vV][cC][xX][pP][rR][oO][jJ] filter=lfs diff=lfs merge=lfs -diff -text
+
+### *.xti
+*.[xX][tT][iI] filter=lfs diff=lfs merge=lfs -diff -text
