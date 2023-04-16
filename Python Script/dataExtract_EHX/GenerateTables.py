@@ -104,7 +104,7 @@ if __name__ == "__main__":
 	choice1 = input('Use saved credentials? (y/n):  ')
 	if str.lower(choice1) == 'y':
 		print('Using saved credentials')
-		save = open('credentials.txt','r')
+		save = open('Python Script\dataExtract_EHX\credentials.txt','r')
 		credentials = save.read().splitlines()
 		#Get credentials from the user
 	elif str.lower(choice1) == 'n':
