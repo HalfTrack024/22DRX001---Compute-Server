@@ -7,6 +7,16 @@ def getCred():
     #Get credentials from the user
     return credits
 
+def printResult(data):
+    rstSTR = ""
+    for row in data:
+        rstSTR = "["
+        for item in row:
+            rstSTR += " " 
+            rstSTR += str(item)
+        rstSTR += "]"  
+        print(rstSTR)
+
 class DB_Connect:
     
     connection = psy.connect
