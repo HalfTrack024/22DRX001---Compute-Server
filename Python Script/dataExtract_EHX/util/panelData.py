@@ -46,10 +46,10 @@ if __name__ == "__main__":
     pgDB.open()
 
     #get panel details dimensions
-    sql_var= ""
-    sql_select_query="""SELECT "label", height, thickness, studheight, walllength
+    sql_var= "4a4909bf-f877-4f2f-8692-84d7c6518a2d"
+    sql_select_query=f"""SELECT "label", height, thickness, studheight, walllength
                         FROM panel
-                        WHERE panelguid='4a4909bf-f877-4f2f-8692-84d7c6518a2d';
+                        WHERE panelguid='{sql_var}';
                     """
     
     results = pgDB.query(sqlStatement=sql_select_query)
@@ -58,9 +58,9 @@ if __name__ == "__main__":
     #initialize Panel
     itterPanel = Panel(results)
 
-    sql_select_query="""SELECT elementguid, "type", description, "size", b1x
+    sql_select_query=f"""SELECT elementguid, "type", description, "size", b1x
                         FROM elements
-                        WHERE panelguid = '4a4909bf-f877-4f2f-8692-84d7c6518a2d' AND e1y = 1.5
+                        WHERE panelguid = '{sql_var}' AND e1y = 1.5
                         ORDER BY b1x ASC;
                     """
 

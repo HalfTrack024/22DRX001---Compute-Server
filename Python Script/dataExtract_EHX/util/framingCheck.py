@@ -45,9 +45,12 @@ class Clear:
         else:
             return True
     
-    def studStopMS(elementPOS, self):
-
-        return False
+    def studStopMS(elementPOS, current_stud,panel_data, self):
+        # Panel data should contain the length of the wall studs
+        if elementPOS[3] <= (panel_data + 1.5 - self.ss_width):
+            return False
+        else:
+            return True
 
     def hammerMS(elementPOS, self):
         
