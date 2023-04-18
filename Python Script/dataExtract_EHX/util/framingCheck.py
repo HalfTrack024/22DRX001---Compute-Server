@@ -11,7 +11,7 @@ class Clear:
         sql_var= " "
         sql_select_query="""
                         SELECT description, value
-                        FROM parameters
+                        FROM EC1_parameters
                         WHERE description IN (  'Stud Stop thickness', 
                                                 'Stud Stop width', 
                                                 'Hammer Units Thickness', 
@@ -23,6 +23,7 @@ class Clear:
         results = pgDB.query(sqlStatement=sql_select_query)
         dbc.printResult(results)
         #assign results of query to variables
+        #thickness is in the X direction of elevation, width/length in the Y direction
         self.ss_thickness = float(results[0][1])
         self.ss_width = float(results[1][1])
         self.hu_thickness = float(results[2][1])
