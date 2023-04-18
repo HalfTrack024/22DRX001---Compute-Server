@@ -15,7 +15,8 @@ class Clear:
                                                 'Stud Stop width', 
                                                 'Hammer Units Thickness', 
                                                 'Hammer Units Length', 
-                                                'Hammer Units Stroke'
+                                                'Hammer Units Stroke',
+                                                'Positions:lrHammerUnitYCenterPosition'
                                                 );
                         """
         results = pgDB.query(sqlStatement=sql_select_query)
@@ -26,6 +27,7 @@ class Clear:
         self.hu_thickness = float(results[2][1])
         self.hu_length = float(results[3][1])
         self.hu_stroke = float(results[4][1])
+        self.hu_Y = float(results[5][1])
         pgDB.close()
         
     def studStopFS(elementguid,self):
@@ -72,8 +74,8 @@ class Clear:
         if results[2] == "Sub-Assembly Board":
             MinX = str(results[0] )
             MaxX = str(results[0]+ self.hu_length + self.hu_stroke)
-            MinY = str(38.1)
-            MaxY = str(38.1 + self.hu_thickness)
+            MinY = str(38.1 + self.hu_Y)
+            MaxY = str(38.1 + self.hu_Y + self.hu_thickness)
             sql_select_query=f"""
                             SELECT e2x
                             FROM elements
@@ -146,8 +148,8 @@ class Clear:
         if results[2] == "Sub-Assembly Board":
             MinX = str(results[0])
             MaxX = str(results[0]+ self.hu_length + self.hu_stroke)
-            MinY = str(height - 38.1 - self.hu_thickness)
-            MaxY = str(height - 38.1)
+            MinY = str(height - 38.1 - self.hu_Y - self.hu_thickness)
+            MaxY = str(height - 38.1 - self.hu_Y)
             sql_select_query=f"""
                             SELECT e3x
                             FROM elements
