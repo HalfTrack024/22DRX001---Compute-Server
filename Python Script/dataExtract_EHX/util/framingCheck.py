@@ -11,7 +11,7 @@ class Clear:
         sql_var= " "
         sql_select_query="""
                         SELECT description, value
-                        FROM parameters
+                        FROM EC1_parameters
                         WHERE description IN (  'Stud Stop thickness', 
                                                 'Stud Stop width', 
                                                 'Hammer Units Thickness', 
