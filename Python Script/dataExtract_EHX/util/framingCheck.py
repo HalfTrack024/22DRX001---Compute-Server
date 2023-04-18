@@ -30,21 +30,142 @@ class Clear:
         self.hu_stroke = float(results[4][1])
         pgDB.close()
         
-    def studStopFS(elementPOS):
-
-        return False
-
-    def hammerFS(elementPOS):
+    def studStopFS(elementguid,self):
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_select_query=f"""
+                        SELECT e1x, panelguid
+                        FROM elements
+                        WHERE elementguid = '{elementguid}' 
+                        ORDER BY e1x ASC;
+                        """
+        results = pgDB.query(sqlStatement=sql_select_query)
+        MinX = str(results[0] - self.ss_thickness)
+        MaxX = str(results[0])
+        MinY = str(38.1)
+        MaxY = str(38.1 + self.ss_width)
+        sql_select_query=f"""
+                        SELECT e1x
+                        FROM elements
+                        WHERE panelguid = '{results[1]}' and ({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
+                        or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY});
+                        """
+        results = pgDB.query(sqlStatement=sql_select_query)
+        print(results)
+        if results == None:
+            SSF_Clear = True
+            print(True)
+            return SSF_Clear
         
-        return False
-    
-    def studStopMS(elementPOS):
+        pgDB.close()
 
-        return False
-
-    def hammerMS(elementPOS):
+    def hammerFS(elementguid,self):
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_select_query=f"""
+                        SELECT e4x, panelguid, type, description
+                        FROM elements
+                        WHERE elementguid = '{elementguid}'
+                        ORDER BY e4x ASC;
+                        """
+        results = pgDB.query(sqlStatement=sql_select_query)
+        if results[2] == "Sub-Assembly Board":
+            MinX = str(results[0] )
+            MaxX = str(results[0]+ self.hu_length + self.hu_stroke)
+            MinY = str(38.1)
+            MaxY = str(38.1 + self.hu_thickness)
+            sql_select_query=f"""
+                            SELECT e2x
+                            FROM elements
+                            WHERE panelguid = '{results[1]}' and ({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
+                            or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY});
+                            """
+            results = pgDB.query(sqlStatement=sql_select_query)
+            if results == None:
+                SSM_Clear = True
+            return SSM_Clear
         
-        return False
+        if results[2] == "Board" and results[3] == "Stud":
+            SSM_Clear = True
+            return SSM_Clear
+        
+        pgDB.close()
+
+    def studStopMS(elementguid, self):
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_select_query=f"""
+                        SELECT e2x, panelguid
+                        FROM elements
+                        WHERE elementguid = '{elementguid}'
+                        ORDER BY e2x ASC;
+                        """
+        results = pgDB.query(sqlStatement=sql_select_query)
+        sql_select_query=f"""
+                        SELECT height
+                        FROM panel
+                        WHERE panelguid = '{results[1]}'
+                        """
+        height = pgDB.query(sqlStatement=sql_select_query)
+        MinX = str(results[0] - self.ss_thickness)
+        MaxX = str(results[0])
+        MinY = str(height - 38.1 - self.ss_width)
+        MaxY = str(height - 38.1)
+        sql_select_query=f"""
+                        SELECT e2x
+                        FROM elements
+                        WHERE panelguid = '{results[1]}' and ({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
+                        or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY});
+                        """
+        results = pgDB.query(sqlStatement=sql_select_query)
+
+        if results == None:
+            SSM_Clear = True
+            return SSM_Clear
+        
+        pgDB.close()
+
+    def hammerMS(elementguid, self):
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_select_query=f"""
+                        SELECT e3x, panelguid, type, description
+                        FROM elements
+                        WHERE elementguid = '{elementguid}'
+                        ORDER BY e3x ASC;
+                        """
+        results = pgDB.query(sqlStatement=sql_select_query)
+        sql_select_query=f"""
+                        SELECT height
+                        FROM panel
+                        WHERE panelguid = '{results[1]}'
+                        """
+        height = pgDB.query(sqlStatement=sql_select_query)
+        if results[2] == "Sub-Assembly Board":
+            MinX = str(results[0])
+            MaxX = str(results[0]+ self.hu_length + self.hu_stroke)
+            MinY = str(height - 38.1 - self.hu_thickness)
+            MaxY = str(height - 38.1)
+            sql_select_query=f"""
+                            SELECT e3x
+                            FROM elements
+                            WHERE panelguid = '{results[1]}' and ({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
+                            or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY});
+                            """
+            results = pgDB.query(sqlStatement=sql_select_query)
+            if results == None:
+                SSM_Clear = True
+                return SSM_Clear
+        
+        if results[2] == "Board" and results[3] == "Stud":
+            SSM_Clear = True
+            return SSM_Clear
+        
+        pgDB.close()
 
 
 if __name__ == "__main__":
