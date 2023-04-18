@@ -8,6 +8,7 @@ class Clear:
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         #get parameters for stud stop and hammer that are universal 
+        sql_var= " "
         sql_select_query="""
                         SELECT description, value
                         FROM parameters
@@ -19,6 +20,7 @@ class Clear:
                                                 'Positions:lrHammerUnitYCenterPosition'
                                                 );
                         """
+        
         results = pgDB.query(sqlStatement=sql_select_query)
         dbc.printResult(results)
         #assign results of query to variables

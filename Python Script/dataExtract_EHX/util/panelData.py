@@ -39,7 +39,6 @@ class Panel:
     def getPanel(self, panelGUID):
         pass
 
-    def elementInspect(self, )
 
 if __name__ == "__main__":
     credentials = dbc.getCred()
@@ -47,10 +46,12 @@ if __name__ == "__main__":
     pgDB.open()
 
     #get panel details dimensions
+    sql_var= ""
     sql_select_query="""SELECT "label", height, thickness, studheight, walllength
                         FROM panel
                         WHERE panelguid='4a4909bf-f877-4f2f-8692-84d7c6518a2d';
                     """
+    
     results = pgDB.query(sqlStatement=sql_select_query)
     print(type(results[0][4]))
 
@@ -65,7 +66,7 @@ if __name__ == "__main__":
 
     results = pgDB.query(sqlStatement=sql_select_query)
     
-    clear = fc.clear()
+    clear = fc.Clear()
 
     if clear.studStopFS(): 
         #add for when stud stop is allowed

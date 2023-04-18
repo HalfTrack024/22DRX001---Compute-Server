@@ -66,10 +66,13 @@ if __name__ == "__main__":
     credentials = getCred()
     pgDB = DB_Connect(credentials)
     pgDB.open()
-    sql_select_query="select * from bundle"
+    sql_Var = "221415WALLS"
+    sql_select_query=f"""SELECT jobid, panelguid
+                        FROM bundle, panel
+                        WHERE jobid = '{sql_Var}'
+                    """
+
     results = pgDB.query(sqlStatement=sql_select_query)
     pgDB.close()
-    for row in results:
-        for item in row:
-            print(item)
+    printResult(results)
 
