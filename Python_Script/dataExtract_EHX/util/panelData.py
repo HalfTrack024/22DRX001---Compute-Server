@@ -10,7 +10,6 @@ class Panel:
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
 
-
         sql_var= panelguid
         sql_select_query=f"""
                         SELECT thickness, studheight, walllength, category
