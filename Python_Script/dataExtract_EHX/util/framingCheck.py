@@ -1,8 +1,6 @@
 import dataBaseConnect as dbc
-
 # this class is designed to check positional okayness of the framing units Hammer and Stud Stop on both the Mobile and Fix Sides
 class Clear:
-
     def __init__(self) -> None:
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -62,7 +60,6 @@ class Clear:
             return SSF_Clear
         
         pgDB.close()
-
     def hammerFS(elementguid,self):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -95,7 +92,6 @@ class Clear:
             return SSM_Clear
         
         pgDB.close()
-
     def studStopMS(elementguid, self):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -124,13 +120,11 @@ class Clear:
                         or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY});
                         """
         results = pgDB.query(sqlStatement=sql_select_query)
-
         if results == None:
             SSM_Clear = True
             return SSM_Clear
         
         pgDB.close()
-
     def hammerMS(elementguid, self):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -169,9 +163,5 @@ class Clear:
             return SSM_Clear
         
         pgDB.close()
-
-
 if __name__ == "__main__":
     board = Clear()
-
-    

@@ -1,9 +1,8 @@
 import psycopg2 as psy              #Requires Python >=3.6
 
 def getCred():
-    print('Using saved credentials')
-    save = open('Python Script\dataExtract_EHX\credentials.txt','r')
-    credits = save.read().splitlines()
+    f = open(r'Python_Script\dataExtract_EHX\util\credentials.txt', 'r')
+    credits = f.read().splitlines()
     #Get credentials from the user
     return credits
 
@@ -38,7 +37,7 @@ class DB_Connect:
                 port=self.port,
                 database=self.database
             )
-            print(self.connection.status)
+            #print(self.connection.status)
         except(Exception, psy.Error) as Error:
             print("Failed to Connect: {}".format(Error))
         finally:
@@ -49,7 +48,7 @@ class DB_Connect:
         print(self.connection.status)
         if self.connection:
             self.connection.close()
-            print(self.connection.status)
+            #print(self.connection.status)
             print("SQL connection closed")
 
     def query(self, sqlStatement):
@@ -67,9 +66,25 @@ if __name__ == "__main__":
     pgDB = DB_Connect(credentials)
     pgDB.open()
     sql_Var = "221415WALLS"
-    sql_select_query=f"""SELECT jobid, panelguid
-                        FROM bundle, panel
-                        WHERE jobid = '{sql_Var}'
+    thickness = 0.75
+
+    sql_e1X_Max = 175.769
+    sql_e1X_Min = sql_e1X_Max - thickness
+
+    sql_select_query=f"""SELECT e1x
+                        FROM elements
+                        WHERE elementguid = '0c326f0c-19e7-41f2-9ac7-8d723ff671c1'
+                    """
+
+    results = pgDB.query(sqlStatement=sql_select_query)
+    printResult(results)
+    print(results[0][0])
+    sql_e1X_Max = float(results[0][0])
+    sql_e1X_Min = sql_e1X_Max - thickness
+
+    sql_select_query=f"""SELECT elementguid, description, b1x, e1x , e4x 
+                        FROM elements
+                        WHERE panelguid = '4a4909bf-f877-4f2f-8692-84d7c6518a2d' and (e1x  >= {sql_e1X_Min} and e1x < {sql_e1X_Max}) or (e4x  <= {sql_e1X_Max} and e4x >= {sql_e1X_Min});
                     """
 
     results = pgDB.query(sqlStatement=sql_select_query)
