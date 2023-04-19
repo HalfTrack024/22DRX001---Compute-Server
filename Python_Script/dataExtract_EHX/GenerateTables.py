@@ -4,11 +4,22 @@ def genTables(credentials):
     #Table query comands
     commands = (
             """
-            CREATE TABLE parameters (
-            description VARCHAR (255),
-            value VARCHAR (255),
-            max VARCHAR (255),
-            min VARCHAR (255)
+            CREATE TABLE JobData (
+            panelguid VARCHAR (255),
+            Xpos SMALLINT,
+            OpText VARCHAR (255),
+            OpCode_FS SMALLINT,
+            ZPos_FS SMALLINT,
+            YPos_FS SMALLINT,
+            SsUpPos_FS SMALLINT,
+            OpCode_MS SMALLINT,
+            ZPos_MS SMALLINT,
+            YPos_MS SMALLINT,
+            SsUpPos_MS SMALLINT,
+            ImgName VARCHAR (255),
+            OBJ_ID SMALLINT,
+            loadDate TIMESTAMP,
+            PRIMARY KEY (panelguid,OBJ_ID)
             );
             """
     )
@@ -45,7 +56,7 @@ if __name__ == "__main__":
 	choice1 = input('Use saved credentials? (y/n):  ')
 	if str.lower(choice1) == 'y':
 		print('Using saved credentials')
-		save = open('Python Script\dataExtract_EHX\credentials.txt','r')
+		save = open('Python_Script\\dataExtract_EHX\\util\\credentials.txt','r')
 		credentials = save.read().splitlines()
 		#Get credentials from the user
 	elif str.lower(choice1) == 'n':
