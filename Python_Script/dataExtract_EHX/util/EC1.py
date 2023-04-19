@@ -213,9 +213,147 @@ class JobData():
             opcode[0] = opcode[0][:-3]
         return opcode
 
-    def nailElement():
-        pass
-        #placeholder function
+    def nailElement(self,type,desc,size, count,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,panelguid,elemguid):
+        Zpos_2x4 = [0.75,2.75]
+        Zpos_2x6 = [0.75,2.75,4.75]
+        #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
+        OpFS = [False,False,False,False,False,False,False]
+        OpMS = [False,False,False,False,False,False,False]
+        SubTopPlate = 38.1 + self.studHeight
+        SubBottomPlate = 38.1
+        if size == "2x4":
+            ct = 0
+            while ct < 2:
+                OpJob = [] 
+                #Xpos
+                OpJob.append(b1x)
+                #Optext
+                OpJob.append(OpText)
+                #check if the stud stops are clear
+                if clear.Ss_FS(panelguid,elemguid) == True:
+                    OpFS[0] = True
+
+                if clear.Ss_MS(panelguid,elemguid) == True:
+                    OpMS[0] = True
+
+                #if element is a stud enable hammer and autostud
+                if type == 'Board' and desc == 'Stud':
+                    OpFS[1] = True
+                    OpFS[6] = True
+                    OpMS[1] = True
+                    OpMS[6] = True 
+
+                #if element is a sub assembly
+                elif type == 'Sub-Assembly':
+                    # check if hammers are clear
+                    if clear.Hu_FS(panelguid,elemguid) == True:
+                        OpFS[1] = True
+                    if clear.Hu_MS(panelguid,elemguid) == True:
+                        OpMS[1] = True
+
+                    if e2y == SubTopPlate:
+                        if (e1x-e4x) < 2:
+                                ZposMS = Zpos_2x4[ct]
+                        elif (b1y-b2y) < 2:
+                            ZposMS = Zpos_2x4[ct]
+
+
+                    if e1y == SubBottomPlate:
+                        if (e1x-e4x) < 2:
+                            ZposMS = Zpos_2x4[ct]
+
+                #other element types? -> error?
+                else:
+                    if clear.Hu_FS(panelguid,elemguid) == True:
+                        OpFS[1] = True
+                    if clear.Hu_MS(panelguid,elemguid) == True:
+                        OpMS[1] = True
+                    print(f'error with elementguid: {elemguid}')
+
+                #generate OpText and OpCodes from list of bools
+                tmpFS = genOpCode(OpFS)
+                tmpMS = genOpCode(OpMS)
+                #list to append to OpJob & append it
+                OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct], 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', count]
+
+                for i in OpJobAppend:
+                    OpJob.append(i)
+                # increase Nail position counter and OBJ_ID Counter
+                ct += 1
+                count += 1
+
+                 # Return OpJob and updated count
+                return(OpJob,count)
+                
+
+
+        if size == "2x6":
+            ct = 0
+            while ct < 3:
+                OpJob = []
+                #Xpos
+                OpJob.append(b1x)
+                #Optext
+                OpJob.append(OpText)
+                #check if the stud stops are clear
+                if clear.Ss_FS(panelguid,elemguid) == True:
+                    OpFS[0] = True
+
+                if clear.Ss_MS(panelguid,elemguid) == True:
+                    OpMS[0] = True
+
+                #if element is a stud enable hammer and autostud
+                if type == 'Board' and desc == 'Stud':
+                    OpFS[1] = True
+                    OpFS[6] = True
+                    OpMS[1] = True
+                    OpMS[6] = True 
+
+                #if element is a sub assembly
+                elif type == 'Sub-Assembly':
+                    # check if hammers are clear
+                    if clear.Hu_FS(panelguid,elemguid) == True:
+                        OpFS[1] = True
+                    if clear.Hu_MS(panelguid,elemguid) == True:
+                        OpMS[1] = True
+
+                    if e2y == SubTopPlate:
+                        if (e1x-e4x) < 2:
+                                ZposMS = Zpos_2x6[ct]
+                        elif (b1y-b2y) < 2:
+                            ZposMS = Zpos_2x6[ct]
+
+
+                    if e1y == SubBottomPlate:
+                        if (e1x-e4x) < 2:
+                            ZposMS = Zpos_2x6[ct]
+
+                #other element types? -> error?
+                else:
+                    if clear.Hu_FS(panelguid,elemguid) == True:
+                        OpFS[1] = True
+                    if clear.Hu_MS(panelguid,elemguid) == True:
+                        OpMS[1] = True
+                    print(f'error with elementguid: {elemguid}')
+
+                #generate OpText and OpCodes from list of bools
+                tmpFS = genOpCode(OpFS)
+                tmpMS = genOpCode(OpMS)
+                #list to append to OpJob & append it
+                OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct], 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', count]
+
+                for i in OpJobAppend:
+                    OpJob.append(i)
+                # increase Nail position counter and OBJ_ID Counter
+                ct += 1
+                count += 1
+
+                # Return OpJob and updated count
+                return(OpJob,count)
+
+    
+
+ 
 
 if __name__ == "__main__":
     Panel = JobData("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
