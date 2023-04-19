@@ -30,7 +30,22 @@ class Clear:
         self.hu_stroke = float(results[4][1])
         pgDB.close()
         
-    def studStopFS(elementPOS):
+    def studStopFS(elementGuid):
+        sql_Var = elementGuid
+        sql_select_query=f"""
+                        SELECT type, definition, e1x, 
+                        FROM elements
+                        WHERE elementguid = '{sql_Var}' 
+                        """
+        #query definition of element
+        
+        #query location above position
+        
+        # if response from query is empty then 
+        #   return true
+
+        # else 
+        #   return false
 
         return False
 

@@ -1,18 +1,6 @@
 import dataBaseConnect as dbc
 import framingCheck as fc
 
-def printResult(data):
-    rstSTR = ""
-    for row in results:
-        rstSTR = "["
-        for item in row:
-            rstSTR += " " 
-            rstSTR += str(item)
-        rstSTR += "]"  
-        print(rstSTR)
-
-
-
 
 class JobData:
 
@@ -68,7 +56,7 @@ if __name__ == "__main__":
     
     clear = fc.Clear()
 
-    if clear.studStopFS(): 
+    if clear.studStopFS("elementguid_blahblah blah"): 
         #add for when stud stop is allowed
         pass
     if clear.hammerFS():
@@ -84,9 +72,4 @@ if __name__ == "__main__":
 
     results = pgDB.query(sqlStatement=sql_select_query)
 
-    printResult(data=results)
-
-
-
-    results = pgDB.query(sqlStatement=sql_select_query)
     pgDB.close()
