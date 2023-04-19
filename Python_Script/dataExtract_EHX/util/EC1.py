@@ -1,5 +1,6 @@
 from util import dataBaseConnect as dbc
 from util import framingCheck as fc
+# why are we importing panelData? I thought we were depricating it.
 import panelData
 
 class MtrlData:
@@ -108,19 +109,22 @@ class JobData():
         ssuppos_ms = EXCLUDED.ssuppos_ms,imgname = EXCLUDED.imgname,
         obj_id = EXCLUDED.obj_id,loaddate = NOW();
         '''
+        #make a list of tuples for querymany
         jdQueryData = []
         for item in OpData:
             jdQueryData.append((panelguid, item[0],item[1],item[2],item[3],item[4],
                                 item[5],item[6],item[7],item[8],item[9],item[10],item[11]))
 
-        pgDB.querymany(sql_JobData_query,jdQueryData)
+        tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        #print the no. of rows modified
+        print(tmp + ' rows modified')
         pgDB.close()
 
     def jdBuild(panelguid): # Job Data Build
         
         pass
 
-    def placeElement(type,desc,count,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,panelguid,elemguid):
+    def placeElement(self,type,desc,count,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,panelguid,elemguid):
         clear = fc.Clear()
         #empty list for [Xpos,OpText,OpCodeFS,ZposFS,YposFS,SSupPosFS,OpCodeMS,ZposMS,YposMS,SSupPosMS,IMG_NAME,OBJ_ID]
         OpJob = []
