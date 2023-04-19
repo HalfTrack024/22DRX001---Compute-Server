@@ -1,30 +1,39 @@
 import dataBaseConnect as dbc
 import framingCheck as fc
-def printResult(data):
-    rstSTR = ""
-    for row in results:
-        rstSTR = "["
-        for item in row:
-            rstSTR += " " 
-            rstSTR += str(item)
-        rstSTR += "]"  
-        print(rstSTR)
-class JobData:
-    def __init__(self):
-            self
+
 class Panel:
     plateInnerBottom = 0
     plateInnerTop = 0
-    def __init__(self, paneldata):
-        self.label = paneldata[0][0]
-        self.height = float(paneldata[0][1])
-        self.thickness = float(paneldata[0][2])
-        self.studheight = float(paneldata[0][3])
-        self.walllength = float(paneldata[0][4])
+    def __init__(self, panelguid):
+        # Open Database Connection
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+
+
+        sql_var= panelguid
+        sql_select_query=f"""
+                        SELECT thickness, studheight, walllength, category
+                        FROM panel
+                        WHERE panelguid = '{sql_var}';
+                        """
+        #
+        results = pgDB.query(sqlStatement=sql_select_query)
+        dbc.printResult(results)
+        pgDB.close()
+        #assign results of query to variables
+        self.guid = panelguid
+        self.panelThickness = float(results[0][0])
+        self.studHeight = float(results[0][1])
+        self.panelLength = float(results[0][2])
+        self.catagory = results[0][3]
+
         self.plateInnerBottom = 1.5
-        self.plateInnerTop  = 1.5 + self.studheight
+        self.plateInnerTop  = 1.5 + self.studHeight
+
     def getPanel(self, panelGUID):
         pass
+    
     def genOPCode(OpIn):
         #This function converts a list of bools to a list containing OpText and an integer opcode
         #OpIn is a list of opcode parameters 
@@ -56,6 +65,7 @@ class Panel:
         if opcode[0][-3] == ' ':
             opcode[0] = opcode[0][:-3]
         return opcode
+    
 if __name__ == "__main__":
     credentials = dbc.getCred()
     pgDB = dbc.DB_Connect(credentials)
@@ -105,6 +115,6 @@ if __name__ == "__main__":
     opcodeFS = Panel.genOPCode(oplistFS)
     opcodeMS = Panel.genOPCode(oplistMS)
     results = pgDB.query(sqlStatement=sql_select_query)
-    printResult(data=results)
+    dbc.printResult(data=results)
     results = pgDB.query(sqlStatement=sql_select_query)
     pgDB.close()
