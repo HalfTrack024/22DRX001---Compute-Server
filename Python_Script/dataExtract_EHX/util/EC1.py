@@ -1,9 +1,53 @@
-from util import dataBaseConnect as dbc
+import dataBaseConnect as dbc
 import panelData
 
 class MtrlData:
 
-    def mdMain():
+    mrtldata = []
+
+    def __init__(self, panelData : panelData.Panel):
+        #Assigns Panel Instance to Mtrl 
+        self.panel = panelData
+        
+        self.mdMain()
+
+    # Main Call for determining Material List
+    def mdMain(self):
+        #Open Connection to the database
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var = self.panel.guid
+        sql_select_query=f"""SELECT elementguid, "type", description, "size", actual_thickness, actual_width
+                    FROM elements
+                    WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board'
+                    ORDER BY b1x ASC;
+                """       
+
+        results = pgDB.query(sqlStatement=sql_select_query)
+        pgDB.close()
+        for element in results:            
+            self.mrtldata.append(self.mdBuild(element))
+
+    def mdBuild(self, element):
+        
+        uiItemLength = self.panel.studHeight
+        uiItemHeight = float(element[4])
+        uiItemThickness = float(element[5])
+        sMtrlCode = self.getMatCode(element[3])
+        uiOpCode = 0
+        sPrinterWrite = 0	
+        sType = 0
+        uiItemID = element[0]	
+        sCADPath = 0
+        sProjectName = 0	
+        sItemName = self.panel.guid
+
+        line = [uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName]
+        return line
+    
+    def getMatCode(studType):
+        #NEED TO DETERMINE HOW TO GET STUD MATERIAL CODE
         pass
 
 
@@ -25,33 +69,11 @@ class JobData():
         "objID" : 0
     }
 
-    def __init__(self, panelguid, panelData(panel)):
-        self.pdData = panelData.Panel(panel)
-        credentials = dbc.getCred()
-        pgDB = dbc.DB_Connect(credentials)
-        pgDB.open()
-        #
-        sql_var= " "
-        sql_select_query=f"""
-                        SELECT thickness, studheight, walllength, category
-                        FROM panel
-                        WHERE panelguid = '{panelguid}';
-                        """
-        
-        results = pgDB.query(sqlStatement=sql_select_query)
-        dbc.printResult(results)
-        #assign results of query to variables
-        self.panelGuid = panelguid
-        self.panelThickness = float(results[0][1])
-        self.studHeight = float(results[1][1])
-        self.panelLength = float(results[2][1])
-        self.catagory = float(results[3][1])
+    def __init__(self, panel : panelData.Panel):
+        self.pdData = panel
 
         #self.plateInnerBottom = 1.5
         #self.plateInnerTop  = 1.5 + self.studHeight        
-
-        #Always close the connection after all queries are complete
-        pgDB.close()
 
     def jdMain(panelguid): # Job Data Main
         
@@ -64,4 +86,7 @@ class JobData():
 
 
 if __name__ == "__main__":
-    Panel = JobData("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
+    panel = panelData.Panel("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
+    matData = MtrlData(panel)
+    jobdata = JobData(panel)
+
