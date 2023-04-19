@@ -57,7 +57,15 @@ class DB_Connect:
         result = cursor.fetchall()
         cursor.close()
         return result
-
+    
+    def querymany(self,sqlStatement,records):
+        cursor = self.connection.cursor()
+        cursor.executemany(sqlStatement,records)
+        self.connection.commit()
+        print(cursor.rowcount + ' rows modified')
+        tmp = cursor.rowcount
+        cursor.close()
+        return(tmp)
 
 
 
