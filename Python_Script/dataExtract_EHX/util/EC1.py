@@ -215,16 +215,12 @@ class JobData():
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
-        SubTopPlate = 38.1 + self.studHeight
-        SubBottomPlate = 38.1
         if size == "2x4":
             ct = 0
             while ct < 2:
                 OpJob = [] 
                 #Xpos
                 OpJob.append(b1x)
-                #Optext
-                OpJob.append(OpText)
                 #check if the stud stops are clear
                 if clear.Ss_FS(panelguid,elemguid) == True:
                     OpFS[0] = True
@@ -241,22 +237,24 @@ class JobData():
 
                 #if element is a sub assembly
                 elif type == 'Sub-Assembly':
+                    #SubTopPlate = 38.1 + self.studHeight
+                    #SubBottomPlate = 38.1
                     # check if hammers are clear
                     if clear.Hu_FS(panelguid,elemguid) == True:
                         OpFS[1] = True
                     if clear.Hu_MS(panelguid,elemguid) == True:
                         OpMS[1] = True
 
-                    if e2y == SubTopPlate:
-                        if (e1x-e4x) < 2:
-                                ZposMS = Zpos_2x4[ct]
-                        elif (b1y-b2y) < 2:
-                            ZposMS = Zpos_2x4[ct]
+                    #if e2y == SubTopPlate:
+                    #    if (e1x-e4x) < 2:
+                    #            ZposMS = Zpos_2x4[ct]
+                    #    elif (b1y-b2y) < 2:
+                    #        ZposMS = Zpos_2x4[ct]
 
 
-                    if e1y == SubBottomPlate:
-                        if (e1x-e4x) < 2:
-                            ZposMS = Zpos_2x4[ct]
+                    #if e1y == SubBottomPlate:
+                    #   if (e1x-e4x) < 2:
+                    #        ZposMS = Zpos_2x4[ct]
 
                 #other element types? -> error?
                 else:
@@ -278,19 +276,13 @@ class JobData():
                 ct += 1
                 count += 1
 
-                 # Return OpJob and updated count
-                return(OpJob,count)
                 
-
-
         if size == "2x6":
             ct = 0
             while ct < 3:
                 OpJob = []
                 #Xpos
                 OpJob.append(b1x)
-                #Optext
-                OpJob.append(OpText)
                 #check if the stud stops are clear
                 if clear.Ss_FS(panelguid,elemguid) == True:
                     OpFS[0] = True
@@ -313,17 +305,6 @@ class JobData():
                     if clear.Hu_MS(panelguid,elemguid) == True:
                         OpMS[1] = True
 
-                    if e2y == SubTopPlate:
-                        if (e1x-e4x) < 2:
-                                ZposMS = Zpos_2x6[ct]
-                        elif (b1y-b2y) < 2:
-                            ZposMS = Zpos_2x6[ct]
-
-
-                    if e1y == SubBottomPlate:
-                        if (e1x-e4x) < 2:
-                            ZposMS = Zpos_2x6[ct]
-
                 #other element types? -> error?
                 else:
                     if clear.Hu_FS(panelguid,elemguid) == True:
@@ -344,8 +325,8 @@ class JobData():
                 ct += 1
                 count += 1
 
-                # Return OpJob and updated count
-                return(OpJob,count)
+        # Return OpJob and updated count
+        return(OpJob,count)
 
     
 
