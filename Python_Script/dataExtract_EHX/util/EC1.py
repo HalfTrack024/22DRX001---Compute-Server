@@ -1,5 +1,4 @@
-from util import dataBaseConnect as dbc
-from util import framingCheck as fc
+import framingCheck as fc
 import dataBaseConnect as dbc
 import panelData
 
@@ -72,23 +71,24 @@ class JobData():
     }
 
     def __init__(self, panel : panelData.Panel):
-        self.pdData = panel
+        self.panel = panel
 
         #self.plateInnerBottom = 1.5
         #self.plateInnerTop  = 1.5 + self.studHeight        
 
 
 
-    def jdMain(self, panelguid): # Job Data Main
+    def jdMain(self): # Job Data Main
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
-
+        panelguid = self.panel.guid
+        sql_var = self.panel.guid
         #query relevant data from elements table
         sql_elemData_query = f'''
         SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y
         FROM elements
-        WHERE panelguid = '{panelguid}'
+        WHERE panelguid = '{sql_var}'
         ORDER BY b1x ASC;
         '''
 
