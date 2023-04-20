@@ -273,7 +273,7 @@ class JobData():
         #list of OpJobs for the current Element
         OpElement = []
         Zpos_2x4 = [0.75,2.75]
-        Zpos_2x6 = [0.75,2.75,4.75]
+        Zpos_2x6 = [0.6,2.75,4.9]
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
@@ -290,11 +290,13 @@ class JobData():
                 if clear.Ss_MS(element[0],element[1]) == True:
                     OpMS[0] = True
 
-                #if element is a stud enable hammer and Nailing
+                #if element is a stud enable hammer, autostud, and nailing
                 if element[2] == 'Board' and element[3] == 'Stud':
                     OpFS[1] = True
+                    OpFS[4] = True
                     OpFS[6] = True
                     OpMS[1] = True
+                    OpFS[5] = True
                     OpMS[6] = True 
                     '''
                 #if element is a sub assembly
