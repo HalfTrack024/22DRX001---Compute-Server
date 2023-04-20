@@ -100,11 +100,14 @@ class JobData():
         #loop through all elements in the panel
         inSubAssembly = False
         for elem in elemData:
+            #convert to mm and:
             #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
             #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
-            element = [panelguid,elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],
-                       elem[6],elem[7],elem[8],elem[9],elem[10],elem[11],elem[12],
-                       elem[13],elem[14],elem[15],elem[16],elem[17],elem[18],elem[19],obj_count]
+            element = [panelguid,elem[0],elem[1],elem[2],elem[3],elem[4],elem[5] * 25.4,
+                       elem[6] * 25.4,elem[7] * 25.4,elem[8] * 25.4,elem[9] * 25.4,
+                       elem[10] * 25.4,elem[11] * 25.4,elem[12] * 25.4,elem[13] * 25.4,
+                       elem[14] * 25.4,elem[15] * 25.4,elem[16] * 25.4,elem[17] * 25.4,
+                       elem[18] * 25.4,elem[19] * 25.4,obj_count]
 
             if inSubAssembly == True and elem[1] != 'Sub-Assembly Board':
                 inSubAssembly = False
@@ -272,8 +275,8 @@ class JobData():
         clear = fc.Clear
         #list of OpJobs for the current Element
         OpElement = []
-        Zpos_2x4 = [0.75,2.75]
-        Zpos_2x6 = [0.6,2.75,4.9]
+        Zpos_2x4 = [19,70]
+        Zpos_2x6 = [15,70,125]
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
@@ -296,7 +299,7 @@ class JobData():
                     OpFS[4] = True
                     OpFS[6] = True
                     OpMS[1] = True
-                    OpFS[5] = True
+                    OpFS[4] = True
                     OpMS[6] = True 
                     '''
                 #if element is a sub assembly
