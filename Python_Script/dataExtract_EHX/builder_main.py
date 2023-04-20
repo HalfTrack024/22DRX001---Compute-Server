@@ -20,13 +20,15 @@ dbc.printResult(results)
 pgDB.close()
 
 # Itterate through each panel to build table data
-for panel in results:
+for panelGuid in results:
     # Get Panel Data
-    pdData = pd.Panel(panel)
+    pdData = pd.Panel(panelGuid)
     ## Stud Picker Data
-    
+    sfData = EC1.MtrlData(pdData)
     ## Framing
     fm3_panel = EC1.JobData(pdData)
+    fm3_panel.jdMain()
+
     #fm3_panel.jobdata.append(linelist)
     ## Robot Cell 1
 

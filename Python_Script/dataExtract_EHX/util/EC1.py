@@ -1,11 +1,54 @@
 from util import dataBaseConnect as dbc
 from util import framingCheck as fc
-# why are we importing panelData? I thought we were depricating it.
 import panelData
 
 class MtrlData:
 
-    def mdMain():
+    mrtldata = []
+
+    def __init__(self, panelData : panelData.Panel):
+        #Assigns Panel Instance to Mtrl 
+        self.panel = panelData
+        
+        self.mdMain()
+
+    # Main Call for determining Material List
+    def mdMain(self):
+        #Open Connection to the database
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var = self.panel.guid
+        sql_select_query=f"""SELECT elementguid, "type", description, "size", actual_thickness, actual_width
+                    FROM elements
+                    WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board'
+                    ORDER BY b1x ASC;
+                """       
+
+        results = pgDB.query(sqlStatement=sql_select_query)
+        pgDB.close()
+        for element in results:            
+            self.mrtldata.append(self.mdBuild(element))
+
+    def mdBuild(self, element):
+        
+        uiItemLength = self.panel.studHeight
+        uiItemHeight = float(element[4])
+        uiItemThickness = float(element[5])
+        sMtrlCode = self.getMatCode(element[3])
+        uiOpCode = 0
+        sPrinterWrite = 0	
+        sType = 0
+        uiItemID = element[0]	
+        sCADPath = 0
+        sProjectName = 0	
+        sItemName = self.panel.guid
+
+        line = [uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName]
+        return line
+    
+    def getMatCode(studType):
+        #NEED TO DETERMINE HOW TO GET STUD MATERIAL CODE
         pass
 
 
@@ -27,44 +70,25 @@ class JobData():
         "objID" : 0
     }
 
-    def __init__(self, panelguid, panelData):
-        self.pdData = panelData.Panel
-        credentials = dbc.getCred()
-        pgDB = dbc.DB_Connect(credentials)
-        pgDB.open()
-        #
-        sql_var= " "
-        sql_select_query=f"""
-                        SELECT thickness, studheight, walllength, category
-                        FROM panel
-                        WHERE panelguid = '{panelguid}';
-                        """
-        
-        results = pgDB.query(sql_select_query)
-        dbc.printResult(results)
-        #assign results of query to variables
-        self.panelGuid = panelguid
-        self.panelThickness = float(results[0][1])
-        self.studHeight = float(results[1][1])
-        self.panelLength = float(results[2][1])
-        self.catagory = float(results[3][1])
+    def __init__(self, panel : panelData.Panel):
+        self.panel = panel
 
         #self.plateInnerBottom = 1.5
         #self.plateInnerTop  = 1.5 + self.studHeight        
 
-        #Always close the connection after all queries are complete
-        pgDB.close()
 
-    def jdMain(self, panelguid): # Job Data Main
+
+    def jdMain(self): # Job Data Main
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
-
+        panelguid = self.panel.guid
+        sql_var = self.panel.guid
         #query relevant data from elements table
         sql_elemData_query = f'''
         SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y
         FROM elements
-        WHERE panelguid = '{panelguid}'
+        WHERE panelguid = '{sql_var}'
         ORDER BY b1x ASC;
         '''
 
@@ -219,16 +243,12 @@ class JobData():
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
-        SubTopPlate = 38.1 + self.studHeight
-        SubBottomPlate = 38.1
         if size == "2x4":
             ct = 0
             while ct < 2:
                 OpJob = [] 
                 #Xpos
                 OpJob.append(b1x)
-                #Optext
-                OpJob.append(OpText)
                 #check if the stud stops are clear
                 if clear.Ss_FS(panelguid,elemguid) == True:
                     OpFS[0] = True
@@ -245,22 +265,24 @@ class JobData():
 
                 #if element is a sub assembly
                 elif type == 'Sub-Assembly':
+                    #SubTopPlate = 38.1 + self.studHeight
+                    #SubBottomPlate = 38.1
                     # check if hammers are clear
                     if clear.Hu_FS(panelguid,elemguid) == True:
                         OpFS[1] = True
                     if clear.Hu_MS(panelguid,elemguid) == True:
                         OpMS[1] = True
 
-                    if e2y == SubTopPlate:
-                        if (e1x-e4x) < 2:
-                                ZposMS = Zpos_2x4[ct]
-                        elif (b1y-b2y) < 2:
-                            ZposMS = Zpos_2x4[ct]
+                    #if e2y == SubTopPlate:
+                    #    if (e1x-e4x) < 2:
+                    #            ZposMS = Zpos_2x4[ct]
+                    #    elif (b1y-b2y) < 2:
+                    #        ZposMS = Zpos_2x4[ct]
 
 
-                    if e1y == SubBottomPlate:
-                        if (e1x-e4x) < 2:
-                            ZposMS = Zpos_2x4[ct]
+                    #if e1y == SubBottomPlate:
+                    #   if (e1x-e4x) < 2:
+                    #        ZposMS = Zpos_2x4[ct]
 
                 #other element types? -> error?
                 else:
@@ -282,19 +304,13 @@ class JobData():
                 ct += 1
                 count += 1
 
-                 # Return OpJob and updated count
-                return(OpJob,count)
                 
-
-
         if size == "2x6":
             ct = 0
             while ct < 3:
                 OpJob = []
                 #Xpos
                 OpJob.append(b1x)
-                #Optext
-                OpJob.append(OpText)
                 #check if the stud stops are clear
                 if clear.Ss_FS(panelguid,elemguid) == True:
                     OpFS[0] = True
@@ -317,17 +333,6 @@ class JobData():
                     if clear.Hu_MS(panelguid,elemguid) == True:
                         OpMS[1] = True
 
-                    if e2y == SubTopPlate:
-                        if (e1x-e4x) < 2:
-                                ZposMS = Zpos_2x6[ct]
-                        elif (b1y-b2y) < 2:
-                            ZposMS = Zpos_2x6[ct]
-
-
-                    if e1y == SubBottomPlate:
-                        if (e1x-e4x) < 2:
-                            ZposMS = Zpos_2x6[ct]
-
                 #other element types? -> error?
                 else:
                     if clear.Hu_FS(panelguid,elemguid) == True:
@@ -348,12 +353,15 @@ class JobData():
                 ct += 1
                 count += 1
 
-                # Return OpJob and updated count
-                return(OpJob,count)
+        # Return OpJob and updated count
+        return(OpJob,count)
 
     
 
  
 
 if __name__ == "__main__":
-    Panel = JobData("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
+    panel = panelData.Panel("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
+    matData = MtrlData(panel)
+    jobdata = JobData(panel)
+
