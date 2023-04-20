@@ -98,27 +98,54 @@ class JobData():
         #list of OpDatas
         OpData = []
         #loop through all elements in the panel
+        inSubAssembly = False
         for elem in elemData:
+            #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
+            #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+            element = [panelguid,elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],
+                       elem[6],elem[7],elem[8],elem[9],elem[10],elem[11],elem[12],
+                       elem[13],elem[14],elem[15],elem[16],elem[17],elem[18],elem[19],obj_count]
+
+            if inSubAssembly == True and elem[1] != 'Sub-Assembly Board':
+                inSubAssembly = False
+                tmp = JobData.nailSubElement(subElements)
+                for i,ct in enumerate(tmp):
+                    if ct + 1 < len(tmp):
+                        OpData.append(i)
+                    obj_count = tmp[-1]
+
+
             #if the element isn't a sheet, sub-assembly board, top plate or bottom plate
-            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[1] != 'Sub-Assembly Board':
-                #get opData for placeing the element
-                tmp = JobData.placeElement(elem[1],elem[2],obj_count,elem[4],elem[5],elem[6],elem[7],elem[8],
-                                           elem[9],elem[10],elem[11],elem[12],elem[13],elem[14],elem[15],elem[16],
-                                           elem[17],elem[18],elem[19],panelguid,elem[0])
-                #Add to OpDatas and increase the count
-                OpData.append(tmp[0])
-                obj_count = tmp[1]
-                #Add get OpDatas for nailing
-                tmp = JobData.nailElement(elem[1],elem[2], elem[3], obj_count,elem[4],elem[5],elem[6],elem[7],
-                                          elem[8],elem[9],elem[10],elem[11],elem[12],elem[13],elem[14],elem[15],
-                                          elem[16],elem[17],elem[18],elem[19],panelguid,elem[0])
-                # loop through the OpDatas from the function and append to the list
-                # exclude the last list item because that is the counter
-                for i,j in enumerate(tmp):
-                    if i+1 < len(tmp):
-                        OpData.append(j)
-                #update counter
-                obj_count = tmp[-1]
+            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate':
+                if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly':
+                    #get opData for placeing the element
+                    tmp = JobData.placeElement(element)
+                    #Add to OpDatas and increase the count
+                    OpData.append(tmp[0])
+                    obj_count = tmp[1]
+                    #Add get OpDatas for nailing
+                    tmp = JobData.nailElement(element)
+                    # loop through the OpDatas from the function and append to the list
+                    # exclude the last list item because that is the counter
+                    for i,j in enumerate(tmp):
+                        if i+1 < len(tmp):
+                            OpData.append(j)
+                    #update counter
+                    obj_count = tmp[-1]
+                elif elem[1] == 'Sub Assembly':
+                    #get opData for placeing the element
+                    tmp = JobData.placeElement(element)
+                    #Add to OpDatas and increase the count
+                    OpData.append(tmp[0])
+                    obj_count = tmp[1]
+
+                    inSubAssembly = True
+                    subElements = []
+                elif elem[1] == 'Sub-Assembly Board':
+                    if inSubAssembly == True:
+                        subElements.append(element)
+                    else:
+                        print(f'ERROR: subassembly board outside of sub assembly, elementguid = {elem[0]}')
         #send OpData to JobData table
         sql_JobData_query = '''
         INSERT INTO JobData(panelguid, xpos, optext, opcode_fs, zpos_fs, ypos_fs, ssuppos_fs, 
@@ -148,61 +175,63 @@ class JobData():
         
         pass
 
-    def placeElement(self,type,desc,count,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,panelguid,elemguid):
+    def placeElement(self,element):
+        #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
+        #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
         clear = fc.Clear()
         #empty list for [Xpos,OpText,OpCodeFS,ZposFS,YposFS,SSupPosFS,OpCodeMS,ZposMS,YposMS,SSupPosMS,IMG_NAME,OBJ_ID]
         OpJob = []
         #add X Pos from element
-        OpJob.append(b1x)
+        OpJob.append(element[5])
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
         #check if the stud stops are clear
-        if clear.Ss_FS(panelguid,elemguid) == True:
+        if clear.Ss_FS(element[0],element[1]) == True:
             OpFS[0] = True
         
-        if clear.Ss_MS(panelguid,elemguid) == True:
+        if clear.Ss_MS(element[0],element[1]) == True:
             OpMS[0] = True
         #if element is a stud enable hammer and autostud
-        if type == 'Board' and desc == 'Stud':
+        if element[2] == 'Board' and element[3] == 'Stud':
             OpFS[1] = True
             OpFS[4] = True
             OpMS[1] = True
             OpMS[4] = True
             # if element is the first stud enable operator confirm
-            if b1x <= 1:
+            if element[5] <= 1:
                 OpFS[5] == True
                 OpMS[5] == True
         #if element is a sub assembly
-        elif type == 'Sub-Assembly':
+        elif element[2] == 'Sub-Assembly':
             # check if hammers are clear
-            if clear.Hu_FS(panelguid,elemguid) == True:
+            if clear.Hu_FS(element[0],element[1]) == True:
                 OpFS[1] = True
-            if clear.Hu_MS(panelguid,elemguid) == True:
+            if clear.Hu_MS(element[0],element[1]) == True:
                 OpMS[1] = True
             #set operator confirm
             OpFS[5] == True
             OpMS[5] == True
         #other element types? -> error?
         else:
-            if clear.Hu_FS(panelguid,elemguid) == True:
+            if clear.Hu_FS(element[0],element[1]) == True:
                 OpFS[1] = True
-            if clear.Hu_MS(panelguid,elemguid) == True:
+            if clear.Hu_MS(element[0],element[1]) == True:
                 OpMS[1] = True
-            print(f'error with elementguid: {elemguid}')
+            print(f'error with elementguid: {element[1]} \n Type unknown')
             
         #generate OpText and OpCodes from list of bools
         tmpFS = JobData.genOpCode(OpFS)
         tmpMS = JobData.genOpCode(OpMS)
         #list to append to OpJob & append it
-        OpJobAppend = [tmpFS[0],tmpFS[1], 0, 0, 0, tmpMS[1], 0, 0, 0, 'ImgName', count]
+        OpJobAppend = [tmpFS[0],tmpFS[1], 0, 0, 0, tmpMS[1], 0, 0, 0, 'ImgName', element[-1]]
         
         for i in OpJobAppend:
             OpJob.append(i)
         # increase OBJ_ID Count
-        count += 1
+        element[-1] += 1
         # Return OpJob and updated count
-        return(OpJob,count)
+        return(OpJob,element[-1])
     
     def genOpCode(OpIn):
         #This function converts a list of bools to a list containing OpText and an integer opcode
@@ -237,36 +266,42 @@ class JobData():
             opcode[0] = opcode[0][:-3]
         return opcode
 
-    def nailElement(self,type,desc,size, count,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,panelguid,elemguid):
+    def nailElement(self,element):
+        #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
+        #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+        clear = fc.Clear
+        #list of OpJobs for the current Element
+        OpElement = []
         Zpos_2x4 = [0.75,2.75]
         Zpos_2x6 = [0.75,2.75,4.75]
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
-        if size == "2x4":
+        if element[4] == "2x4":
             ct = 0
             while ct < 2:
                 OpJob = [] 
                 #Xpos
-                OpJob.append(b1x)
+                OpJob.append(element[5])
                 #check if the stud stops are clear
-                if clear.Ss_FS(panelguid,elemguid) == True:
+                if clear.Ss_FS(element[0],element[1]) == True:
                     OpFS[0] = True
 
-                if clear.Ss_MS(panelguid,elemguid) == True:
+                if clear.Ss_MS(element[0],element[1]) == True:
                     OpMS[0] = True
 
-                #if element is a stud enable hammer and autostud
-                if type == 'Board' and desc == 'Stud':
+                #if element is a stud enable hammer and Nailing
+                if element[2] == 'Board' and element[3] == 'Stud':
                     OpFS[1] = True
                     OpFS[6] = True
                     OpMS[1] = True
                     OpMS[6] = True 
-
+                    '''
                 #if element is a sub assembly
                 elif type == 'Sub-Assembly':
                     #SubTopPlate = 38.1 + self.studHeight
                     #SubBottomPlate = 38.1
+
                     # check if hammers are clear
                     if clear.Hu_FS(panelguid,elemguid) == True:
                         OpFS[1] = True
@@ -283,48 +318,48 @@ class JobData():
                     #if e1y == SubBottomPlate:
                     #   if (e1x-e4x) < 2:
                     #        ZposMS = Zpos_2x4[ct]
-
+                '''
                 #other element types? -> error?
                 else:
-                    if clear.Hu_FS(panelguid,elemguid) == True:
+                    if clear.Hu_FS(element[0],element[1]) == True:
                         OpFS[1] = True
-                    if clear.Hu_MS(panelguid,elemguid) == True:
+                    if clear.Hu_MS(element[0],element[1]) == True:
                         OpMS[1] = True
-                    print(f'error with elementguid: {elemguid}')
+                    print(f'error with elementguid: {element[1]} \n Type unknown')
 
                 #generate OpText and OpCodes from list of bools
                 tmpFS = self.genOpCode(OpFS)
                 tmpMS = self.genOpCode(OpMS)
                 #list to append to OpJob & append it
-                OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct], 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', count]
+                OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct], 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', element[-1]]
 
                 for i in OpJobAppend:
                     OpJob.append(i)
                 # increase Nail position counter and OBJ_ID Counter
                 ct += 1
-                count += 1
+                element[-1] += 1
+                OpElement.append(OpJob)
 
-                
-        if size == "2x6":
+        elif element[4] == "2x6":
             ct = 0
             while ct < 3:
                 OpJob = []
                 #Xpos
-                OpJob.append(b1x)
+                OpJob.append(element[5])
                 #check if the stud stops are clear
-                if clear.Ss_FS(panelguid,elemguid) == True:
+                if clear.Ss_FS(element[0],element[1]) == True:
                     OpFS[0] = True
 
-                if clear.Ss_MS(panelguid,elemguid) == True:
+                if clear.Ss_MS(element[0],element[1]) == True:
                     OpMS[0] = True
 
                 #if element is a stud enable hammer and autostud
-                if type == 'Board' and desc == 'Stud':
+                if element[2] == 'Board' and element[3] == 'Stud':
                     OpFS[1] = True
                     OpFS[6] = True
                     OpMS[1] = True
                     OpMS[6] = True 
-
+                    '''
                 #if element is a sub assembly
                 elif type == 'Sub-Assembly':
                     # check if hammers are clear
@@ -332,29 +367,31 @@ class JobData():
                         OpFS[1] = True
                     if clear.Hu_MS(panelguid,elemguid) == True:
                         OpMS[1] = True
-
+                    '''
                 #other element types? -> error?
                 else:
-                    if clear.Hu_FS(panelguid,elemguid) == True:
+                    if clear.Hu_FS(element[0],element[1]) == True:
                         OpFS[1] = True
-                    if clear.Hu_MS(panelguid,elemguid) == True:
+                    if clear.Hu_MS(element[0],element[1]) == True:
                         OpMS[1] = True
-                    print(f'error with elementguid: {elemguid}')
+                    print(f'error with elementguid: {element[1]} \n Type unknown')
 
                 #generate OpText and OpCodes from list of bools
                 tmpFS = self.genOpCode(OpFS)
                 tmpMS = self.genOpCode(OpMS)
                 #list to append to OpJob & append it
-                OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct], 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', count]
+                OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct], 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', element[-1]]
 
                 for i in OpJobAppend:
                     OpJob.append(i)
                 # increase Nail position counter and OBJ_ID Counter
                 ct += 1
-                count += 1
+                element[-1] += 1
+                OpElement.append(OpJob)
 
+        OpElement.append(element[-1])
         # Return OpJob and updated count
-        return(OpJob,count)
+        return(OpElement)
 
     
 
