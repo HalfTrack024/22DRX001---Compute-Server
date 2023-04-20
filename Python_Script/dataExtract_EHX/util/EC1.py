@@ -271,8 +271,8 @@ class JobData():
                     print(f'error with elementguid: {elemguid}')
 
                 #generate OpText and OpCodes from list of bools
-                tmpFS = genOpCode(OpFS)
-                tmpMS = genOpCode(OpMS)
+                tmpFS = self.genOpCode(OpFS)
+                tmpMS = self.genOpCode(OpMS)
                 #list to append to OpJob & append it
                 OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct], 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', count]
 
@@ -337,8 +337,8 @@ class JobData():
                     print(f'error with elementguid: {elemguid}')
 
                 #generate OpText and OpCodes from list of bools
-                tmpFS = genOpCode(OpFS)
-                tmpMS = genOpCode(OpMS)
+                tmpFS = self.genOpCode(OpFS)
+                tmpMS = self.genOpCode(OpMS)
                 #list to append to OpJob & append it
                 OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct], 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', count]
 
