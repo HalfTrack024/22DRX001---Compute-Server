@@ -59,12 +59,15 @@ class DB_Connect:
         return result
     
     def querymany(self,sqlStatement,records):
+        #records should be a list of tuples
+        #sql statement should be a string of an sql statement with the values to be passed replaced by %s
+        #records will be placed where the %s are
         cursor = self.connection.cursor()
         cursor.executemany(sqlStatement,records)
         self.connection.commit()
-        print(cursor.rowcount + ' rows modified')
         tmp = cursor.rowcount
         cursor.close()
+        #returns the amount of rows modified
         return(tmp)
 
 
