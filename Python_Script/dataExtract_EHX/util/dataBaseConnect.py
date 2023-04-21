@@ -53,6 +53,7 @@ class DB_Connect:
 
     def query(self, sqlStatement):
         cursor = self.connection.cursor()
+        #print(sqlStatement)
         cursor.execute(sqlStatement) 
         result = cursor.fetchall()
         cursor.close()

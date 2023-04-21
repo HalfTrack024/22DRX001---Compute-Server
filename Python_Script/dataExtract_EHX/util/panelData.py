@@ -18,7 +18,7 @@ class Panel:
                         """
         #
         results = pgDB.query(sqlStatement=sql_select_query)
-        dbc.printResult(results)
+        #dbc.printResult(results)
         pgDB.close()
         #assign results of query to variables
         self.guid = panelguid
