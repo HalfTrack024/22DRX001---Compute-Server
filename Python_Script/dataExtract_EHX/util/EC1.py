@@ -150,6 +150,7 @@ class JobData():
                     if inSubAssembly == True:
                         subElements.append(element)
                     else:
+                        '''
                         tmp = self.placeElement(element)
                         OpData.append(tmp[:-1])
                         obj_count = tmp[-1]
@@ -159,6 +160,7 @@ class JobData():
                                 OpData.append(j)
                             else:
                                 obj_count = j
+                        '''
                         print(f'Subassembly board outside of sub assembly, elementguid = {elem[0]}')
         #send OpData to JobData table
         sql_JobData_query = '''
