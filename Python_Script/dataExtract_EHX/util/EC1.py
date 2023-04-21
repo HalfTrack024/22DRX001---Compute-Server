@@ -72,7 +72,8 @@ class JobData():
 
     def __init__(self, panelguid):#panel : panelData.Panel):
         self.panelguid = panelguid
-
+        tmp = panelData.Panel(panelguid)
+        self.studHeight = panelData.Panel.studHeight
         #self.plateInnerBottom = 1.5
         #self.plateInnerTop  = 1.5 + self.studHeight        
 
@@ -103,7 +104,8 @@ class JobData():
             #convert to mm and:
             #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
             #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
-            element = [panelguid,elem[0],elem[1],elem[2],elem[3],float(elem[4]) * 25.4,float(elem[5]) * 25.4,
+            if elem[4] != None:
+                element = [panelguid,elem[0],elem[1],elem[2],elem[3],float(elem[4]) * 25.4,float(elem[5]) * 25.4,
                        float(elem[6]) * 25.4,float(elem[7]) * 25.4,float(elem[8]) * 25.4,float(elem[9]) * 25.4,
                        float(elem[10]) * 25.4,float(elem[11]) * 25.4,float(elem[12]) * 25.4,float(elem[13]) * 25.4,
                        float(elem[14]) * 25.4,float(elem[15]) * 25.4,float(elem[16]) * 25.4,float(elem[17]) * 25.4,
@@ -111,7 +113,7 @@ class JobData():
 
             if inSubAssembly == True and elem[1] != 'Sub-Assembly Board':
                 inSubAssembly = False
-                tmp = JobData.nailSubElement(subElements)
+                tmp = self.nailSubElement(subElements)
                 for i,ct in enumerate(tmp):
                     if ct + 1 < len(tmp):
                         OpData.append(i)
@@ -137,7 +139,7 @@ class JobData():
                     obj_count = tmp[-1]
                 elif elem[1] == 'Sub Assembly':
                     #get opData for placeing the element
-                    tmp = JobData.placeElement(element)
+                    tmp = self.placeElement(element)
                     #Add to OpDatas and increase the count
                     OpData.append(tmp[0])
                     obj_count = tmp[1]
@@ -148,7 +150,16 @@ class JobData():
                     if inSubAssembly == True:
                         subElements.append(element)
                     else:
-                        print(f'ERROR: subassembly board outside of sub assembly, elementguid = {elem[0]}')
+                        tmp = self.placeElement(element)
+                        OpData.append(tmp[:-1])
+                        obj_count = tmp[-1]
+                        tmp = self.nailSubElement([element])
+                        for i,j in enumerate(tmp):
+                            if i+1 < len(tmp):
+                                OpData.append(j)
+                            else:
+                                obj_count = j
+                        print(f'Subassembly board outside of sub assembly, elementguid = {elem[0]}')
         #send OpData to JobData table
         sql_JobData_query = '''
         INSERT INTO jobdata(panelguid, xpos, optext, opcode_fs, zpos_fs, ypos_fs, ssuppos_fs, 
@@ -666,18 +677,19 @@ class JobData():
                             ct += 1
 
         OplistSorted = sorted(OpJobList,key=lambda var:(var[0],var[3],var[7]))
-
-        count = elementList[0][-1]
+        if len(elementList) > 0:
+            count = elementList[0][-1]
         
         for OpJob in OplistSorted:
             OpJob[-1] = count
             count += 1
-        OplistSorted.append(count)
+        if len(elementList) > 0:
+            OplistSorted.append(count)
         # Return OpJob and updated count
         return(OplistSorted)
     
 if __name__ == "__main__":
     #panel = panelData.Panel("0ae67cc2-5433-467a-9964-4fa935b4cda9")
     #matData = MtrlData(panel)
-    jobdata = JobData("0ae67cc2-5433-467a-9964-4fa935b4cda9")
+    jobdata = JobData("7c992d2b-2602-4b18-8b70-4e17a211f512")
     test = jobdata.jdMain()

@@ -23,7 +23,7 @@ class Panel:
         #assign results of query to variables
         self.guid = panelguid
         self.panelThickness = float(results[0][0])
-        self.studHeight = float(results[0][1])
+        Panel.studHeight = float(results[0][1])
         self.panelLength = float(results[0][2])
         self.catagory = results[0][3]
 

@@ -68,24 +68,24 @@ class Clear:
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e4x ASC;
                         """
-        results = pgDB.query(sqlStatement=sql_select_query)
+        results = pgDB.query(sql_select_query)
         if results[0][2] == "Sub-Assembly Board":
-            MinX = str(results[0] )
-            MaxX = str(results[0]+ self.hu_length + self.hu_stroke)
+            MinX = str(results[0][0])
+            MaxX = str(float(results[0][0])+ self.hu_length + self.hu_stroke)
             MinY = str(38.1 + self.hu_Y)
             MaxY = str(38.1 + self.hu_Y + self.hu_thickness)
             sql_select_query=f"""
                             SELECT e2x
                             FROM elements
-                            WHERE panelguid = '{results[1]}' and ({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
+                            WHERE panelguid = '{results[0][1]}' and ({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
                             or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY});
                             """
-            results = pgDB.query(sqlStatement=sql_select_query)
+            results = pgDB.query(sql_select_query)
             if results == None:
                 SSM_Clear = True
-            return SSM_Clear
+                return SSM_Clear
         
-        if results[0][2] == "Board" and results[0][3] == "Stud":
+        elif results[0][2] == "Board" and results[0][3] == "Stud":
             SSM_Clear = True
             return SSM_Clear
         
@@ -141,14 +141,14 @@ class Clear:
                         """
         height = pgDB.query(sqlStatement=sql_select_query)
         if results[0][2] == "Sub-Assembly Board":
-            MinX = str(results[0])
-            MaxX = str(results[0]+ self.hu_length + self.hu_stroke)
-            MinY = str(height - 38.1 - self.hu_Y - self.hu_thickness)
-            MaxY = str(height - 38.1 - self.hu_Y)
+            MinX = str(results[0][0])
+            MaxX = str(float(results[0][0])+ self.hu_length + self.hu_stroke)
+            MinY = str(float(height[0][0]) - 38.1 - self.hu_Y - self.hu_thickness)
+            MaxY = str(float(height[0][0]) - 38.1 - self.hu_Y)
             sql_select_query=f"""
                             SELECT e3x
                             FROM elements
-                            WHERE panelguid = '{results[1]}' and ({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
+                            WHERE panelguid = '{results[0][1]}' and ({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
                             or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY});
                             """
             results = pgDB.query(sqlStatement=sql_select_query)
@@ -156,7 +156,7 @@ class Clear:
                 SSM_Clear = True
                 return SSM_Clear
         
-        if results[0][2] == "Board" and results[0][3] == "Stud":
+        elif results[0][2] == "Board" and results[0][3] == "Stud":
             SSM_Clear = True
             return SSM_Clear
         
