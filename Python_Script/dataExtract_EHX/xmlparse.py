@@ -285,8 +285,6 @@ if __name__ == "__main__":
 						#loop through the SubAssemblies
 						subassemblyCT = 1
 						for subassembly in panel['SubAssembly']:
-							#Is there an opening that needs to be cut into the panel?
-							roughopening = False
 							#are there boards in the subassembly?
 							if 'Board' in subassembly.keys():
 								#loop through all the boards in the subassembly
@@ -306,10 +304,12 @@ if __name__ == "__main__":
 										  boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
 										  boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],
 										  str(subassemblyCT)),)
-									else: #add the subassembly to the elements list with the rough opening as its points
-										elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
-														  subassembly['FamilyMember'],subassembly['FamilyMemberName'],
-														  None,None,boardsub['Material']['ActualWidth'],None,
+									else: #add the rough cutout to the list 
+										  #(only works when there is 1 rough out per subassembly due to element guid creation)
+										elementIN.append((subassembly['PanelGuid'],
+			    										  subassembly['SubAssemblyGuid'] + str(subassemblyCT),'Sub-Assembly Cutout',
+														  subassembly['FamilyMember'],'Rough cutout',
+														  0,0,boardsub['Material']['ActualWidth'],None,
 														  boardsub['BottomView']['Point'][0]['X'],
 														  boardsub['BottomView']['Point'][0]['Y'],
 														  boardsub['BottomView']['Point'][1]['X'],
@@ -326,11 +326,8 @@ if __name__ == "__main__":
 														  boardsub['ElevationView']['Point'][2]['Y'],
 														  boardsub['ElevationView']['Point'][3]['X'],
 														  boardsub['ElevationView']['Point'][3]['Y'],str(subassemblyCT)),)
-										#confirm that the subassembly is added to the list
-										roughopening = True
-							#if the subassembly wasn't added to the list already add it without point data
-							if roughopening == False:
-								elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
+							#add subassembly without point data
+							elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
 												  subassembly['FamilyMember'],subassembly['FamilyMemberName'],
 												  None,None,subassembly['Width'],None,None,None,None,None,None,None,None,
 												  None,None,None,None,None,None,None,None,None,str(subassemblyCT)),)
@@ -338,7 +335,7 @@ if __name__ == "__main__":
 					# if there is only one subassembly in the panel
 					if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == dict:
 						#check for a rough opening sub-board
-						roughopening = False
+						subassemblyCT = 1
 						#loop through all the boards in the subassembly
 						for boardsub in panel['SubAssembly']['Board']:
 							#Check if the sub board is the rough opening
@@ -355,11 +352,11 @@ if __name__ == "__main__":
 														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
 														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
 														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-							else: #add the subassembly to the database with the rough opening as the points
-								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
-			  											'Sub Assembly',panel['SubAssembly']['FamilyMember'],
-														panel['SubAssembly']['FamilyMemberName'],None,None,
-														boardsub['Material']['ActualWidth'],None,
+							else: #add the rough cutout to the list 
+								  #(only works when there is 1 rough out per subassembly due to element guid creation)
+								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid']+ str(subassemblyCT),
+			  											'Sub-Assembly Cutout',panel['SubAssembly']['FamilyMember'],
+														'Rough cutout',0,0,boardsub['Material']['ActualWidth'],None,
 														boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
 														boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
 														boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
@@ -368,11 +365,8 @@ if __name__ == "__main__":
 														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
 														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
 														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-								#confirm that the subassembly was added
-								roughopening = True
-							#if the sub assembly wasn't added yet add it without point data
-							if roughopening == False:
-								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
+						#add subassembly without point data
+						elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
 			  											'Sub Assembly',panel['SubAssembly']['FamilyMember'],
 														panel['SubAssembly']['FamilyMemberName'],None,None,
 														panel['SubAssembly']['Width'],None,None,None,None,None,None,None,None,
@@ -418,13 +412,11 @@ if __name__ == "__main__":
 						#loop through all the subassemblies
 						subassemblyCT = 1
 						for subassembly in bundle['Panel']['SubAssembly']:
-							#check if there is a rough opening for the subassemby
-							roughopening = False
-							#add board to the list if it exists
+							#are there boards in the subassembly?
 							if 'Board' in subassembly.keys():
 								#loop through all the boards in the subassembly
 								for boardsub in subassembly['Board']:
-									#Add boards if they aren't the rough opening
+									#when the board isn't the rough opening board add it to the list
 									if boardsub['FamilyMemberName'] != 'RoughOpening':
 										elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
 										  boardsub['FamilyMember'],boardsub['FamilyMemberName'],
@@ -437,11 +429,14 @@ if __name__ == "__main__":
 										  boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
 										  boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
 										  boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-										  boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],str(subassemblyCT)),)
-									else: #add the subassembly if it has a rough opening
-										elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
-														  subassembly['FamilyMember'],subassembly['FamilyMemberName'],
-														  None,None,boardsub['Material']['ActualWidth'],None,
+										  boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],
+										  str(subassemblyCT)),)
+									else: #add the rough cutout to the list 
+										  #(only works when there is 1 rough out per subassembly due to element guid creation)
+										elementIN.append((subassembly['PanelGuid'],
+			    										  subassembly['SubAssemblyGuid'] + str(subassemblyCT),'Sub-Assembly Cutout',
+														  subassembly['FamilyMember'],'Rough cutout',
+														  0,0,boardsub['Material']['ActualWidth'],None,
 														  boardsub['BottomView']['Point'][0]['X'],
 														  boardsub['BottomView']['Point'][0]['Y'],
 														  boardsub['BottomView']['Point'][1]['X'],
@@ -457,26 +452,24 @@ if __name__ == "__main__":
 														  boardsub['ElevationView']['Point'][2]['X'],
 														  boardsub['ElevationView']['Point'][2]['Y'],
 														  boardsub['ElevationView']['Point'][3]['X'],
-														  boardsub['ElevationView']['Point'][3]['Y'],
-														  str(subassemblyCT)),)
-										#confirm if the subassembly was added to the list
-										roughopening = True
-							#add the subassembly to the list without point data if it wasn't added yet
-							if roughopening == False:
-								elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
+														  boardsub['ElevationView']['Point'][3]['Y'],str(subassemblyCT)),)
+							
+							#add subassembly without point data
+							elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
 												  subassembly['FamilyMember'],subassembly['FamilyMemberName'],
 												  None,None,subassembly['Width'],None,None,None,None,None,None,None,None,
-												  None,None,None,None,None,None,None,None,None, str(subassemblyCT)),)
+												  None,None,None,None,None,None,None,None,None,str(subassemblyCT)),)
 							subassemblyCT += 1
 					#Add the subassembly if it exists and is dictionary type
 					if 'SubAssembly' in bundle['Panel'].keys() and type(bundle['Panel']['SubAssembly']) == dict and c2 == 0:
 						#check if the subassembly has a rough opening in the panel
-						roughopening = False
+						subassemblyCT = 1
 						#loop through all the boards in the subassembly
 						for boardsub in bundle['Panel']['SubAssembly']['Board']:
-							# if the sub board isn't a rough opening add it to the list
-							if boardsub['FamilyMemberName'] != 'RoughOpening':
-								elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
+							for boardsub in panel['SubAssembly']['Board']:
+							#Check if the sub board is the rough opening
+								if boardsub['FamilyMemberName'] != 'RoughOpening':
+									elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
 			  											boardsub['FamilyMember'],boardsub['FamilyMemberName'],
 														boardsub['Material']['Size'],boardsub['Material']['ActualThickness'],
 														boardsub['Material']['ActualWidth'],boardsub['Material']['MaterialsId'],
@@ -488,11 +481,11 @@ if __name__ == "__main__":
 														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
 														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
 														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-							else: #Add the subassembly to the list if it has a rough opening
-								elementIN.append((bundle['Panel']['SubAssembly']['PanelGuid'],bundle['Panel']['SubAssembly']['SubAssemblyGuid'],
-			  											'Sub Assembly',bundle['Panel']['SubAssembly']['FamilyMember'],
-														bundle['Panel']['SubAssembly']['FamilyMemberName'],None,None,
-														boardsub['Material']['ActualWidth'],None,
+							else: #add the rough cutout to the list 
+								  #(only works when there is 1 rough out per subassembly due to element guid creation)
+								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid']+ str(subassemblyCT),
+			  											'Sub-Assembly Cutout',panel['SubAssembly']['FamilyMember'],
+														'Rough cutout',0,0,boardsub['Material']['ActualWidth'],None,
 														boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
 														boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
 														boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
@@ -501,11 +494,8 @@ if __name__ == "__main__":
 														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
 														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
 														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-								#confirm the subassembly was added to the list
-								roughopening = True
-							#Add the subassembly to the list if it wasn't already
-							if roughopening == False:
-								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
+						#add subassembly without point data
+						elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
 			  											'Sub Assembly',panel['SubAssembly']['FamilyMember'],
 														panel['SubAssembly']['FamilyMemberName'],None,None,
 														panel['SubAssembly']['Width'],None,None,None,None,None,None,None,None,

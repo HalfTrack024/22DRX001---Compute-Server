@@ -72,7 +72,7 @@ class JobData():
 
     def __init__(self, panelguid):#panel : panelData.Panel):
         self.panelguid = panelguid
-        tmp = panelData.Panel(panelguid)
+        #tmp = panelData.Panel(panelguid)
         self.studHeight = panelData.Panel.studHeight
         #self.plateInnerBottom = 1.5
         #self.plateInnerTop  = 1.5 + self.studHeight        
@@ -87,7 +87,7 @@ class JobData():
         sql_var = self.panelguid
         #query relevant data from elements table
         sql_elemData_query = f'''
-        SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y
+        SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
         FROM elements
         WHERE panelguid = '{sql_var}'
         ORDER BY b1x ASC;
@@ -99,30 +99,21 @@ class JobData():
         #list of OpDatas
         OpData = []
         #loop through all elements in the panel
-        inSubAssembly = False
+        placedSubAssembly = []
         for elem in elemData:
             #convert to mm and:
             #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
-            #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+            #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id,count]
             if elem[4] != None:
                 element = [panelguid,elem[0],elem[1],elem[2],elem[3],float(elem[4]) * 25.4,float(elem[5]) * 25.4,
                        float(elem[6]) * 25.4,float(elem[7]) * 25.4,float(elem[8]) * 25.4,float(elem[9]) * 25.4,
                        float(elem[10]) * 25.4,float(elem[11]) * 25.4,float(elem[12]) * 25.4,float(elem[13]) * 25.4,
                        float(elem[14]) * 25.4,float(elem[15]) * 25.4,float(elem[16]) * 25.4,float(elem[17]) * 25.4,
-                       float(elem[18]) * 25.4,float(elem[19]) * 25.4,obj_count]
+                       float(elem[18]) * 25.4,float(elem[19]) * 25.4,elem[-1],obj_count]
 
-            if inSubAssembly == True and elem[1] != 'Sub-Assembly Board':
-                inSubAssembly = False
-                tmp = self.nailSubElement(subElements)
-                for i,ct in enumerate(tmp):
-                    if ct + 1 < len(tmp):
-                        OpData.append(i)
-                    obj_count = tmp[-1]
-
-
-            #if the element isn't a sheet, sub-assembly board, top plate or bottom plate
+            #if the element isn't a sheet, top plate or bottom plate
             if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate':
-                if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly':
+                if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout':
                     #get opData for placeing the element
                     tmp = self.placeElement(element)
                     #Add to OpDatas and increase the count
@@ -132,36 +123,46 @@ class JobData():
                     tmp = self.nailElement(element)
                     # loop through the OpDatas from the function and append to the list
                     # exclude the last list item because that is the counter
-                    for i,j in enumerate(tmp):
-                        if i+1 < len(tmp):
-                            OpData.append(j)
+                    for i in tmp[:-1]:
+                        OpData.append(i)
                     #update counter
                     obj_count = tmp[-1]
-                elif elem[1] == 'Sub Assembly':
-                    #get opData for placeing the element
-                    tmp = self.placeElement(element)
-                    #Add to OpDatas and increase the count
+                elif elem[-1] not in placedSubAssembly and elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout':
+                    
+                    sql_subelem_query = f'''
+                    SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
+                    FROM elements
+                    WHERE panelguid = '{sql_var}' and assembly_id = '{elem[-1]}'
+                    ORDER BY b1x ASC;
+                    '''
+                    subelemData = pgDB.query(sql_subelem_query)
+                    subElemList = []
+                    for subelem in subelemData:
+                        if subelem[4] != None:
+                            subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],float(subelem[4]) * 25.4,float(subelem[5]) * 25.4,
+                                float(subelem[6]) * 25.4,float(subelem[7]) * 25.4,float(subelem[8]) * 25.4,float(subelem[9]) * 25.4,
+                                float(subelem[10]) * 25.4,float(subelem[11]) * 25.4,float(subelem[12]) * 25.4,float(subelem[13]) * 25.4,
+                                float(subelem[14]) * 25.4,float(subelem[15]) * 25.4,float(subelem[16]) * 25.4,float(subelem[17]) * 25.4,
+                                float(subelem[18]) * 25.4,float(subelem[19]) * 25.4,subelem[-1],obj_count]
+                        else:
+                            subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],subelem[4],subelem[5],
+                                subelem[6],subelem[7],subelem[8],subelem[9],
+                                subelem[10],subelem[11],subelem[12],subelem[13],
+                                subelem[14],subelem[15],subelem[16],subelem[17],
+                                subelem[18],subelem[19],subelem[-1],obj_count]
+                            
+                        subElemList.append(subelement)
+                    tmp = self.placeElement(subElemList[-1])
                     OpData.append(tmp[0])
                     obj_count = tmp[1]
 
-                    inSubAssembly = True
-                    subElements = []
-                elif elem[1] == 'Sub-Assembly Board':
-                    if inSubAssembly == True:
-                        subElements.append(element)
-                    else:
-                        '''
-                        tmp = self.placeElement(element)
-                        OpData.append(tmp[:-1])
-                        obj_count = tmp[-1]
-                        tmp = self.nailSubElement([element])
-                        for i,j in enumerate(tmp):
-                            if i+1 < len(tmp):
-                                OpData.append(j)
-                            else:
-                                obj_count = j
-                        '''
-                        print(f'Subassembly board outside of sub assembly, elementguid = {elem[0]}')
+                    tmp = self.nailSubElement(subElemList[:-1])
+                    for i in tmp[:-1]:
+                        OpData.append(i)
+                    obj_count = tmp[-1]
+
+                    placedSubAssembly.append(elem[-1])
+
         #send OpData to JobData table
         sql_JobData_query = '''
         INSERT INTO jobdata(panelguid, xpos, optext, opcode_fs, zpos_fs, ypos_fs, ssuppos_fs, 
