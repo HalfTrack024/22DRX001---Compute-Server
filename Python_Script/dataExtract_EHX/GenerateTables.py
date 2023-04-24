@@ -4,23 +4,23 @@ def genTables(credentials):
     #Table query comands
     commands = (
             """
-            CREATE TABLE JobData (
-            panelguid VARCHAR (255),
-            Xpos SMALLINT,
-            OpText VARCHAR (255),
-            OpCode_FS SMALLINT,
-            ZPos_FS SMALLINT,
-            YPos_FS SMALLINT,
-            SsUpPos_FS SMALLINT,
-            OpCode_MS SMALLINT,
-            ZPos_MS SMALLINT,
-            YPos_MS SMALLINT,
-            SsUpPos_MS SMALLINT,
-            ImgName VARCHAR (255),
-            OBJ_ID SMALLINT,
-            loadDate TIMESTAMP,
-            PRIMARY KEY (panelguid,OBJ_ID)
+            CREATE TABLE "materialData" (
+            "byteSize" INTEGER,
+            "numOfStuds" INTEGER,
+            "uiItemLength" INTEGER,
+            "uiItemHeight" INTEGER,
+            "uiItemThickness" INTEGER,
+            "sMtrlCode" INTEGER,
+            "uiOpCode" INTEGER,
+            "sPrinterWrite" VARCHAR (100),
+            "sType" VARCHAR (20),
+            "uiItemID" INTEGER,
+            "sCADPath" VARCHAR (100),
+            "sProjectName" VARCHAR (100),
+            "sItemName" VARCHAR (100),
+            PRIMARY KEY ("sItemName")
             );
+
             """
     )
     #Run each of the above commands seperately so they all run even if a table already exists

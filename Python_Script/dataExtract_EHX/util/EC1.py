@@ -4,7 +4,7 @@ import panelData
 
 class MtrlData:
 
-    mtrldata = []
+    mtrldata = ()
 
     def __init__(self, panelData : panelData.Panel):
         #Assigns Panel Instance to Mtrl 
@@ -36,49 +36,42 @@ class MtrlData:
 
     def mdBuild(self, studs): # This function will assemble the entry line of Material Data
         uiItemLength = self.panel.studHeight
-        uiItemHeight = float(studs[3])
-        uiItemThickness = float(studs[4])
+        uiItemHeight = float(studs[3]) * 25.4 # convert from inches to mm
+        uiItemThickness = float(studs[4]) * 25.4 # convert from inches to mm
         sMtrlCode = self.getMatCode(studs[2])
         uiOpCode = 0
         sPrinterWrite = 0	
         sType = 0
-        uiItemID = studs[0]	
+        uiItemID = 0
         sCADPath = 0
         sProjectName = 0	
         sItemName = self.panel.guid
 
-        line = [uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName]
+        line = (1,1, uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
         return line
     
     def getMatCode(self, studType): # returns material code for size of material (1: 2x4, 2:2x6)
         #NEED TO DETERMINE HOW TO GET STUD MATERIAL CODE
         pass
 
-    def mdInsert(self, data): # Inserts "mtrldata" list into table "materialData"
-    
+    def mdInsert(self): # Inserts "mtrldata" list into table "materialData"
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
         #send OpData to JobData table
         sql_JobData_query = '''
-        INSERT INTO materialData(uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, 
-        sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
-        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW())
-        ON CONFLICT (panelguid,obj_id)
-        DO UPDATE SET xpos = EXCLUDED.xpos,
-        optext = EXCLUDED.optext, opcode_fs = EXCLUDED.opcode_fs,
-        zpos_fs = EXCLUDED.zpos_fs,ypos_fs = EXCLUDED.ypos_fs,
-        ssuppos_fs = EXCLUDED.ssuppos_fs,opcode_ms = EXCLUDED.opcode_ms,
-        zpos_ms = EXCLUDED.zpos_ms,ypos_ms = EXCLUDED.ypos_ms,
-        ssuppos_ms = EXCLUDED.ssuppos_ms,imgname = EXCLUDED.imgname,
-        obj_id = EXCLUDED.obj_id,loaddate = NOW();
-        '''
+                            INSERT INTO "materialData"
+                            ("byteSize", "numOfStuds", "uiItemLength", "uiItemHeight", "uiItemThickness", "sMtrlCode", "uiOpCode", "sPrinterWrite", "sType", "uiItemID", "sCADPath", "sProjectName", "sItemName")
+                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                            '''
         #make a list of tuples for querymany
         jdQueryData = []
-        #for item in OpData:
-        #    jdQueryData.append((panelguid, item[0],item[1],item[2],item[3],item[4],
-        #                        item[5],item[6],item[7],item[8],item[9],item[10],item[11]))
+        jdQueryData.append(self.mrtldata)        
 
-        #tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        pgDB.close()
 
-        pass
+
     
 
 
