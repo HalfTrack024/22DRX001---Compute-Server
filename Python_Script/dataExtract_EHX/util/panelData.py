@@ -23,7 +23,7 @@ class Panel:
         #assign results of query to variables
         self.guid = panelguid
         self.panelThickness = float(results[0][0])
-        Panel.studHeight = float(results[0][1])
+        self.studHeight = float(results[0][1])
         self.panelLength = float(results[0][2])
         self.catagory = results[0][3]
 
@@ -33,37 +33,6 @@ class Panel:
     def getPanel(self, panelGUID):
         pass
     
-    def genOPCode(OpIn):
-        #This function converts a list of bools to a list containing OpText and an integer opcode
-        #OpIn is a list of opcode parameters 
-        #[Stud Stop, Hammer, Multi-device, Option, AutoStud, Operator Confirm, Nailing]
-        opcode = ['', 0]
-        if OpIn[0] == True:
-            opcode[0] += 'StudStop | '
-            opcode[1] += 1
-        if OpIn[1] == True:
-            opcode[0] += 'HammerUnit | '
-            opcode[1] += 2
-        if OpIn[2] == True:
-            opcode[0] += 'Multi-Device | '
-            opcode[1] += 4
-        if OpIn[3] == True:
-            opcode[0] += 'Option | '
-            opcode[1] += 8
-        if OpIn[4] == True:
-            opcode[0] += 'AutoStud | '
-            opcode[1] += 16
-        if OpIn[5] == True:
-            opcode[0] += 'OperatorConfirmation | '
-            opcode[1] += 32
-        if OpIn[6] == True:
-            opcode[0] += 'Nailing'
-            opcode[1] += 64
-        
-        #remove trailing ' | ' from OpText string
-        if opcode[0][-3] == ' ':
-            opcode[0] = opcode[0][:-3]
-        return opcode
     
 if __name__ == "__main__":
     credentials = dbc.getCred()

@@ -44,7 +44,8 @@ class MtrlData:
         sProjectName = 0	
         sItemName = self.panel.guid
 
-        line = [uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName]
+        line = [uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType,
+                 uiItemID, sCADPath, sProjectName, sItemName]
         return line
     
     def getMatCode(studType):
@@ -71,11 +72,28 @@ class JobData():
     }
 
     def __init__(self, panelguid):#panel : panelData.Panel):
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+
+        sql_select_query=f"""
+                        SELECT thickness, studheight, walllength, category
+                        FROM panel
+                        WHERE panelguid = '{panelguid}';
+                        """
+        #
+        results = pgDB.query(sqlStatement=sql_select_query)
+        #dbc.printResult(results)
+        pgDB.close()
+        #assign results of query to variables
         self.panelguid = panelguid
-        #tmp = panelData.Panel(panelguid)
-        self.studHeight = panelData.Panel.studHeight
-        #self.plateInnerBottom = 1.5
-        #self.plateInnerTop  = 1.5 + self.studHeight        
+        self.panelThickness = float(results[0][0])
+        self.studHeight = float(results[0][1])
+        self.panelLength = float(results[0][2])
+        self.catagory = results[0][3]
+
+        self.plateInnerBottom = 1.5
+        self.plateInnerTop  = 1.5 + self.studHeight      
 
 
 
@@ -130,7 +148,8 @@ class JobData():
                 elif elem[-1] not in placedSubAssembly and elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout':
                     
                     sql_subelem_query = f'''
-                    SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
+                    SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
+                    e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
                     FROM elements
                     WHERE panelguid = '{sql_var}' and assembly_id = '{elem[-1]}'
                     ORDER BY b1x ASC;
@@ -139,10 +158,12 @@ class JobData():
                     subElemList = []
                     for subelem in subelemData:
                         if subelem[4] != None:
-                            subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],float(subelem[4]) * 25.4,float(subelem[5]) * 25.4,
-                                float(subelem[6]) * 25.4,float(subelem[7]) * 25.4,float(subelem[8]) * 25.4,float(subelem[9]) * 25.4,
-                                float(subelem[10]) * 25.4,float(subelem[11]) * 25.4,float(subelem[12]) * 25.4,float(subelem[13]) * 25.4,
-                                float(subelem[14]) * 25.4,float(subelem[15]) * 25.4,float(subelem[16]) * 25.4,float(subelem[17]) * 25.4,
+                            subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],
+                                          float(subelem[4]) * 25.4,float(subelem[5]) * 25.4,
+                                float(subelem[6]) * 25.4,float(subelem[7]) * 25.4,float(subelem[8]) * 25.4,
+                                float(subelem[9]) * 25.4,float(subelem[10]) * 25.4,float(subelem[11]) * 25.4,
+                                float(subelem[12]) * 25.4,float(subelem[13]) * 25.4,float(subelem[14]) * 25.4,
+                                float(subelem[15]) * 25.4,float(subelem[16]) * 25.4,float(subelem[17]) * 25.4,
                                 float(subelem[18]) * 25.4,float(subelem[19]) * 25.4,subelem[-1],obj_count]
                         else:
                             subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],subelem[4],subelem[5],
@@ -152,7 +173,7 @@ class JobData():
                                 subelem[18],subelem[19],subelem[-1],obj_count]
                             
                         subElemList.append(subelement)
-                    tmp = self.placeElement(subElemList[-1])
+                    tmp = self.placeElement(subElemList[-1],element)
                     OpData.append(tmp[0])
                     obj_count = tmp[1]
 
@@ -193,23 +214,33 @@ class JobData():
         
         pass
 
-    def placeElement(self,element):
+    def placeElement(self,element,subelement = None):
         #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
-        #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+        #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id,count]
         clear = fc.Clear()
         #empty list for [Xpos,OpText,OpCodeFS,ZposFS,YposFS,SSupPosFS,OpCodeMS,ZposMS,YposMS,SSupPosMS,IMG_NAME,OBJ_ID]
         OpJob = []
-        #add X Pos from element
-        OpJob.append(element[5])
+        if subelement == None:
+            #add X Pos from element
+            OpJob.append(element[5])
+        else:
+            OpJob.append(float(subelement[5]))
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
         #check if the stud stops are clear
-        if clear.studStopFS(element[1]) == True:
-            OpFS[0] = True
-        
-        if clear.studStopMS(element[1]) == True:
-            OpMS[0] = True
+        if subelement == None:
+            if clear.studStopFS(element[1]) == True:
+                OpFS[0] = True
+            
+            if clear.studStopMS(element[1]) == True:
+                OpMS[0] = True
+        else:
+            if clear.studStopFS(subelement[1]) == True:
+                OpFS[0] = True
+            
+            if clear.studStopMS(subelement[1]) == True:
+                OpMS[0] = True
         #if element is a stud enable hammer and autostud
         if element[2] == 'Board' and element[3] == 'Stud':
             OpFS[1] = True
@@ -221,12 +252,7 @@ class JobData():
                 OpFS[5] = True
                 OpMS[5] = True
         #if element is a sub assembly
-        elif element[2] == 'Sub-Assembly':
-            # check if hammers are clear
-            if clear.hammerFS(element[1]) == True:
-                OpFS[1] = True
-            if clear.hammerMS(element[1]) == True:
-                OpMS[1] = True
+        elif element[2] == 'Sub Assembly':
             #set operator confirm
             OpFS[5] = True
             OpMS[5] = True
@@ -239,7 +265,6 @@ class JobData():
             print(f'error with elementguid: {element[1]} \n Type unknown')
             
         #generate OpText and OpCodes from list of bools
-        
         tmpFS = JobData.genOpCode(OpFS)
         tmpMS = JobData.genOpCode(OpMS)
         #list to append to OpJob & append it

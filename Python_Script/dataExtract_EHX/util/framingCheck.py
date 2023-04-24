@@ -41,23 +41,29 @@ class Clear:
                         ORDER BY e1x ASC;
                         """
         results = pgDB.query(sql_select_query)
-        MinX = str(float(results[0][0]) - self.ss_thickness)
-        MaxX = str(results[0][0])
+        MinX = str(float(results[0][0]) * 25.4 - self.ss_thickness)
+        MaxX = str(float(results[0][0]) * 25.4)
         MinY = str(38.1)
         MaxY = str(38.1 + self.ss_width)
         sql_select_query=f"""
-                        SELECT e1x
+                        SELECT e1x, elementguid
                         FROM elements
-                        WHERE panelguid = '{results[0][1]}' and ({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
-                        or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY});
+                        WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
+                        and elementguid != '{elementguid}'
+                        and (({MinX} <= (e1x * 25.4) and (e1x * 25.4) <= {MaxX} and {MinY} <= (e1y * 25.4) and (e1y * 25.4) <= {MaxY}) 
+                        or ({MinX} <= (e4x * 25.4) and (e4x * 25.4) <= {MaxX} and {MinY} <= (e4y * 25.4) and (e4y * 25.4) <= {MaxY}));
                         """
-        results = pgDB.query(sql_select_query)
-        #print(results)
-        if len(results[0]) < 2:
+        #print(sql_select_query)
+        results2 = pgDB.query(sql_select_query)
+        #print(str(elementguid) + '   ')
+        #print(results2)
+        #print('\n')
+        if len(results2) < 1:
             SSF_Clear = True
             return SSF_Clear
         
         pgDB.close()
+
     def hammerFS(self,elementguid):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -77,8 +83,10 @@ class Clear:
             sql_select_query=f"""
                             SELECT e2x
                             FROM elements
-                            WHERE panelguid = '{results[0][1]}' and ({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
-                            or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY});
+                            WHERE WHERE panelguid = '{results[0][1]}' and description NOT IN 
+                            ('Sheathing','TopPlate','BottomPlate','VeryTopPlate') and elementguid != '{elementguid}' 
+                            and (({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
+                            or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY}));
                             """
             results = pgDB.query(sql_select_query)
             if results == None:
@@ -114,13 +122,16 @@ class Clear:
         sql_select_query=f"""
                         SELECT e2x
                         FROM elements
-                        WHERE panelguid = '{results[0][1]}' and ({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
-                        or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY});
+                        WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
+                        and elementguid != '{elementguid}' 
+                        and (({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
+                        or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY}));
                         """
         results = pgDB.query(sql_select_query)
-        if len(results[0]) < 2:
-            SSM_Clear = True
-            return SSM_Clear
+        if results != []:
+            if len(results[0]) < 2:
+                SSM_Clear = True
+                return SSM_Clear
         
         pgDB.close()
     def hammerMS(self,elementguid):
@@ -148,8 +159,10 @@ class Clear:
             sql_select_query=f"""
                             SELECT e3x
                             FROM elements
-                            WHERE panelguid = '{results[0][1]}' and ({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
-                            or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY});
+                            WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
+                            and elementguid != '{elementguid}'
+                            and (({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
+                            or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY}));
                             """
             results = pgDB.query(sqlStatement=sql_select_query)
             if results == None:

@@ -41,15 +41,16 @@ class DB_Connect:
         except(Exception, psy.Error) as Error:
             print("Failed to Connect: {}".format(Error))
         finally:
-             print("Connection Open")
+             #print("Connection Open")
+             pass
 
     def close(self):
         #Close DB Connection
-        print(self.connection.status)
+        #print(self.connection.status)
         if self.connection:
             self.connection.close()
             #print(self.connection.status)
-            print("SQL connection closed")
+            #print("SQL connection closed")
 
     def query(self, sqlStatement):
         cursor = self.connection.cursor()
