@@ -121,7 +121,7 @@ class JobData():
 
 
             #if the element isn't a sheet, sub-assembly board, top plate or bottom plate
-            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate':
+            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate':
                 if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly':
                     #get opData for placeing the element
                     tmp = self.placeElement(element)
