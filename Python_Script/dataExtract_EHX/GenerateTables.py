@@ -32,6 +32,7 @@ def genTables(credentials):
             ,e4y NUMERIC(6,3)
             ,assembly_id VARCHAR(255)
             );
+
             """
     )
     #Run each of the above commands seperately so they all run even if a table already exists
