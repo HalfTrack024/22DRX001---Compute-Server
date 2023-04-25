@@ -88,7 +88,7 @@ class JobData():
         #assign results of query to variables
         self.panelguid = panelguid
         self.panelThickness = float(results[0][0])
-        self.studHeight = round((float(results[0][1]))*25.4,1)
+        self.studHeight = (float(results[0][1]))*25.4
         self.panelLength = float(results[0][2])
         self.catagory = results[0][3]
 
@@ -138,7 +138,7 @@ class JobData():
         WHERE panelguid = '{sql_var}'
         ORDER BY b1x ASC;
         '''
-
+        #print(sql_elemData_query)
         elemData = pgDB.query(sql_elemData_query)
         #counter for obj
         obj_count = 1
@@ -174,7 +174,7 @@ class JobData():
                         OpData.append(i)
                     #update counter
                     obj_count = tmp[-1]
-                elif elem[-1] not in placedSubAssembly and elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout':
+                elif elem[-1] not in placedSubAssembly and (elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout'):
                     
                     sql_subelem_query = f'''
                     SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
@@ -339,8 +339,10 @@ class JobData():
             opcode[1] += 64
             
         #remove trailing ' | ' from OpText string
-       # if opcode[0][-3] == ' ':
-       #     opcode[0] = opcode[0][:-3]
+        if opcode[0] != '':
+            if opcode[0][-3] == ' ':
+                opcode[0] = opcode[0][:-3]
+        
         return opcode
 
 
@@ -444,19 +446,17 @@ class JobData():
 
     def nailSubElement(self,elementList):
         clear = fc.Clear
-        TopPlate = 38.1 + self.studHeight
-        TopPlate = round(TopPlate,1)
+        TopPlate = round(38.1 + self.studHeight,1)
         BottomPlate = 38.1
         Zpos_2x4 = [19,70]
         Zpos_2x6 = [15,70,125]
         HeaderNailSpacing = 304.8
-        OpFS = [False,False,False,False,False,False,False]
-        OpMS = [False,False,False,False,False,False,False]
         OpJobList = []
         #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
         #        [   0     ,      1    ,  2 ,    3      ,  4 , 5 , 6 , 7 , 8 , 9 , 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
         for elem in elementList:
-
+            OpFS = [False,False,False,False,False,False,False]
+            OpMS = [False,False,False,False,False,False,False]
             #Sub Assembly Element is only touching Top plate
             if elem[16] == TopPlate and elem[14] != BottomPlate:
 
@@ -479,6 +479,8 @@ class JobData():
                             #generate OpText and OpCodes from list of bools
                             tmpFS = JobData.genOpCode(OpFS)
                             tmpMS = JobData.genOpCode(OpMS)
+
+                           
                             #list to append to OpJob & append it
                             OpJobAppend = [tmpMS[0],0,0, 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', 0]
                             for i in OpJobAppend:
@@ -574,10 +576,10 @@ class JobData():
             if elem[14] == BottomPlate and elem[16] != TopPlate:
 
                 if clear.studStopFS(self,elem[1]) == True:
-                    OpMS[0] = True
+                    OpFS[0] = True
 
                 if clear.hammerFS(self,elem[1]) == True:
-                    OpMS[1] = True
+                    OpFS[1] = True
 
                 OpFS[6] = True
                 
@@ -688,10 +690,10 @@ class JobData():
             if elem[14] == BottomPlate and elem[16] == TopPlate:
 
                 if clear.studStopFS(self,elem[1]) == True:
-                    OpMS[0] = True
+                    OpFS[0] = True
 
                 if clear.hammerFS(self,elem[1]) == True:
-                    OpMS[1] = True
+                    OpFS[1] = True
 
                 OpFS[6] = True
 
@@ -714,6 +716,7 @@ class JobData():
                             #generate OpText and OpCodes from list of bools
                             tmpFS = JobData.genOpCode(OpFS)
                             tmpMS = JobData.genOpCode(OpMS)
+
                             #list to append to OpJob & append it
                             OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct], 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', 0]
                             for i in OpJobAppend:
@@ -739,7 +742,7 @@ class JobData():
                             ct += 1
                 
                 #Is the element in the sub assembly Side stud orientation
-                if (elem[17] - elem[13]) > 50.8: 
+                if (elem[17] - elem[13]) > 50.8:
                     if elem[4] == "2X4":
                         NailCounter = 0
                         XposOffset2X4 = [19,70]

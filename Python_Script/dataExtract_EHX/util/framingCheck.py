@@ -48,7 +48,7 @@ class Clear:
         MinY = str(38.1)
         MaxY = str(round(38.1 + self.ss_width,1))
         sql_select_query=f"""
-                        SELECT e1x, elementguid
+                        SELECT e1x
                         FROM elements
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
                         and elementguid != '{elementguid}'
@@ -57,6 +57,8 @@ class Clear:
                         """
         results2 = pgDB.query(sql_select_query)
         pgDB.close()
+        #print(results2)
+        #print('\n')
         if results2 == []:
             SSF_Clear = True
             return SSF_Clear        
@@ -128,6 +130,8 @@ class Clear:
                         """
         results2 = pgDB.query(sql_select_query)
         pgDB.close()
+        #print(results2)
+        #print('\n')
         if results2 == []:
             SSF_Clear = True
             return SSF_Clear 
