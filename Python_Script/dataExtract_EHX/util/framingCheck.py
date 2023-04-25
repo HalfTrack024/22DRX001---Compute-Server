@@ -35,16 +35,18 @@ class Clear:
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_select_query=f"""
-                        SELECT e1x, panelguid
+                        SELECT e1x, panelguid, type
                         FROM elements
                         WHERE elementguid = '{elementguid}' 
                         ORDER BY e1x ASC;
                         """
         results = pgDB.query(sql_select_query)
-        MinX = str(float(results[0][0]) * 25.4 - self.ss_thickness)
-        MaxX = str(float(results[0][0]) * 25.4)
+        if results[0][2] == 'Sub-Assembly Cutout':
+            return False
+        MinX = str(round(float(results[0][0]) * 25.4 - self.ss_thickness,1))
+        MaxX = str(round(float(results[0][0]) * 25.4,1))
         MinY = str(38.1)
-        MaxY = str(38.1 + self.ss_width)
+        MaxY = str(round(38.1 + self.ss_width,1))
         sql_select_query=f"""
                         SELECT e1x, elementguid
                         FROM elements
@@ -53,33 +55,28 @@ class Clear:
                         and (({MinX} <= (e1x * 25.4) and (e1x * 25.4) <= {MaxX} and {MinY} <= (e1y * 25.4) and (e1y * 25.4) <= {MaxY}) 
                         or ({MinX} <= (e4x * 25.4) and (e4x * 25.4) <= {MaxX} and {MinY} <= (e4y * 25.4) and (e4y * 25.4) <= {MaxY}));
                         """
-        #print(sql_select_query)
         results2 = pgDB.query(sql_select_query)
-        #print(str(elementguid) + '   ')
-        #print(results2)
-        #print('\n')
-        if len(results2) < 1:
-            SSF_Clear = True
-            return SSF_Clear
-        
         pgDB.close()
+        if results2 == []:
+            SSF_Clear = True
+            return SSF_Clear        
 
     def hammerFS(self,elementguid):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_select_query=f"""
-                        SELECT e4x, panelguid, type, description
+                        SELECT e4x, panelguid, type
                         FROM elements
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e4x ASC;
                         """
         results = pgDB.query(sql_select_query)
         if results[0][2] == "Sub-Assembly Board":
-            MinX = str(results[0][0])
-            MaxX = str(float(results[0][0])+ self.hu_length + self.hu_stroke)
-            MinY = str(38.1 + self.hu_Y)
-            MaxY = str(38.1 + self.hu_Y + self.hu_thickness)
+            MinX = str(round(float(results[0][0]) * 25.4,1))
+            MaxX = str(round(float(results[0][0]) * 25.4 + self.hu_length + self.hu_stroke,1))
+            MinY = str(round(38.1 + self.hu_Y,1))
+            MaxY = str(round(38.1 + self.hu_Y + self.hu_thickness,1))
             sql_select_query=f"""
                             SELECT e2x
                             FROM elements
@@ -89,7 +86,8 @@ class Clear:
                             or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY}));
                             """
             results = pgDB.query(sql_select_query)
-            if results == None:
+            pgDB.close()
+            if results == []:
                 SSM_Clear = True
                 return SSM_Clear
         
@@ -97,65 +95,65 @@ class Clear:
             SSM_Clear = True
             return SSM_Clear
         
-        pgDB.close()
     def studStopMS(self,elementguid):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_select_query=f"""
-                        SELECT e2x, panelguid
+                        SELECT e2x, panelguid, type
                         FROM elements
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e2x ASC;
                         """
         results = pgDB.query(sql_select_query)
+        if results[0][2] == 'Sub-Assembly Cutout':
+            return False
         sql_select_query=f"""
-                        SELECT height
+                        SELECT studheight
                         FROM panel
                         WHERE panelguid = '{results[0][1]}'
                         """
         height = pgDB.query(sql_select_query)
-        MinX = str(float(results[0][0]) - self.ss_thickness)
-        MaxX = str(results[0][0])
-        MinY = str(float(height[0][0]) - 38.1 - self.ss_width)
-        MaxY = str(float(height[0][0]) - 38.1)
+        MinX = str(round(float(results[0][0]) * 25.4 - self.ss_thickness,1))
+        MaxX = str(round(float(results[0][0]) * 25.4,1))
+        MinY = str(round(float(height[0][0]) * 25.4 + 38.1 - self.ss_width,1))
+        MaxY = str(round(float(height[0][0]) * 25.4 + 38.1,1))
         sql_select_query=f"""
                         SELECT e2x
                         FROM elements
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
                         and elementguid != '{elementguid}' 
-                        and (({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
-                        or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY}));
+                        and (({MinX} <= (e2x * 25.4) and (e2x * 25.4) <= {MaxX} and {MinY} <= (e2y * 25.4) and (e2y * 25.4) <= {MaxY}) 
+                        or ({MinX} <= (e3x * 25.4) and (e3x * 25.4) <= {MaxX} and {MinY} <= (e3y * 25.4) and (e3y * 25.4) <= {MaxY}));
                         """
-        results = pgDB.query(sql_select_query)
-        if results != []:
-            if len(results[0]) < 2:
-                SSM_Clear = True
-                return SSM_Clear
-        
+        results2 = pgDB.query(sql_select_query)
         pgDB.close()
+        if results2 == []:
+            SSF_Clear = True
+            return SSF_Clear 
+        
     def hammerMS(self,elementguid):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_select_query=f"""
-                        SELECT e3x, panelguid, type, description
+                        SELECT e3x, panelguid, type
                         FROM elements
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e3x ASC;
                         """
         results = pgDB.query(sql_select_query)
         sql_select_query=f"""
-                        SELECT height
+                        SELECT studheight
                         FROM panel
                         WHERE panelguid = '{results[0][1]}'
                         """
         height = pgDB.query(sqlStatement=sql_select_query)
         if results[0][2] == "Sub-Assembly Board":
-            MinX = str(results[0][0])
-            MaxX = str(float(results[0][0])+ self.hu_length + self.hu_stroke)
-            MinY = str(float(height[0][0]) - 38.1 - self.hu_Y - self.hu_thickness)
-            MaxY = str(float(height[0][0]) - 38.1 - self.hu_Y)
+            MinX = str(round(float(results[0][0]) * 25.4 ,1))
+            MaxX = str(round(float(results[0][0]) * 25.4 + self.hu_length + self.hu_stroke,1))
+            MinY = str(round(float(height[0][0]) * 25.4 + 38.1 - self.hu_Y - self.hu_thickness,1))
+            MaxY = str(round(float(height[0][0]) * 25.4 + 38.1 - self.hu_Y,1))
             sql_select_query=f"""
                             SELECT e3x
                             FROM elements
@@ -165,7 +163,8 @@ class Clear:
                             or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY}));
                             """
             results = pgDB.query(sqlStatement=sql_select_query)
-            if results == None:
+            pgDB.close()
+            if results == []:
                 SSM_Clear = True
                 return SSM_Clear
         
@@ -173,6 +172,5 @@ class Clear:
             SSM_Clear = True
             return SSM_Clear
         
-        pgDB.close()
 if __name__ == "__main__":
     board = Clear()

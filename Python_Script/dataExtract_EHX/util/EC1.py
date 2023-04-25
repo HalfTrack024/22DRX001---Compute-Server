@@ -118,10 +118,11 @@ class JobData():
         OpData = []
         #loop through all elements in the panel
         placedSubAssembly = []
-        for elem in elemData:
+        for i,elem in enumerate(elemData):
             #convert to mm and:
             #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
             #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id,count]
+            #print(str(i) + '    ' + elem[1] + ','+ elem[2]+'    ' +str(obj_count))
             if elem[4] != None:
                 element = [panelguid,elem[0],elem[1],elem[2],elem[3],float(elem[4]) * 25.4,float(elem[5]) * 25.4,
                        float(elem[6]) * 25.4,float(elem[7]) * 25.4,float(elem[8]) * 25.4,float(elem[9]) * 25.4,
@@ -151,7 +152,7 @@ class JobData():
                     SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
                     e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
                     FROM elements
-                    WHERE panelguid = '{sql_var}' and assembly_id = '{elem[-1]}'
+                    WHERE panelguid = '{sql_var}' and assembly_id = '{elem[-1]}' and type != 'Sub-Assembly Cutout'
                     ORDER BY b1x ASC;
                     '''
                     subelemData = pgDB.query(sql_subelem_query)
@@ -174,14 +175,16 @@ class JobData():
                             
                         subElemList.append(subelement)
                     tmp = self.placeElement(subElemList[-1],element)
+                    
                     OpData.append(tmp[0])
                     obj_count = tmp[1]
-
+                    for i in subElemList[:-1]:
+                        i[-1] = obj_count
                     tmp = self.nailSubElement(subElemList[:-1])
                     for i in tmp[:-1]:
                         OpData.append(i)
                     obj_count = tmp[-1]
-
+                    
                     placedSubAssembly.append(elem[-1])
 
         #send OpData to JobData table
@@ -209,6 +212,7 @@ class JobData():
         #print the no. of rows modified
         #print(str(tmp) + ' rows modified')
         pgDB.close()
+        
 
     def jdBuild(panelguid): # Job Data Build
         
@@ -273,8 +277,12 @@ class JobData():
         for i in OpJobAppend:
             OpJob.append(i)
         # increase OBJ_ID Count
-        element[-1] += 1
+        if subelement == None:
+            element[-1] += 1
+        else:
+            element[-1] = subelement[-1] + 1
         # Return OpJob and updated count
+        
         return(OpJob,element[-1])
     
     def genOpCode(OpIn):
