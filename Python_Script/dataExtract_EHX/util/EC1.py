@@ -234,8 +234,6 @@ class JobData():
         for item in OpData:
             jdQueryData.append((panelguid, item[0],item[1],item[2],item[3],item[4],
                                 item[5],item[6],item[7],item[8],item[9],item[10],item[11]))
-        for i in jdQueryData:
-            print(i)
         pgDB.querymany(sql_JobData_query,jdQueryData)
         #print the no. of rows modified
         #print(str(tmp) + ' rows modified')
@@ -796,5 +794,5 @@ class JobData():
 if __name__ == "__main__":
     #panel = panelData.Panel("0ae67cc2-5433-467a-9964-4fa935b4cda9")
     #matData = MtrlData(panel)
-    jobdata = JobData("7c992d2b-2602-4b18-8b70-4e17a211f512")
+    jobdata = JobData("6cbbcbbc-bae8-4bc7-8935-309230e646c0")
     test = jobdata.jdMain()
