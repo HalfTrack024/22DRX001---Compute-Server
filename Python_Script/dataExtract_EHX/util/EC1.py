@@ -129,27 +129,25 @@ class JobData():
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         panelguid = self.panelguid
-        sql_var = self.panelguid
         #query relevant data from elements table
         sql_elemData_query = f'''
         SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
         FROM elements
-        WHERE panelguid = '{sql_var}'
+        WHERE panelguid = '{panelguid}'
         ORDER BY b1x ASC;
         '''
-        #print(sql_elemData_query)
         elemData = pgDB.query(sql_elemData_query)
-        #counter for obj
+        #counter for obj_id
         obj_count = 1
         #list of OpDatas
         OpData = []
-        #loop through all elements in the panel
+        #list of placed sub assemblies
         placedSubAssembly = []
+        #loop through all elements in the panel
         for i,elem in enumerate(elemData):
             #convert to mm and:
             #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
             #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id,count]
-            #print(str(i) + '    ' + elem[1] + ','+ elem[2]+'    ' +str(obj_count))
             if elem[4] != None:
                 element = [panelguid,elem[0],elem[1],elem[2],elem[3],float(elem[4]) * 25.4,float(elem[5]) * 25.4,
                        float(elem[6]) * 25.4,float(elem[7]) * 25.4,float(elem[8]) * 25.4,float(elem[9]) * 25.4,
@@ -157,8 +155,9 @@ class JobData():
                        float(elem[14]) * 25.4,float(elem[15]) * 25.4,float(elem[16]) * 25.4,float(elem[17]) * 25.4,
                        float(elem[18]) * 25.4,float(elem[19]) * 25.4,elem[-1],obj_count]
 
-            #if the element isn't a sheet, top plate or bottom plate
+            #if the element isn't a sheet, top plate, bottom plate, or very top plate
             if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate':
+                #if the element is a normal stud
                 if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout':
                     #get opData for placeing the element
                     tmp = self.placeElement(element)
@@ -173,18 +172,22 @@ class JobData():
                         OpData.append(i)
                     #update counter
                     obj_count = tmp[-1]
+                #if the element isn't in a placed sub assembly and is a sub assembly board or cutout
                 elif elem[-1] not in placedSubAssembly and (elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout'):
-                    
+                    #get relevant data of elements that aren't sub assembly cutouts, sort by b1x ascending
                     sql_subelem_query = f'''
                     SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
                     e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
                     FROM elements
-                    WHERE panelguid = '{sql_var}' and assembly_id = '{elem[-1]}' and type != 'Sub-Assembly Cutout'
+                    WHERE panelguid = '{panelguid}' and assembly_id = '{elem[-1]}' and type != 'Sub-Assembly Cutout'
                     ORDER BY b1x ASC;
                     '''
                     subelemData = pgDB.query(sql_subelem_query)
+                    #list of all sub elements and the sub assembly element, excluding rough cutouts(they don't need to be nailed)
                     subElemList = []
+                    #loop through all the sub elements
                     for subelem in subelemData:
+                        #if the sub elem has coordinates (isn't the sub assembly element)
                         if subelem[4] != None:
                             subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],
                                           round(float(subelem[4]) * 25.4,1),round(float(subelem[5]) * 25.4,1),
@@ -193,25 +196,28 @@ class JobData():
                                 round(float(subelem[12]) * 25.4,1),round(float(subelem[13]) * 25.4,1),round(float(subelem[14]) * 25.4,1),
                                 round(float(subelem[15]) * 25.4,1),round(float(subelem[16]) * 25.4,1),round(float(subelem[17]) * 25.4,1),
                                 round(float(subelem[18]) * 25.4,1),round(float(subelem[19]) * 25.4,1),subelem[-1],obj_count]
-                        else:
+                        else: #if the sub elem is the subassembly element (always the last in the list due to sort by b1x)
                             subelement = [panelguid,subelem[0],subelem[1],subelem[2],subelem[3],subelem[4],subelem[5],
                                 subelem[6],subelem[7],subelem[8],subelem[9],
                                 subelem[10],subelem[11],subelem[12],subelem[13],
                                 subelem[14],subelem[15],subelem[16],subelem[17],
                                 subelem[18],subelem[19],subelem[-1],obj_count]
-                            
+                        #add the item to the list
                         subElemList.append(subelement)
+                    #place the sub assembly send(sub assembly element, first board in the sub assembly for b1x position)
                     tmp = self.placeElement(subElemList[-1],element)
-                    
+                    #add to opdata and update counter
                     OpData.append(tmp[0])
                     obj_count = tmp[1]
+                    #update the counter for all items in the subelemlist
                     for i in subElemList[:-1]:
                         i[-1] = obj_count
+                    #get the nailing data, add it to the opdata list and update the counter
                     tmp = self.nailSubElement(subElemList[:-1])
                     for i in tmp[:-1]:
                         OpData.append(i)
                     obj_count = tmp[-1]
-                    
+                    #add the assembly id to the list of placed sub assemblies
                     placedSubAssembly.append(elem[-1])
 
         #send OpData to JobData table
@@ -235,32 +241,37 @@ class JobData():
                                 item[5],item[6],item[7],item[8],item[9],item[10],item[11]))
             
         pgDB.querymany(sql_JobData_query,jdQueryData)
-        #print the no. of rows modified
-        #print(str(tmp) + ' rows modified')
+        #close the DB connection
         pgDB.close()
 
 
     def placeElement(self,element,subelement = None):
+        #call function with (self,element, subassembly board if applicable)
+
         #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
         #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id,count]
         clear = fc.Clear()
         #empty list for [Xpos,OpText,OpCodeFS,ZposFS,YposFS,SSupPosFS,OpCodeMS,ZposMS,YposMS,SSupPosMS,IMG_NAME,OBJ_ID]
         OpJob = []
+        # if placing a standard board
         if subelement == None:
             #add X Pos from element
             OpJob.append(element[5])
+        #if placing a subassembly
         else:
+            #add X pos from sub assembly board
             OpJob.append(float(subelement[5]))
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
         OpFS = [False,False,False,False,False,False,False]
         OpMS = [False,False,False,False,False,False,False]
-        #check if the stud stops are clear
+        #check if the stud stops are clear for standard elements
         if subelement == None:
             if clear.studStopFS(element[1]) == True:
                 OpFS[0] = True
             
             if clear.studStopMS(element[1]) == True:
                 OpMS[0] = True
+        #check if the stud stops are clear for sub assemblies
         else:
             if clear.studStopFS(subelement[1]) == True:
                 OpFS[0] = True
@@ -282,7 +293,7 @@ class JobData():
             #set operator confirm
             OpFS[5] = True
             OpMS[5] = True
-        #other element types? -> error?
+        #other element types -> error
         else:
             if clear.hammerFS(element[1]) == True:
                 OpFS[1] = True
@@ -295,10 +306,9 @@ class JobData():
         tmpMS = JobData.genOpCode(OpMS)
         #list to append to OpJob & append it
         OpJobAppend = [tmpFS[0],tmpFS[1], 0, 0, 0, tmpMS[1], 0, 0, 0, 'ImgName', element[-1]]
-        
         for i in OpJobAppend:
             OpJob.append(i)
-        # increase OBJ_ID Count
+        # increase OBJ_ID Count for studs or subassemblies
         if subelement == None:
             element[-1] += 1
         else:
