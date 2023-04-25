@@ -34,6 +34,7 @@ class Clear:
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
+        #query the e1x, panelid and type from the current element
         sql_select_query=f"""
                         SELECT e1x, panelguid, type
                         FROM elements
@@ -41,12 +42,16 @@ class Clear:
                         ORDER BY e1x ASC;
                         """
         results = pgDB.query(sql_select_query)
+        #if the current element is a rough cutout don't stud stop
         if results[0][2] == 'Sub-Assembly Cutout':
             return False
+        #set maximum and minimum values after converting to mm
         MinX = str(round(float(results[0][0]) * 25.4 - self.ss_thickness,1))
         MaxX = str(round(float(results[0][0]) * 25.4,1))
         MinY = str(38.1)
         MaxY = str(round(38.1 + self.ss_width,1))
+        #select elements in the bounds of the max and min, in the current panel, excluding the current element and elements with 
+        # a description of sheathing,TopPlate,BottomPlate, and VeryTopPlate
         sql_select_query=f"""
                         SELECT e1x
                         FROM elements
@@ -57,8 +62,7 @@ class Clear:
                         """
         results2 = pgDB.query(sql_select_query)
         pgDB.close()
-        #print(results2)
-        #print('\n')
+        #if there aren't any results the SS is clear
         if results2 == []:
             SSF_Clear = True
             return SSF_Clear        
@@ -67,6 +71,7 @@ class Clear:
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
+        #query the e4x, panelid and type from the current element
         sql_select_query=f"""
                         SELECT e4x, panelguid, type
                         FROM elements
@@ -74,11 +79,16 @@ class Clear:
                         ORDER BY e4x ASC;
                         """
         results = pgDB.query(sql_select_query)
+        #if the current element is a rough cutout don't hammer
+        #if the current element is a sub assembly board
         if results[0][2] == "Sub-Assembly Board":
+            # convert to mm and set max/min values
             MinX = str(round(float(results[0][0]) * 25.4,1))
             MaxX = str(round(float(results[0][0]) * 25.4 + self.hu_length + self.hu_stroke,1))
             MinY = str(round(38.1 + self.hu_Y,1))
             MaxY = str(round(38.1 + self.hu_Y + self.hu_thickness,1))
+            #select elements in the current panel and within the min/max bounds, that aren't sheathing, top plate,
+            #bottom plate, or very top plate and aren't the current element
             sql_select_query=f"""
                             SELECT e2x
                             FROM elements
@@ -89,10 +99,11 @@ class Clear:
                             """
             results = pgDB.query(sql_select_query)
             pgDB.close()
+            # if the hammer is clear return true
             if results == []:
                 SSM_Clear = True
                 return SSM_Clear
-        
+        # if the element is a standard stud return true
         elif results[0][2] == "Board" and results[0][3] == "Stud":
             SSM_Clear = True
             return SSM_Clear
@@ -101,6 +112,7 @@ class Clear:
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
+        #query e2x, panelguid, type of the current element
         sql_select_query=f"""
                         SELECT e2x, panelguid, type
                         FROM elements
@@ -108,18 +120,23 @@ class Clear:
                         ORDER BY e2x ASC;
                         """
         results = pgDB.query(sql_select_query)
+        # if the current element is a cutout return false
         if results[0][2] == 'Sub-Assembly Cutout':
             return False
+        #query the studheight from the panels table
         sql_select_query=f"""
                         SELECT studheight
                         FROM panel
                         WHERE panelguid = '{results[0][1]}'
                         """
         height = pgDB.query(sql_select_query)
+        # set the min and max values for the SS boundries
         MinX = str(round(float(results[0][0]) * 25.4 - self.ss_thickness,1))
         MaxX = str(round(float(results[0][0]) * 25.4,1))
         MinY = str(round(float(height[0][0]) * 25.4 + 38.1 - self.ss_width,1))
         MaxY = str(round(float(height[0][0]) * 25.4 + 38.1,1))
+        #select elements within the bounds and panel, that aren't sheathing, topplate, bottom plate, 
+        # or very top plate and aren't the current element
         sql_select_query=f"""
                         SELECT e2x
                         FROM elements
@@ -130,8 +147,7 @@ class Clear:
                         """
         results2 = pgDB.query(sql_select_query)
         pgDB.close()
-        #print(results2)
-        #print('\n')
+        #if stud stop is clear return true
         if results2 == []:
             SSF_Clear = True
             return SSF_Clear 
@@ -140,6 +156,7 @@ class Clear:
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
+        # query e3x, panelguid and type from the current element
         sql_select_query=f"""
                         SELECT e3x, panelguid, type
                         FROM elements
@@ -147,6 +164,7 @@ class Clear:
                         ORDER BY e3x ASC;
                         """
         results = pgDB.query(sql_select_query)
+        #query the studheight from the panels table
         sql_select_query=f"""
                         SELECT studheight
                         FROM panel
@@ -154,10 +172,13 @@ class Clear:
                         """
         height = pgDB.query(sqlStatement=sql_select_query)
         if results[0][2] == "Sub-Assembly Board":
+            # if the element is a sub assembly obard set the boundries
             MinX = str(round(float(results[0][0]) * 25.4 ,1))
             MaxX = str(round(float(results[0][0]) * 25.4 + self.hu_length + self.hu_stroke,1))
             MinY = str(round(float(height[0][0]) * 25.4 + 38.1 - self.hu_Y - self.hu_thickness,1))
             MaxY = str(round(float(height[0][0]) * 25.4 + 38.1 - self.hu_Y,1))
+            # select elements in the current panel and within the bounds that aren't the current element and aren't 
+            # sheathing, top plate, bottom plate, or very top plate
             sql_select_query=f"""
                             SELECT e3x
                             FROM elements
@@ -168,10 +189,11 @@ class Clear:
                             """
             results = pgDB.query(sqlStatement=sql_select_query)
             pgDB.close()
+            #if the hammer is clear return true
             if results == []:
                 SSM_Clear = True
                 return SSM_Clear
-        
+        # if the  current element is a standard stud return true
         elif results[0][2] == "Board" and results[0][3] == "Stud":
             SSM_Clear = True
             return SSM_Clear
