@@ -662,7 +662,7 @@ class JobData():
                     Length_of_Header = elem[17] - elem[13]
                     Number_of_NailSpacings = Length_of_Header/HeaderNailSpacing
                     NailCounter = 0
-                    Zpos = round((elem[6] - elem[8])/2,0)
+                    Zpos = round((elem[8] - elem[6])/2,0)
                     while NailCounter < Number_of_NailSpacings:  
                         OpJob = []
                         #Xpos
@@ -731,6 +731,45 @@ class JobData():
                                 OpJob.append(i)
                             OpJobList.append(OpJob)
                             ct += 1
+                
+                #Is the element in the sub assembly Side stud orientation
+                if (elem[17] - elem[13]) > 50.8: 
+                    if elem[4] == "2X4":
+                        NailCounter = 0
+                        XposOffset2X4 = [19,70]
+                        Zpos = round((elem[8] - elem[6])/2,0)
+                        while NailCounter < 2:
+                            OpJob = []
+                            #Xpos
+                            OpJob.append(elem[5] + XposOffset2X4[NailCounter])
+                            #generate OpText and OpCodes from list of bools
+                            tmpFS = JobData.genOpCode(OpFS)
+                            tmpMS = JobData.genOpCode(OpMS)
+                            #list to append to OpJob & append it
+                            OpJobAppend = [tmpFS[0],tmpFS[1],Zpos, 0, 0,tmpMS[1],Zpos,0, 0, 'ImgName', 0]
+                            for i in OpJobAppend:
+                                OpJob.append(i)
+                            OpJobList.append(OpJob)
+                            NailCounter += 1
+                    
+
+                    if elem[4] == "2X6":
+                        NailCounter = 0
+                        XposOffset2X6 = [15,70,125]
+                        Zpos = round((elem[8] - elem[6])/2,0)
+                        while NailCounter < 2:
+                            OpJob = []
+                            #Xpos
+                            OpJob.append(elem[5] + XposOffset2X6[NailCounter])
+                            #generate OpText and OpCodes from list of bools
+                            tmpFS = JobData.genOpCode(OpFS)
+                            tmpMS = JobData.genOpCode(OpMS)
+                            #list to append to OpJob & append it
+                            OpJobAppend = [tmpFS[0],tmpFS[1],Zpos, 0, 0,tmpMS[1],Zpos,0, 0, 'ImgName', 0]
+                            for i in OpJobAppend:
+                                OpJob.append(i)
+                            OpJobList.append(OpJob)
+                            NailCounter += 1
 
         OplistSorted = sorted(OpJobList,key=lambda var:(var[0],var[3],var[7]))
         if len(elementList) > 0:
