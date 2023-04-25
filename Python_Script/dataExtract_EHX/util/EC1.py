@@ -71,7 +71,7 @@ class JobData():
         "objID" : 0
     }
 
-    def __init__(self, panelguid):#panel : panelData.Panel):
+    def __init__(self, panelguid):
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
@@ -94,7 +94,6 @@ class JobData():
 
         self.plateInnerBottom = 1.5
         self.plateInnerTop  = 1.5 + self.studHeight      
-
 
 
     def jdMain(self): # Job Data Main
@@ -212,11 +211,7 @@ class JobData():
         #print the no. of rows modified
         #print(str(tmp) + ' rows modified')
         pgDB.close()
-        
 
-    def jdBuild(panelguid): # Job Data Build
-        
-        pass
 
     def placeElement(self,element,subelement = None):
         #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
@@ -285,6 +280,7 @@ class JobData():
         
         return(OpJob,element[-1])
     
+
     def genOpCode(OpIn):
         #This function converts a list of bools to a list containing OpText and an integer opcode
 
@@ -317,6 +313,7 @@ class JobData():
         if opcode[0][-3] == ' ':
             opcode[0] = opcode[0][:-3]
         return opcode
+
 
     def nailElement(self,element):
         #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
@@ -414,7 +411,8 @@ class JobData():
         OpElement.append(count)
         # Return OpJob and updated count
         return(OpElement)
-        
+
+
     def nailSubElement(self,elementList):
         clear = fc.Clear
         TopPlate = 38.1 + self.studHeight
@@ -724,6 +722,7 @@ class JobData():
         # Return OpJob and updated count
         return(OplistSorted)
     
+
 if __name__ == "__main__":
     #panel = panelData.Panel("0ae67cc2-5433-467a-9964-4fa935b4cda9")
     #matData = MtrlData(panel)
