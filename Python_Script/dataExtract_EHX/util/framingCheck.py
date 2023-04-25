@@ -83,7 +83,7 @@ class Clear:
             sql_select_query=f"""
                             SELECT e2x
                             FROM elements
-                            WHERE WHERE panelguid = '{results[0][1]}' and description NOT IN 
+                            WHERE panelguid = '{results[0][1]}' and description NOT IN 
                             ('Sheathing','TopPlate','BottomPlate','VeryTopPlate') and elementguid != '{elementguid}' 
                             and (({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
                             or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY}));
