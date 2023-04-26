@@ -1,4 +1,3 @@
-import psycopg2 as psy              #Requires Python >=3.6
 import numpy as np					#Requires Python ???
 from stl import mesh				#Requires Python ???
 from util import dataBaseConnect as dbc
