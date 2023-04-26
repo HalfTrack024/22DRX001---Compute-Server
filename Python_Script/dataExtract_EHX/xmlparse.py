@@ -1,25 +1,66 @@
 import xmltodict as dc #requires python >= V3.4
 import psycopg2 as psy #requires python >= V3.6
+from util import dataBaseConnect as dbc
 
-def dicXML(filepath):
-	#open the xml file
-	with open(filepath, 'r') as f:
-		set = f.read()
-	#global variable data is accessable outside of this function
-	global data
-	data = dc.parse(set)
+class xmlParse():
+	def __init__(self,filepath):
+		#open the xml file
+		with open(filepath, 'r') as f:
+			set = f.read()
+		#variable data is accessable outside of this function
+		self.data = dc.parse(set)
+		self.credentials = dbc.getCred()
 
-def insertJob(records,credentials):
-	#connect to the database
-	try:
-		connection = psy.connect(
-			user=credentials[0],
-			password=credentials[1],
-			host=credentials[2],
-			port=credentials[3],
-			database=credentials[4]
+		xmlParse.data = self.data
+		xmlParse.credentials = self.credentials
+
+		#self.xmlMain()
+	
+
+	def appendElement(self, element, elemtype, subctr):
+		if subctr == None:
+			self.elementIN.append(
+			(element['PanelGuid'],element['BoardGuid'],elemtype,
+			element['FamilyMember'],element['FamilyMemberName'],
+			element['Material']['Size'],element['Material']['ActualThickness'],
+			element['Material']['ActualWidth'],element['Material']['MaterialsId'],
+			element['BottomView']['Point'][0]['X'],element['BottomView']['Point'][0]['Y'],
+			element['BottomView']['Point'][1]['X'],element['BottomView']['Point'][1]['Y'],
+			element['BottomView']['Point'][2]['X'],element['BottomView']['Point'][2]['Y'],
+			element['BottomView']['Point'][3]['X'],element['BottomView']['Point'][3]['Y'],
+			element['ElevationView']['Point'][0]['X'],element['ElevationView']['Point'][0]['Y'],
+			element['ElevationView']['Point'][1]['X'],element['ElevationView']['Point'][1]['Y'],
+			element['ElevationView']['Point'][2]['X'],element['ElevationView']['Point'][2]['Y'],
+			element['ElevationView']['Point'][3]['X'],element['ElevationView']['Point'][3]['Y'],None),
 		)
-		cursor = connection.cursor()
+		elif subctr != None and elemtype != 'Sub Assembly':
+			self.elementIN.append(
+			(element['PanelGuid'],element['BoardGuid'],elemtype,
+			element['FamilyMember'],element['FamilyMemberName'],
+			element['Material']['Size'],element['Material']['ActualThickness'],
+			element['Material']['ActualWidth'],element['Material']['MaterialsId'],
+			element['BottomView']['Point'][0]['X'],element['BottomView']['Point'][0]['Y'],
+			element['BottomView']['Point'][1]['X'],element['BottomView']['Point'][1]['Y'],
+			element['BottomView']['Point'][2]['X'],element['BottomView']['Point'][2]['Y'],
+			element['BottomView']['Point'][3]['X'],element['BottomView']['Point'][3]['Y'],
+			element['ElevationView']['Point'][0]['X'],element['ElevationView']['Point'][0]['Y'],
+			element['ElevationView']['Point'][1]['X'],element['ElevationView']['Point'][1]['Y'],
+			element['ElevationView']['Point'][2]['X'],element['ElevationView']['Point'][2]['Y'],
+			element['ElevationView']['Point'][3]['X'],element['ElevationView']['Point'][3]['Y'],str(subctr)),
+		)
+		elif elemtype == 'Sub Assembly':
+			self.elementIN.append(
+				(element['PanelGuid'],element['SubAssemblyGuid'],elemtype,
+					element['FamilyMember'],element['FamilyMemberName'],
+					None,None,element['Width'],None,None,None,None,None,None,None,None,
+					None,None,None,None,None,None,None,None,None,str(subctr)),
+			)
+
+
+	def insertJob(self):
+		jobIN = [(10,self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']),]
+		pgDB = dbc.DB_Connect(xmlParse.credentials)
+		pgDB.open()
 		#Query used for inserting the data
 		sql_insert_query="""
 							INSERT INTO jobs(serial,jobid,loaddate)
@@ -27,31 +68,22 @@ def insertJob(records,credentials):
 							ON CONFLICT (serial,jobid)
 							DO UPDATE SET loaddate = NOW();
 							"""
-		result = cursor.executemany(sql_insert_query, records)
-		connection.commit()
-		print(cursor.rowcount, "Records inserted successfully into jobs table")
+		pgDB.querymany(sql_insert_query,jobIN)
+		pgDB.close()
 
-	except(Exception, psy.Error) as Error:
-		print("Failed to insert record to table: {}".format(Error))
 
-	finally:
-		#Close DB Connection
-		if connection:
-			cursor.close()
-			connection.close()
-			print("SQL connection closed")
+	def insertBundle(self):
+		#List to insert to bundles table
+		bundleIN = []
+		#Loop through all levels in the job
+		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
+			#Loop through all bundles in the level
+			for bundle in level["Bundle"]:
+				#Data to import to the database
+				bundleIN.append((bundle['BundleGuid'],bundle['JobID'],level['Description'],bundle['Label'],bundle['Type']),)
 
-def insertBundle(records,credentials):
-	#Connect to Database
-	try:
-		connection = psy.connect(
-			user=credentials[0],
-			password=credentials[1],
-			host=credentials[2],
-			port=credentials[3],
-			database=credentials[4]
-		)
-		cursor = connection.cursor()
+		pgDB = dbc.DB_Connect(xmlParse.credentials)
+		pgDB.open()
 		#Query used for inserting data to the database
 		sql_insert_query="""
 							INSERT INTO bundle(bundleguid,jobid,level_description,label,type)
@@ -60,31 +92,44 @@ def insertBundle(records,credentials):
 							DO UPDATE SET jobid = EXCLUDED.jobid, level_description = EXCLUDED.level_description,
 							label = EXCLUDED.label, type = EXCLUDED.type;
 							"""
-		result = cursor.executemany(sql_insert_query, records)
-		connection.commit()
-		print(cursor.rowcount, "Records inserted successfully into bundles table")
+		pgDB.querymany(sql_insert_query,bundleIN)
+		pgDB.close()
 
-	except(Exception, psy.Error) as Error:
-		print("Failed to insert record to table: {}".format(Error))
 
-	finally:
-		#Close DB Connection
-		if connection:
-			cursor.close()
-			connection.close()
-			print("SQL connection closed")
-
-def insertPanel(records,credentials):
-	#Connect to the Database
-	try:
-		connection = psy.connect(
-			user=credentials[0],
-			password=credentials[1],
-			host=credentials[2],
-			port=credentials[3],
-			database=credentials[4]
-		)
-		cursor = connection.cursor()
+	def insertPanel(self):
+		c = 0
+		#List column data for panels table
+		panelIN = []
+		#Loop through all the levels in the job
+		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
+			#Loop through all the bundles in the level
+			for bundle in level["Bundle"]:
+				#Loop through all the panels in the bundle
+				for panel in bundle['Panel']:
+					#Check if the panel is a string
+					#The panel is a string if it is the only panel in a bundle
+					if type(panel) == str:
+						#All params of the panel are a different string, only add one data to the query
+						if c==0:
+							panelIN.append((bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],
+											bundle['Panel']['Label'],bundle['Panel']['Height'],
+											bundle['Panel']['Thickness'],bundle['Panel']['StudSpacing'],
+											bundle['Panel']['StudHeight'],bundle['Panel']['WallLength'],
+											bundle['Panel']['Category'],bundle['Panel']['BoardFeet']),)
+						c+=1
+						#reset counter at the end of the strings
+						if c == 29:
+							c=0
+						#Skip to the next loop if the panel was a string
+						continue
+					#Get the data for non-string panels
+					panelIN.append((panel['BundleGuid'],panel['PanelGuid'],panel['Label'],
+									panel['Height'],panel['Thickness'],panel['StudSpacing'],
+									panel['StudHeight'],panel['WallLength'],panel['Category'],
+									panel['BoardFeet']),)
+		#Insert the panel data to the Database
+		pgDB = dbc.DB_Connect(xmlParse.credentials)
+		pgDB.open()
 		#Query used for writing data to the database
 		sql_insert_query="""
 							INSERT INTO panel(bundleguid, panelguid, label, height, thickness,
@@ -97,31 +142,175 @@ def insertPanel(records,credentials):
 							studheight = EXCLUDED.studheight, walllength = EXCLUDED.walllength,
 							category = EXCLUDED.category, boardfeet = EXCLUDED.boardfeet;
 							"""
-		result = cursor.executemany(sql_insert_query, records)
-		connection.commit()
-		print(cursor.rowcount, "Records inserted successfully into panels table")
+		pgDB.querymany(sql_insert_query, panelIN)
+		pgDB.close()
+			
 
-	except(Exception, psy.Error) as Error:
-		print("Failed to insert record to table: {}".format(Error))
+	def insertElements(self):
+		#Counter for strings
+		c2 = 0
+		#List of data for elements table
+		self.elementIN = []
+		#loop through all the levels in the job
+		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
+			#loop through all the bundles in the level
+			for bundle in level["Bundle"]:
+				#loop through all the panels in the bundle
+				for panel in bundle['Panel']:
+					#check if the panel is a string type
+					if type(panel) != str:
+						#Add boards to the list if they exist
+						if 'Board' in panel.keys():
+							#loop through all the boards in the panel
+							for board in panel['Board']:
+								#add the board data to the list
+								xmlParse.appendElement(self,board,'Board',None)
+						#Add sheets to the list if they exist
+						if 'Sheet' in panel.keys():
+							#loop through all the sheets in the panel
+							for sheet in panel['Sheet']:
+								#add the sheet data to the list
+								xmlParse.appendElement(self,sheet,'Sheet',None)
+						#Add SubAssemblies to the list if they exist and are in a list format
+						#SubAssemblies will be in list format if there are >1 in the current panel
+						if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == list:
+							#loop through the SubAssemblies
+							subassemblyCT = 1
+							for subassembly in panel['SubAssembly']:
+								#are there boards in the subassembly?
+								if 'Board' in subassembly.keys():
+									#loop through all the boards in the subassembly
+									for boardsub in subassembly['Board']:
+										#when the board isn't the rough opening board add it to the list
+										if boardsub['FamilyMemberName'] != 'RoughOpening':
+											xmlParse.appendElement(self,boardsub,'Sub-Assembly Board',subassemblyCT)
+										else: #add the rough cutout to the list 
+											#(only works when there is 1 rough out per subassembly due to element guid creation)
+											boardsub['PanelGuid'] = subassembly['PanelGuid']
+											boardsub['BoardGuid'] = subassembly['SubAssemblyGuid'] + str(subassemblyCT)
+											boardsub['FamilyMember'] = subassembly['FamilyMember']
+											boardsub['FamilyMemberName'] = 'Rough cutout'
+											boardsub['Material']['Size'] = 0
+											boardsub['Material']['ActualThickness'] = 0
+											boardsub['Material']['MaterialsId']
 
-	finally:
-		#Close DB Connection
-		if connection:
-			cursor.close()
-			connection.close()
-			print("SQL connection closed")
+											xmlParse.appendElement(self,boardsub,'Sub-Assembly Cutout',subassemblyCT)
+								#add subassembly without point data
+								xmlParse.appendElement(self,subassembly,'Sub Assembly',subassemblyCT)
+								subassemblyCT += 1
+						# if there is only one subassembly in the panel
+						if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == dict:
+							#check for a rough opening sub-board
+							subassemblyCT = 1
+							#loop through all the boards in the subassembly
+							for boardsub in panel['SubAssembly']['Board']:
+								#Check if the sub board is the rough opening
+								if boardsub['FamilyMemberName'] != 'RoughOpening':
 
-def insertElements(records,credentials):
-	#connect to the database
-	try:
-		connection = psy.connect(
-			user=credentials[0],
-			password=credentials[1],
-			host=credentials[2],
-			port=credentials[3],
-			database=credentials[4]
-		)
-		cursor = connection.cursor()
+									xmlParse.appendElement(self,boardsub,'Sub-Assembly Board',subassemblyCT)
+								
+								else: #add the rough cutout to the list 
+									#(only works when there is 1 rough out per subassembly due to element guid creation)
+
+									boardsub['PanelGuid'] = panel['SubAssembly']['PanelGuid']
+									boardsub['BoardGuid'] = panel['SubAssembly']['SubAssemblyGuid']+ str(subassemblyCT)
+									boardsub['FamilyMember'] = panel['SubAssembly']['FamilyMember']
+									boardsub['FamilyMemberName'] = 'Rough cutout'
+									boardsub['Material']['Size'] = 0
+									boardsub['Material']['ActualThickness'] = 0
+									boardsub['Material']['MaterialsId']
+
+									xmlParse.appendElement(self,boardsub,'Sub-Assembly Cutout',subassemblyCT)
+
+							#add subassembly without point data
+
+							subassembly = {
+								'PanelGuid': panel['SubAssembly']['PanelGuid'],
+								'SubAssemblyGuid': panel['SubAssembly']['SubAssemblyGuid'],
+								'FamilyMember': panel['SubAssembly']['FamilyMember'],
+								'FamilyMemberName':panel['SubAssembly']['FamilyMemberName'],
+								'Width':panel['SubAssembly']['Width']
+							}
+							xmlParse.appendElement(self,subassembly,'Sub Assembly',subassemblyCT)
+
+					# if the panel is a string (only 1 panel in the bundle)
+					elif type(panel) == str:
+						#add the boards to the list if they exist
+						if 'Board' in bundle['Panel'].keys() and c2 == 0:
+							#loop through all the boards in the panel
+							for board in bundle['Panel']['Board']:
+								#add the data to the list
+								xmlParse.appendElement(self,board,'Board',None)
+						#add the sheets to the list if they exist
+						if 'Sheet' in bundle['Panel'].keys() and c2 == 0:
+							#loop through the sheets in the panel
+							for sheet in bundle['Panel']['Sheet']:
+								#add the data for the sheets to the list
+								xmlParse.appendElement(self,sheet,'Sheet',None)
+						#Add Sub Assemblies to the list if they exist, are list type
+						if 'SubAssembly' in bundle['Panel'].keys() and type(bundle['Panel']['SubAssembly']) == list and c2 == 0:
+							#loop through all the subassemblies
+							subassemblyCT = 1
+							for subassembly in bundle['Panel']['SubAssembly']:
+								#are there boards in the subassembly?
+								if 'Board' in subassembly.keys():
+									#loop through all the boards in the subassembly
+									for boardsub in subassembly['Board']:
+										#when the board isn't the rough opening board add it to the list
+										if boardsub['FamilyMemberName'] != 'RoughOpening':
+											xmlParse.appendElement(self,boardsub,'Sub-Assembly Board',subassemblyCT)
+										else: #add the rough cutout to the list 
+											#(only works when there is 1 rough out per subassembly due to element guid creation)
+											boardsub['PanelGuid'] = subassembly['PanelGuid']
+											boardsub['BoardGuid'] = subassembly['SubAssemblyGuid'] + str(subassemblyCT)
+											boardsub['FamilyMember'] = subassembly['FamilyMember']
+											boardsub['FamilyMemberName'] = 'Rough cutout'
+											boardsub['Material']['Size'] = 0
+											boardsub['Material']['ActualThickness'] = 0
+											boardsub['Material']['MaterialsId']
+
+											xmlParse.appendElement(self,boardsub,'Sub-Assembly Cutout',subassemblyCT)
+								
+								#add subassembly without point data
+								xmlParse.appendElement(self,subassembly,'Sub Assembly',subassemblyCT)
+								subassemblyCT += 1
+						#Add the subassembly if it exists and is dictionary type
+						if 'SubAssembly' in bundle['Panel'].keys() and type(bundle['Panel']['SubAssembly']) == dict and c2 == 0:
+							#check if the subassembly has a rough opening in the panel
+							subassemblyCT = 1
+							#loop through all the boards in the subassembly
+							for boardsub in bundle['Panel']['SubAssembly']['Board']:
+								for boardsub in panel['SubAssembly']['Board']:
+								#Check if the sub board is the rough opening
+									if boardsub['FamilyMemberName'] != 'RoughOpening':
+										xmlParse.appendElement(self,boardsub,'Sub-Assembly Board',subassemblyCT)
+								else: #add the rough cutout to the list 
+									#(only works when there is 1 rough out per subassembly due to element guid creation)
+									boardsub['PanelGuid'] = panel['SubAssembly']['PanelGuid']
+									boardsub['BoardGuid'] = panel['SubAssembly']['SubAssemblyGuid']+ str(subassemblyCT)
+									boardsub['FamilyMember'] = panel['SubAssembly']['FamilyMember']
+									boardsub['FamilyMemberName'] = 'Rough cutout'
+									boardsub['Material']['Size'] = 0
+									boardsub['Material']['ActualThickness'] = 0
+									boardsub['Material']['MaterialsId']
+
+									xmlParse.appendElement(self,boardsub,'Sub-Assembly Cutout',subassemblyCT)
+							#add subassembly without point data
+							subassembly = {
+								'PanelGuid': panel['SubAssembly']['PanelGuid'],
+								'SubAssemblyGuid': panel['SubAssembly']['SubAssemblyGuid'],
+								'FamilyMember': panel['SubAssembly']['FamilyMember'],
+								'FamilyMemberName':panel['SubAssembly']['FamilyMemberName'],
+								'Width':panel['SubAssembly']['Width']
+							}
+							xmlParse.appendElement(self,subassembly,'Sub Assembly',subassemblyCT)
+					c2+=1
+					#reset counter after 1 string panel
+					if c2 == 29:
+						c2 = 0
+		#insert the list to the database
+		pgDB = dbc.DB_Connect(xmlParse.credentials)
+		pgDB.open()
 		#Query used for writing data to the database
 		sql_insert_query="""
 							INSERT INTO elements(panelguid,elementguid,type,familymember,description,
@@ -139,374 +328,26 @@ def insertElements(records,credentials):
 							e3x = EXCLUDED.e3x,e3y = EXCLUDED.e3y,e4x = EXCLUDED.e4x,e4y = EXCLUDED.e4y,
 							assembly_id = EXCLUDED.assembly_id;
 							"""
-		result = cursor.executemany(sql_insert_query, records)
-		connection.commit()
-		print(cursor.rowcount, "Records inserted successfully into elements table")
+		pgDB.querymany(sql_insert_query,self.elementIN)
+		pgDB.close()
 
-	except(Exception, psy.Error) as Error:
-		print("Failed to insert record to table: {}".format(Error))
 
-	finally:
-		#Close DB Connection
-		if connection:
-			cursor.close()
-			connection.close()
-			print("SQL connection closed")
-	
+	def xmlMain(self):
+		self.insertJob(self)
+		self.insertBundle(self)
+		self.insertPanel(self)
+		self.insertElements(self)
+
 
 if __name__ == "__main__":
 	#get filepath to XML file from user
-	filepath = input('Type filename or path to file\n(1337.xml or c:/Users/115.xml):  ')
+	filepath = "Python_Script/dataExtract_EHX/xmlFiles/221415.xml"
 
-	#get sql server credentials from user
-	choice1 = input('Use saved credentials? (y/n):  ')
-	if str.lower(choice1) == 'y':
-		print('Using saved credentials')
-		save = open(r'Python_Script\dataExtract_EHX\util\credentials.txt','r')
-		credentials = save.read().splitlines()
-		#Get credentials from the user
-	elif str.lower(choice1) == 'n':
-		credentials = []
-		credentials.append(input('Type DB Username:  	'))
-		credentials.append(input('Type DB Password:  	'))
-		credentials.append(input('Type DB Host IP:  	'))
-		credentials.append(input('Type DB Port:  		'))
-		credentials.append(input('Type DB Name:  		'))
-		choice2 = input('Save the credentials?(This overwrites stored credentials) (y/n):  ')
-		# Save the credentials
-		if str.lower(choice2) == 'y':
-			save = open('credentials.txt','w')
-			save.write(credentials[0] + '\n' +credentials[1] + '\n' + credentials[2] + '\n' +
-						credentials[3] + '\n' + credentials[4])
-
-	#convert XML file to dictionaries
-	dicXML(filepath)
-
-
-	#List to insert to jobs table
-	jobIN = [(10,data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']),]
-	#Insert jobIN List to jobs table
-	insertJob(jobIN,credentials)
-
-
-	#List to insert to bundles table
-	bundleIN = []
-	#Loop through all levels in the job
-	for level in data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
-		#Loop through all bundles in the level
-		for bundle in level["Bundle"]:
-			#Data to import to the database
-			bundleIN.append((bundle['BundleGuid'],bundle['JobID'],level['Description'],bundle['Label'],bundle['Type']),)
-	#Insert bundleIN list to bundles table
-	insertBundle(bundleIN,credentials)
-
-	c = 0
-	#List column data for panels table
-	panelIN = []
-	#Loop through all the levels in the job
-	for level in data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
-		#Loop through all the bundles in the level
-		for bundle in level["Bundle"]:
-			#Loop through all the panels in the bundle
-			for panel in bundle['Panel']:
-				#Check if the panel is a string
-				#The panel is a string if it is the only panel in a bundle
-				if type(panel) == str:
-					#All params of the panel are a different string, only add one data to the query
-					if c==0:
-						panelIN.append((bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],
-										bundle['Panel']['Label'],bundle['Panel']['Height'],
-										bundle['Panel']['Thickness'],bundle['Panel']['StudSpacing'],
-										bundle['Panel']['StudHeight'],bundle['Panel']['WallLength'],
-										bundle['Panel']['Category'],bundle['Panel']['BoardFeet']),)
-					c+=1
-					#reset counter at the end of the strings
-					if c == 29:
-						c=0
-					#Skip to the next loop if the panel was a string
-					continue
-				#Get the data for non-string panels
-				panelIN.append((panel['BundleGuid'],panel['PanelGuid'],panel['Label'],
-								panel['Height'],panel['Thickness'],panel['StudSpacing'],
-								panel['StudHeight'],panel['WallLength'],panel['Category'],
-								panel['BoardFeet']),)
-	#Insert the panel data to the Database
-	insertPanel(panelIN,credentials)
-
-	#Counter for strings
-	c2 = 0
-	#List of data for elements table
-	elementIN = []
-	#loop through all the levels in the job
-	for level in data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
-		#loop through all the bundles in the level
-		for bundle in level["Bundle"]:
-			#loop through all the panels in the bundle
-			for panel in bundle['Panel']:
-				#check if the panel is a string type
-				if type(panel) != str:
-					#Add boards to the list if they exist
-					if 'Board' in panel.keys():
-						#loop through all the boards in the panel
-						for board in panel['Board']:
-							#add the board data to the list
-							elementIN.append((board['PanelGuid'],board['BoardGuid'],'Board',
-										  board['FamilyMember'],board['FamilyMemberName'],
-										  board['Material']['Size'],board['Material']['ActualThickness'],
-										  board['Material']['ActualWidth'],board['Material']['MaterialsId'],
-										  board['BottomView']['Point'][0]['X'],board['BottomView']['Point'][0]['Y'],
-										  board['BottomView']['Point'][1]['X'],board['BottomView']['Point'][1]['Y'],
-										  board['BottomView']['Point'][2]['X'],board['BottomView']['Point'][2]['Y'],
-										  board['BottomView']['Point'][3]['X'],board['BottomView']['Point'][3]['Y'],
-										  board['ElevationView']['Point'][0]['X'],board['ElevationView']['Point'][0]['Y'],
-										  board['ElevationView']['Point'][1]['X'],board['ElevationView']['Point'][1]['Y'],
-										  board['ElevationView']['Point'][2]['X'],board['ElevationView']['Point'][2]['Y'],
-										  board['ElevationView']['Point'][3]['X'],board['ElevationView']['Point'][3]['Y'],None),)
-					#Add sheets to the list if they exist
-					if 'Sheet' in panel.keys():
-						#loop through all the sheets in the panel
-						for sheet in panel['Sheet']:
-							#add the sheet data to the list
-							elementIN.append((sheet['PanelGuid'],sheet['BoardGuid'],'Sheet',
-										  sheet['FamilyMember'],sheet['FamilyMemberName'],
-										  sheet['Material']['Size'],sheet['Material']['ActualThickness'],
-										  sheet['Material']['ActualWidth'],sheet['Material']['MaterialsId'],
-										  sheet['BottomView']['Point'][0]['X'],sheet['BottomView']['Point'][0]['Y'],
-										  sheet['BottomView']['Point'][1]['X'],sheet['BottomView']['Point'][1]['Y'],
-										  sheet['BottomView']['Point'][2]['X'],sheet['BottomView']['Point'][2]['Y'],
-										  sheet['BottomView']['Point'][3]['X'],sheet['BottomView']['Point'][3]['Y'],
-										  sheet['ElevationView']['Point'][0]['X'],sheet['ElevationView']['Point'][0]['Y'],
-										  sheet['ElevationView']['Point'][1]['X'],sheet['ElevationView']['Point'][1]['Y'],
-										  sheet['ElevationView']['Point'][2]['X'],sheet['ElevationView']['Point'][2]['Y'],
-										  sheet['ElevationView']['Point'][3]['X'],sheet['ElevationView']['Point'][3]['Y'],None),)
-					#Add SubAssemblies to the list if they exist and are in a list format
-					#SubAssemblies will be in list format if there are >1 in the current panel
-					if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == list:
-						#loop through the SubAssemblies
-						subassemblyCT = 1
-						for subassembly in panel['SubAssembly']:
-							#are there boards in the subassembly?
-							if 'Board' in subassembly.keys():
-								#loop through all the boards in the subassembly
-								for boardsub in subassembly['Board']:
-									#when the board isn't the rough opening board add it to the list
-									if boardsub['FamilyMemberName'] != 'RoughOpening':
-										elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
-										  boardsub['FamilyMember'],boardsub['FamilyMemberName'],
-										  boardsub['Material']['Size'],boardsub['Material']['ActualThickness'],
-										  boardsub['Material']['ActualWidth'],boardsub['Material']['MaterialsId'],
-										  boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
-										  boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
-										  boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
-										  boardsub['BottomView']['Point'][3]['X'],boardsub['BottomView']['Point'][3]['Y'],
-										  boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
-										  boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
-										  boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-										  boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],
-										  str(subassemblyCT)),)
-									else: #add the rough cutout to the list 
-										  #(only works when there is 1 rough out per subassembly due to element guid creation)
-										elementIN.append((subassembly['PanelGuid'],
-			    										  subassembly['SubAssemblyGuid'] + str(subassemblyCT),'Sub-Assembly Cutout',
-														  subassembly['FamilyMember'],'Rough cutout',
-														  0,0,boardsub['Material']['ActualWidth'],None,
-														  boardsub['BottomView']['Point'][0]['X'],
-														  boardsub['BottomView']['Point'][0]['Y'],
-														  boardsub['BottomView']['Point'][1]['X'],
-														  boardsub['BottomView']['Point'][1]['Y'],
-														  boardsub['BottomView']['Point'][2]['X'],
-														  boardsub['BottomView']['Point'][2]['Y'],
-														  boardsub['BottomView']['Point'][3]['X'],
-														  boardsub['BottomView']['Point'][3]['Y'],
-														  boardsub['ElevationView']['Point'][0]['X'],
-														  boardsub['ElevationView']['Point'][0]['Y'],
-														  boardsub['ElevationView']['Point'][1]['X'],
-														  boardsub['ElevationView']['Point'][1]['Y'],
-														  boardsub['ElevationView']['Point'][2]['X'],
-														  boardsub['ElevationView']['Point'][2]['Y'],
-														  boardsub['ElevationView']['Point'][3]['X'],
-														  boardsub['ElevationView']['Point'][3]['Y'],str(subassemblyCT)),)
-							#add subassembly without point data
-							elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
-												  subassembly['FamilyMember'],subassembly['FamilyMemberName'],
-												  None,None,subassembly['Width'],None,None,None,None,None,None,None,None,
-												  None,None,None,None,None,None,None,None,None,str(subassemblyCT)),)
-							subassemblyCT += 1
-					# if there is only one subassembly in the panel
-					if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == dict:
-						#check for a rough opening sub-board
-						subassemblyCT = 1
-						#loop through all the boards in the subassembly
-						for boardsub in panel['SubAssembly']['Board']:
-							#Check if the sub board is the rough opening
-							if boardsub['FamilyMemberName'] != 'RoughOpening':
-								elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
-			  											boardsub['FamilyMember'],boardsub['FamilyMemberName'],
-														boardsub['Material']['Size'],boardsub['Material']['ActualThickness'],
-														boardsub['Material']['ActualWidth'],boardsub['Material']['MaterialsId'],
-														boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
-														boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
-														boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
-														boardsub['BottomView']['Point'][3]['X'],boardsub['BottomView']['Point'][3]['Y'],
-														boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
-														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
-														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-							else: #add the rough cutout to the list 
-								  #(only works when there is 1 rough out per subassembly due to element guid creation)
-								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid']+ str(subassemblyCT),
-			  											'Sub-Assembly Cutout',panel['SubAssembly']['FamilyMember'],
-														'Rough cutout',0,0,boardsub['Material']['ActualWidth'],None,
-														boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
-														boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
-														boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
-														boardsub['BottomView']['Point'][3]['X'],boardsub['BottomView']['Point'][3]['Y'],
-														boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
-														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
-														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-						#add subassembly without point data
-						elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
-			  											'Sub Assembly',panel['SubAssembly']['FamilyMember'],
-														panel['SubAssembly']['FamilyMemberName'],None,None,
-														panel['SubAssembly']['Width'],None,None,None,None,None,None,None,None,
-														None,None,None,None,None,None,None,None,None,'1'),)
-				# if the panel is a string (only 1 panel in the bundle)
-				elif type(panel) == str:
-					#add the boards to the list if they exist
-					if 'Board' in bundle['Panel'].keys() and c2 == 0:
-						#loop through all the boards in the panel
-						for board in bundle['Panel']['Board']:
-							#add the data to the list
-							elementIN.append((board['PanelGuid'],board['BoardGuid'],'Board',
-										  board['FamilyMember'],board['FamilyMemberName'],
-										  board['Material']['Size'],board['Material']['ActualThickness'],
-										  board['Material']['ActualWidth'],board['Material']['MaterialsId'],
-										  board['BottomView']['Point'][0]['X'],board['BottomView']['Point'][0]['Y'],
-										  board['BottomView']['Point'][1]['X'],board['BottomView']['Point'][1]['Y'],
-										  board['BottomView']['Point'][2]['X'],board['BottomView']['Point'][2]['Y'],
-										  board['BottomView']['Point'][3]['X'],board['BottomView']['Point'][3]['Y'],
-										  board['ElevationView']['Point'][0]['X'],board['ElevationView']['Point'][0]['Y'],
-										  board['ElevationView']['Point'][1]['X'],board['ElevationView']['Point'][1]['Y'],
-										  board['ElevationView']['Point'][2]['X'],board['ElevationView']['Point'][2]['Y'],
-										  board['ElevationView']['Point'][3]['X'],board['ElevationView']['Point'][3]['Y'],None),)
-					#add the sheets to the list if they exist
-					if 'Sheet' in bundle['Panel'].keys() and c2 == 0:
-						#loop through the sheets in the panel
-						for sheet in bundle['Panel']['Sheet']:
-							#add the data for the sheets to the list
-							elementIN.append((sheet['PanelGuid'],sheet['BoardGuid'],'Sheet',
-										  sheet['FamilyMember'],sheet['FamilyMemberName'],
-										  sheet['Material']['Size'],sheet['Material']['ActualThickness'],
-										  sheet['Material']['ActualWidth'],sheet['Material']['MaterialsId'],
-										  sheet['BottomView']['Point'][0]['X'],sheet['BottomView']['Point'][0]['Y'],
-										  sheet['BottomView']['Point'][1]['X'],sheet['BottomView']['Point'][1]['Y'],
-										  sheet['BottomView']['Point'][2]['X'],sheet['BottomView']['Point'][2]['Y'],
-										  sheet['BottomView']['Point'][3]['X'],sheet['BottomView']['Point'][3]['Y'],
-										  sheet['ElevationView']['Point'][0]['X'],sheet['ElevationView']['Point'][0]['Y'],
-										  sheet['ElevationView']['Point'][1]['X'],sheet['ElevationView']['Point'][1]['Y'],
-										  sheet['ElevationView']['Point'][2]['X'],sheet['ElevationView']['Point'][2]['Y'],
-										  sheet['ElevationView']['Point'][3]['X'],sheet['ElevationView']['Point'][3]['Y'],None),)
-					#Add Sub Assemblies to the list if they exist, are list type
-					if 'SubAssembly' in bundle['Panel'].keys() and type(bundle['Panel']['SubAssembly']) == list and c2 == 0:
-						#loop through all the subassemblies
-						subassemblyCT = 1
-						for subassembly in bundle['Panel']['SubAssembly']:
-							#are there boards in the subassembly?
-							if 'Board' in subassembly.keys():
-								#loop through all the boards in the subassembly
-								for boardsub in subassembly['Board']:
-									#when the board isn't the rough opening board add it to the list
-									if boardsub['FamilyMemberName'] != 'RoughOpening':
-										elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
-										  boardsub['FamilyMember'],boardsub['FamilyMemberName'],
-										  boardsub['Material']['Size'],boardsub['Material']['ActualThickness'],
-										  boardsub['Material']['ActualWidth'],boardsub['Material']['MaterialsId'],
-										  boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
-										  boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
-										  boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
-										  boardsub['BottomView']['Point'][3]['X'],boardsub['BottomView']['Point'][3]['Y'],
-										  boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
-										  boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
-										  boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-										  boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],
-										  str(subassemblyCT)),)
-									else: #add the rough cutout to the list 
-										  #(only works when there is 1 rough out per subassembly due to element guid creation)
-										elementIN.append((subassembly['PanelGuid'],
-			    										  subassembly['SubAssemblyGuid'] + str(subassemblyCT),'Sub-Assembly Cutout',
-														  subassembly['FamilyMember'],'Rough cutout',
-														  0,0,boardsub['Material']['ActualWidth'],None,
-														  boardsub['BottomView']['Point'][0]['X'],
-														  boardsub['BottomView']['Point'][0]['Y'],
-														  boardsub['BottomView']['Point'][1]['X'],
-														  boardsub['BottomView']['Point'][1]['Y'],
-														  boardsub['BottomView']['Point'][2]['X'],
-														  boardsub['BottomView']['Point'][2]['Y'],
-														  boardsub['BottomView']['Point'][3]['X'],
-														  boardsub['BottomView']['Point'][3]['Y'],
-														  boardsub['ElevationView']['Point'][0]['X'],
-														  boardsub['ElevationView']['Point'][0]['Y'],
-														  boardsub['ElevationView']['Point'][1]['X'],
-														  boardsub['ElevationView']['Point'][1]['Y'],
-														  boardsub['ElevationView']['Point'][2]['X'],
-														  boardsub['ElevationView']['Point'][2]['Y'],
-														  boardsub['ElevationView']['Point'][3]['X'],
-														  boardsub['ElevationView']['Point'][3]['Y'],str(subassemblyCT)),)
-							
-							#add subassembly without point data
-							elementIN.append((subassembly['PanelGuid'],subassembly['SubAssemblyGuid'],'Sub Assembly',
-												  subassembly['FamilyMember'],subassembly['FamilyMemberName'],
-												  None,None,subassembly['Width'],None,None,None,None,None,None,None,None,
-												  None,None,None,None,None,None,None,None,None,str(subassemblyCT)),)
-							subassemblyCT += 1
-					#Add the subassembly if it exists and is dictionary type
-					if 'SubAssembly' in bundle['Panel'].keys() and type(bundle['Panel']['SubAssembly']) == dict and c2 == 0:
-						#check if the subassembly has a rough opening in the panel
-						subassemblyCT = 1
-						#loop through all the boards in the subassembly
-						for boardsub in bundle['Panel']['SubAssembly']['Board']:
-							for boardsub in panel['SubAssembly']['Board']:
-							#Check if the sub board is the rough opening
-								if boardsub['FamilyMemberName'] != 'RoughOpening':
-									elementIN.append((boardsub['PanelGuid'],boardsub['BoardGuid'],'Sub-Assembly Board',
-			  											boardsub['FamilyMember'],boardsub['FamilyMemberName'],
-														boardsub['Material']['Size'],boardsub['Material']['ActualThickness'],
-														boardsub['Material']['ActualWidth'],boardsub['Material']['MaterialsId'],
-														boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
-														boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
-														boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
-														boardsub['BottomView']['Point'][3]['X'],boardsub['BottomView']['Point'][3]['Y'],
-														boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
-														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
-														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-							else: #add the rough cutout to the list 
-								  #(only works when there is 1 rough out per subassembly due to element guid creation)
-								elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid']+ str(subassemblyCT),
-			  											'Sub-Assembly Cutout',panel['SubAssembly']['FamilyMember'],
-														'Rough cutout',0,0,boardsub['Material']['ActualWidth'],None,
-														boardsub['BottomView']['Point'][0]['X'],boardsub['BottomView']['Point'][0]['Y'],
-														boardsub['BottomView']['Point'][1]['X'],boardsub['BottomView']['Point'][1]['Y'],
-														boardsub['BottomView']['Point'][2]['X'],boardsub['BottomView']['Point'][2]['Y'],
-														boardsub['BottomView']['Point'][3]['X'],boardsub['BottomView']['Point'][3]['Y'],
-														boardsub['ElevationView']['Point'][0]['X'],boardsub['ElevationView']['Point'][0]['Y'],
-														boardsub['ElevationView']['Point'][1]['X'],boardsub['ElevationView']['Point'][1]['Y'],
-														boardsub['ElevationView']['Point'][2]['X'],boardsub['ElevationView']['Point'][2]['Y'],
-														boardsub['ElevationView']['Point'][3]['X'],boardsub['ElevationView']['Point'][3]['Y'],'1'),)
-						#add subassembly without point data
-						elementIN.append((panel['SubAssembly']['PanelGuid'],panel['SubAssembly']['SubAssemblyGuid'],
-			  											'Sub Assembly',panel['SubAssembly']['FamilyMember'],
-														panel['SubAssembly']['FamilyMemberName'],None,None,
-														panel['SubAssembly']['Width'],None,None,None,None,None,None,None,None,
-														None,None,None,None,None,None,None,None,None,'1'),)
-				c2+=1
-				#reset counter after 1 string panel
-				if c2 == 29:
-					c2 = 0
-	#insert the list to the database
-	insertElements(elementIN,credentials)
-
+	#init the class
+	xmlParse(filepath)
+	#parse the data and send to DB
+	xmlParse.xmlMain(xmlParse)
+	
 
 #Written by Jacob OBrien for BraveCS
 #March 2023
