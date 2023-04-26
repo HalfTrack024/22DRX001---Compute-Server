@@ -72,6 +72,7 @@ class JobData():
     }
 
     def __init__(self, panelguid):
+        # Getting Panel Information for Nailing calculations in nailSubElements Function
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
@@ -91,11 +92,9 @@ class JobData():
         self.studHeight = (float(results[0][1]))*25.4
         self.panelLength = float(results[0][2])
         self.catagory = results[0][3]
+        # End of Panel Information
 
-        self.plateInnerBottom = 1.5
-        self.plateInnerTop  = 1.5 + self.studHeight 
-
-        #Framing Check variables
+        #Getting Stud Stop and Hammer Unit dimensions that framingCheck.py uses 
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
@@ -123,7 +122,7 @@ class JobData():
         self.hu_stroke = float(results[4][1])
         self.hu_Y = float(results[5][1])
         pgDB.close()     
-
+        #End of Framing Check
 
     def jdMain(self): # Job Data Main
         credentials = dbc.getCred()
@@ -240,6 +239,7 @@ class JobData():
         for item in OpData:
             jdQueryData.append((panelguid, item[0],item[1],item[2],item[3],item[4],
                                 item[5],item[6],item[7],item[8],item[9],item[10],item[11]))
+            
         pgDB.querymany(sql_JobData_query,jdQueryData)
         #close the DB connection
         pgDB.close()
@@ -355,12 +355,14 @@ class JobData():
 
 
     def nailElement(self,element):
-        #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,
-        #                       b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+        #element is a list consisting of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+        #Used for calling StudStop or Hamer Unit Functions
         clear = fc.Clear()
-        #list of OpJobs for the current Element
+        #Obj_ID
         count = element[-1]
+        #List used as output of nailElement Function
         OpElement = []
+        #Z positions for Nailing
         Zpos_2x4 = [19,70]
         Zpos_2x6 = [15,70,125]
         #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
@@ -382,7 +384,6 @@ class JobData():
                 #if element is a stud enable hammer, autostud, and nailing
                 if element[2] == 'Board' and element[3] == 'Stud':
                     OpFS[1] = True
-                    OpFS[4] = True
                     OpFS[4] = True
                     OpFS[6] = True
                     OpMS[1] = True
@@ -422,11 +423,13 @@ class JobData():
                 if clear.studStopMS(element[1]) == True:
                     OpMS[0] = True
 
-                #if element is a stud enable hammer and autostud
+                #if element is a stud enable hammer, autostud and nailing
                 if element[2] == 'Board' and element[3] == 'Stud':
                     OpFS[1] = True
+                    OpFS[4] = True
                     OpFS[6] = True
                     OpMS[1] = True
+                    OpMS[4] = True
                     OpMS[6] = True 
                 #other element types? -> error?
                 else:
@@ -453,30 +456,37 @@ class JobData():
 
 
     def nailSubElement(self,elementList):
+        #Used for calling StudStop or Hamer Unit Functions
         clear = fc.Clear
+        #Top and Bottom Plate variables used to check if Sub-Assembly element is touching
         TopPlate = round(38.1 + self.studHeight,1)
         BottomPlate = 38.1
+        #Z positions for Nailing
         Zpos_2x4 = [19,70]
         Zpos_2x6 = [15,70,125]
+        #Value Used for Nail spacing along Header oriented elements (mm)
         HeaderNailSpacing = 304.8
+        #List that Function will return containing all OpJobs for Sub Assembly being evaluated
         OpJobList = []
-        #list of [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
-        #        [   0     ,      1    ,  2 ,    3      ,  4 , 5 , 6 , 7 , 8 , 9 , 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        #elementList [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+        #            [   0     ,      1    ,  2 ,    3      ,  4 , 5 , 6 , 7 , 8 , 9 , 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
         for elem in elementList:
+            #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
             OpFS = [False,False,False,False,False,False,False]
             OpMS = [False,False,False,False,False,False,False]
             #Sub Assembly Element is only touching Top plate
             if elem[16] == TopPlate and elem[14] != BottomPlate:
-
+                # Check if StudStop and Hammer are being used for TopPlate side
                 if clear.studStopMS(self,elem[1]) == True:
                     OpMS[0] = True
 
                 if clear.hammerMS(self,elem[1]) == True:
                     OpMS[1] = True
 
+                #Set Nailing TopPlate Side in Opcode
                 OpMS[6] = True
 
-                #Is the element in the sub assembly normal stud orientation
+                #Is the element in the sub assembly normal stud orientation against Top Plate
                 if (elem[17] - elem[13]) < 50.8:
                     if elem[4] == "2X4":
                         ct = 0
@@ -485,17 +495,13 @@ class JobData():
                             #Xpos
                             OpJob.append(elem[5])
                             #generate OpText and OpCodes from list of bools
-                            tmpFS = JobData.genOpCode(OpFS)
                             tmpMS = JobData.genOpCode(OpMS)
-
-                           
-                            #list to append to OpJob & append it
+                            #list to append to OpJob 
                             OpJobAppend = [tmpMS[0],0,0, 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', 0]
                             for i in OpJobAppend:
                                 OpJob.append(i)
                             ct += 1
                             OpJobList.append(OpJob)
-
 
                     if elem[4] == "2X6":
                         ct = 0
@@ -504,9 +510,8 @@ class JobData():
                             #Xpos
                             OpJob.append(elem[5])
                             #generate OpText and OpCodes from list of bools
-                            tmpFS = JobData.genOpCode(OpFS)
                             tmpMS = JobData.genOpCode(OpMS)
-                            #list to append to OpJob & append it
+                            #list to append to OpJob
                             OpJobAppend = [tmpMS[0],0,0, 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', 0]
                             for i in OpJobAppend:
                                 OpJob.append(i)
@@ -528,7 +533,6 @@ class JobData():
                                 #Xpos
                                 OpJob.append(elem[5] + (NailCounter*HeaderNailSpacing))
                                 #generate OpText and OpCodes from list of bools
-                                tmpFS = JobData.genOpCode(OpFS)
                                 tmpMS = JobData.genOpCode(OpMS)
                                 #list to append to OpJob & append it
                                 OpJobAppend = [tmpMS[0],0,0, 0, 0,tmpMS[1],Zpos_2x4[ct],0, 0, 'ImgName', 0]
@@ -547,7 +551,6 @@ class JobData():
                                 #Xpos
                                 OpJob.append(elem[5] + (NailCounter*HeaderNailSpacing))
                                 #generate OpText and OpCodes from list of bools
-                                tmpFS = JobData.genOpCode(OpFS)
                                 tmpMS = JobData.genOpCode(OpMS)
                                 #list to append to OpJob & append it
                                 OpJobAppend = [tmpMS[0],0,0, 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', 0]
@@ -557,7 +560,7 @@ class JobData():
                                 OpJobList.append(OpJob)
 
                             NailCounter += 1
-                #Header Orientation
+                #Header Orientation along Top Plate(Perpendicular to Top Plate)
                 elif (elem[16] - elem[14]) > 50.8:
                     # b3x - b1x 
                     Length_of_Header = elem[17] - elem[13]
@@ -582,16 +585,17 @@ class JobData():
 
             # Sub Assembly Element is only Touching Bottom Plate
             if elem[14] == BottomPlate and elem[16] != TopPlate:
-
+                # Check if StudStop and Hammer are being used for Bottom Plate side
                 if clear.studStopFS(self,elem[1]) == True:
                     OpFS[0] = True
 
                 if clear.hammerFS(self,elem[1]) == True:
                     OpFS[1] = True
 
+                # Set Nailing Bottom Plate Side in Opcode
                 OpFS[6] = True
                 
-                #Is the element in the sub assembly normal stud orientation
+                #Is the element in the sub assembly normal stud orientation against Bottom Plate
                 if (elem[17] - elem[13]) < 50.8: 
                     if elem[4] == "2X4": 
                         ct = 0
@@ -601,7 +605,6 @@ class JobData():
                             OpJob.append(elem[5])
                             #generate OpText and OpCodes from list of bools
                             tmpFS = JobData.genOpCode(OpFS)
-                            tmpMS = JobData.genOpCode(OpMS)
                             #list to append to OpJob & append it
                             OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct], 0, 0,0,0,0, 0, 'ImgName', 0]
                             for i in OpJobAppend:
@@ -618,7 +621,6 @@ class JobData():
                             OpJob.append(elem[5])
                             #generate OpText and OpCodes from list of bools
                             tmpFS = JobData.genOpCode(OpFS)
-                            tmpMS = JobData.genOpCode(OpMS)
                             #list to append to OpJob & append it
                             OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct], 0, 0,0,0,0, 0, 'ImgName', 0]
                             for i in OpJobAppend:
@@ -627,7 +629,7 @@ class JobData():
                             OpJobList.append(OpJob)
                 
 
-                #Non Header Orientation along Top Plate (Flat against Top Plate)
+                #Non Header Orientation along Bottom Plate (Flat against Top Plate)
                 elif (elem[16] - elem[14]) < 50.8:
                     # b3x - b1x 
                     Length_of_Header = elem[17] - elem[13]
@@ -642,7 +644,6 @@ class JobData():
                                 OpJob.append(elem[5] + (NailCounter*HeaderNailSpacing))
                                 #generate OpText and OpCodes from list of bools
                                 tmpFS = JobData.genOpCode(OpFS)
-                                tmpMS = JobData.genOpCode(OpMS)
                                 #list to append to OpJob & append it
                                 OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x4[ct],0,0,0,0,0,0, 'ImgName', 0]
 
@@ -662,7 +663,6 @@ class JobData():
                                 OpJob.append(elem[5] + (NailCounter*HeaderNailSpacing))
                                 #generate OpText and OpCodes from list of bools
                                 tmpFS = JobData.genOpCode(OpFS)
-                                tmpMS = JobData.genOpCode(OpMS)
                                 #list to append to OpJob & append it
                                 OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct],0,0,0,0,0,0, 'ImgName', 0]
 
@@ -672,7 +672,7 @@ class JobData():
                                 OpJobList.append(OpJob)
                             NailCounter += 1
 
-                #Header Orientation
+                #Header Orientation along Bottom Plate (Perpendicular to Top Plate)
                 elif (elem[16] - elem[14]) > 50.8:
                     # b3x - b1x 
                     Length_of_Header = elem[17] - elem[13]
@@ -685,7 +685,6 @@ class JobData():
                         OpJob.append(elem[5] + (NailCounter*HeaderNailSpacing))
                         #generate OpText and OpCodes from list of bools
                         tmpFS = JobData.genOpCode(OpFS)
-                        tmpMS = JobData.genOpCode(OpMS)
                         #list to append to OpJob & append it
                         OpJobAppend = [tmpFS[0],tmpFS[1],Zpos,0,0,0,0,0,0, 'ImgName', 0]
 
@@ -696,21 +695,24 @@ class JobData():
 
             # Sub Assembly Element is Touching Top and Bottom Plate
             if elem[14] == BottomPlate and elem[16] == TopPlate:
-
+                # Check if StudStop and Hammer are being used for Bottom Plate side
                 if clear.studStopFS(self,elem[1]) == True:
                     OpFS[0] = True
 
                 if clear.hammerFS(self,elem[1]) == True:
                     OpFS[1] = True
 
+                # Set Nailing Bottom Plate Side in Opcode
                 OpFS[6] = True
 
+                # Check if StudStop and Hammer are being used for Top Plate side
                 if clear.studStopMS(self,elem[1]) == True:
                     OpMS[0] = True
 
                 if clear.hammerMS(self,elem[1]) == True:
                     OpMS[1] = True
 
+                # Set Nailing Top Plate Side in Opcode
                 OpMS[6] = True
                 
                 #Is the element in the sub assembly normal stud orientation
@@ -749,7 +751,7 @@ class JobData():
                             OpJobList.append(OpJob)
                             ct += 1
                 
-                #Is the element in the sub assembly Side stud orientation
+                #Is the element in the sub assembly Flat stud orientation
                 if (elem[17] - elem[13]) > 50.8:
                     if elem[4] == "2X4":
                         NailCounter = 0
