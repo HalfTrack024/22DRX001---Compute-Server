@@ -4,20 +4,23 @@ from util import dataBaseConnect as dbc
 
 class GenPreview():
 	def __init__(self) -> None:
+		#get credentials an open the database
 		self.credentials = dbc.getCred()
 		pgDB = dbc.DB_Connect(self.credentials)
 		pgDB.open()
+		#select the panelguids from the database
 		sql_select_query = 'SELECT * FROM panel'
 		self.panelData = []
 		result = pgDB.query(sql_select_query)
 		for row in result:
-			self.panelData.append([row[1],row[2]])
+			self.panelData.append([row[1]])
+		#select the panelguid, elementguid, type, and elevation points from the elements table
 		self.elementData = []
 		sql_select_query = 'SELECT * FROM elements'
 		result2 = pgDB.query(sql_select_query)
 		for row in result2:
 			self.elementData.append([row[0],row[1],row[2],row[17],row[18],row[19],
-		       					row[20],row[21],row[22],row[23],row[24]])
+		       						row[20],row[21],row[22],row[23],row[24]])
 
 
 	def previewMain(self):
@@ -127,9 +130,9 @@ class GenPreview():
 			#Output PNG image
 			outimage.save(name)
 	
-
-GenPreview.__init__(GenPreview)
-GenPreview.previewMain(GenPreview)
+if __name__ == "__main__":
+	GenPreview.__init__(GenPreview)
+	GenPreview.previewMain(GenPreview)
 
 #Written by Jacob OBrien for BraveCS♥
 #March 2023
