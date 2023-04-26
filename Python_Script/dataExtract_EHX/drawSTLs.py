@@ -38,7 +38,7 @@ class GenSTL():
 			#loop through all elements
 			for element in self.elementData:
 				# check if the element is a part of the current panel & isn't null
-				if element[0] == panel[0] and element[25] != 'Sub Assembly':
+				if element[0] == panel[0] and element[25] != 'Sub-Assembly Cutout' and element[25] != 'Sub Assembly':
 					# append the 8 verticies from the sql query to the verticies array
 					points = np.append(points,[[float(element[1]),float(element[2]),float(element[3])],
 						[float(element[4]),float(element[5]),float(element[6])],
