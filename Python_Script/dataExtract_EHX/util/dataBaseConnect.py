@@ -1,4 +1,5 @@
 import psycopg2 as psy              #Requires Python >=3.6
+import psycopg2.extras as psyE
 
 def getCred():
     f = open(r'Python_Script\dataExtract_EHX\util\credentials.txt', 'r')
@@ -69,6 +70,18 @@ class DB_Connect:
         cursor.close()
         #returns the amount of rows modified
         return(tmp)
+    
+    def queryRetJSON(self, sqlStatement):
+        cursor = self.connection.cursor(cursor_factory=psyE.DictCursor)
+        cursor.execute(sqlStatement) 
+        result = cursor.fetchall()
+        cursor.close()
+        return result
+        # cursor = self.connection.cursor(cursor_factory=psy.extras.DictCursor)
+        # cursor.executemany(sqlStatement)
+        # self.connection.commit()
+        # tmp = cursor.rowcount
+        # cursor.close()
 
 
 
@@ -76,29 +89,21 @@ if __name__ == "__main__":
     credentials = getCred()
     pgDB = DB_Connect(credentials)
     pgDB.open()
-    sql_Var = "221415WALLS"
-    thickness = 0.75
 
-    sql_e1X_Max = 175.769
-    sql_e1X_Min = sql_e1X_Max - thickness
-
-    sql_select_query=f"""SELECT e1x
-                        FROM elements
-                        WHERE elementguid = '0c326f0c-19e7-41f2-9ac7-8d723ff671c1'
-                    """
-
-    results = pgDB.query(sqlStatement=sql_select_query)
-    printResult(results)
-    print(results[0][0])
-    sql_e1X_Max = float(results[0][0])
-    sql_e1X_Min = sql_e1X_Max - thickness
-
-    sql_select_query=f"""SELECT elementguid, description, b1x, e1x , e4x 
-                        FROM elements
-                        WHERE panelguid = '4a4909bf-f877-4f2f-8692-84d7c6518a2d' and (e1x  >= {sql_e1X_Min} and e1x < {sql_e1X_Max}) or (e4x  <= {sql_e1X_Max} and e4x >= {sql_e1X_Min});
-                    """
+    sql_select_query=f"""
+select 
+	json_object_agg(description, jsonOBJ.parms) 
+	from (
+		select	
+		description,
+		json_build_object('value', value, 'max', "max", 'min', "min", 'datatype', "DataType")	as parms
+		from ec1_parameters) jsonOBJ;
+                        """
 
     results = pgDB.query(sqlStatement=sql_select_query)
+    for  row in results:
+        print(type(row))
+
     pgDB.close()
-    printResult(results)
+    #printResult(results)
 
