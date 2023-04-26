@@ -1,5 +1,4 @@
 import xmltodict as dc #requires python >= V3.4
-import psycopg2 as psy #requires python >= V3.6
 from util import dataBaseConnect as dbc
 
 class xmlParse():
