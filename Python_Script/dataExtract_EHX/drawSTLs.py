@@ -73,8 +73,9 @@ class GenSTL():
 			name = 'Python_Script/dataExtract_EHX/out/' + str(panel[0]) + '.stl'
 			shape.save(name)
 
-GenSTL.__init__(GenSTL)
-GenSTL.mainSTL(GenSTL)
+if __name__ == '__main__':
+	GenSTL.__init__(GenSTL)
+	GenSTL.mainSTL(GenSTL)
 
 #Written by Jacob OBrien for BraveCS♥
 #April 2023
