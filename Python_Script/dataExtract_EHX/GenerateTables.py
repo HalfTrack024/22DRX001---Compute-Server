@@ -4,22 +4,33 @@ def genTables(credentials):
     #Table query comands
     commands = (
             """
-            CREATE TABLE JobData (
+            CREATE TABLE elements (
             panelguid VARCHAR (255),
-            Xpos SMALLINT,
-            OpText VARCHAR (255),
-            OpCode_FS SMALLINT,
-            ZPos_FS SMALLINT,
-            YPos_FS SMALLINT,
-            SsUpPos_FS SMALLINT,
-            OpCode_MS SMALLINT,
-            ZPos_MS SMALLINT,
-            YPos_MS SMALLINT,
-            SsUpPos_MS SMALLINT,
-            ImgName VARCHAR (255),
-            OBJ_ID SMALLINT,
-            loadDate TIMESTAMP,
-            PRIMARY KEY (panelguid,OBJ_ID)
+            elementguid VARCHAR(255) PRIMARY KEY,
+            type VARCHAR(255)
+            ,familymember VARCHAR(255)
+            ,description VARCHAR(255)
+            ,size VARCHAR(255)
+            ,actual_thickness NUMERIC(6,3)
+            ,actual_width NUMERIC(6,3)
+            ,materialdesc VARCHAR(255)
+            ,b1x NUMERIC(6,3)
+            ,b1y NUMERIC(6,3)
+            ,b2x NUMERIC(6,3)
+            ,b2y NUMERIC(6,3)
+            ,b3x NUMERIC(6,3)
+            ,b3y NUMERIC(6,3)
+            ,b4x NUMERIC(6,3)
+            ,b4y NUMERIC(6,3)
+            ,e1x NUMERIC(6,3)
+            ,e1y NUMERIC(6,3)
+            ,e2x NUMERIC(6,3)
+            ,e2y NUMERIC(6,3)
+            ,e3x NUMERIC(6,3)
+            ,e3y NUMERIC(6,3)
+            ,e4x NUMERIC(6,3)
+            ,e4y NUMERIC(6,3)
+            ,assembly_id VARCHAR(255)
             );
             """
     )
