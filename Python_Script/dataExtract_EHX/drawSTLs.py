@@ -78,11 +78,9 @@ class GenSTL():
 			pgDB.close()
 			
 			#if output/jobID doesn't exist create the folder then set name = filepath/panelguid.png
-			if os.path.exists(f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/'):
-				name = (f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/' + str(panel[0]) + '.stl')
-			else:
+			if not os.path.exists(f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/'):
 				os.makedirs(f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/')
-				name = (f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/' + str(panel[0]) + '.stl')
+			name = (f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/' + str(panel[0]) + '.stl')
 			shape.save(name)
 
 if __name__ == '__main__':
