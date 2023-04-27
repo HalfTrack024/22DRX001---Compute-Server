@@ -1,7 +1,7 @@
-from PIL import Image, ImageDraw    #Requires Python >=3.7
+from PIL import Image, ImageDraw    		#Requires Python >=3.7, pip install Pillow
 from util import dataBaseConnect as dbc
 import os
-#import math						#Built in to Python, only needed for safe rounding
+#import math								#Built in to Python, only needed for safe rounding
 
 class GenPreview():
 	def __init__(self) -> None:
