@@ -57,9 +57,17 @@ class xmlParse():
 
 
 	def insertJob(self):
-		jobIN = [(10,self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']),]
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
 		pgDB.open()
+		sql_serial_query = 'SELECT serial FROM jobs ORDER BY serial DESC'
+		serial = pgDB.query(sql_serial_query)
+		if len(serial) != 0:
+			serial = int(serial[0][0]) + 1
+		else:
+			serial = 1
+		#how to generate the serial number?
+		jobIN = [(serial,self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']),]
+		
 		#Query used for inserting the data
 		sql_insert_query="""
 							INSERT INTO jobs(serial,jobid,loaddate)
@@ -191,7 +199,6 @@ class xmlParse():
 											boardsub['FamilyMemberName'] = 'Rough cutout'
 											boardsub['Material']['Size'] = 0
 											boardsub['Material']['ActualThickness'] = 0
-											boardsub['Material']['MaterialsId']
 
 											xmlParse.appendElement(self,boardsub,'Sub-Assembly Cutout',subassemblyCT)
 								#add subassembly without point data
@@ -217,7 +224,6 @@ class xmlParse():
 									boardsub['FamilyMemberName'] = 'Rough cutout'
 									boardsub['Material']['Size'] = 0
 									boardsub['Material']['ActualThickness'] = 0
-									boardsub['Material']['MaterialsId']
 
 									xmlParse.appendElement(self,boardsub,'Sub-Assembly Cutout',subassemblyCT)
 

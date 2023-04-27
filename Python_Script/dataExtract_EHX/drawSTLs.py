@@ -1,6 +1,7 @@
 import numpy as np					#Requires Python ???
 from stl import mesh				#Requires Python ???
 from util import dataBaseConnect as dbc
+import os
 
 class GenSTL():
 	def __init__(self) -> None:
@@ -13,7 +14,7 @@ class GenSTL():
 		results = pgDB.query(sql_select_query)
 		self.panelData = []
 		for row in results:
-			self.panelData.append([row[1]])
+			self.panelData.append([row[1],row[0]])
 		#select all data from elements table
 		self.elementData = []
 		sql_select_query="SELECT * FROM elements"
@@ -69,8 +70,19 @@ class GenSTL():
 				for j in range(3):
 					shape.vectors[i][j] = points[int(f[j]),]
 			
-			#make the filename & directory
-			name = 'Python_Script/dataExtract_EHX/out/' + str(panel[0]) + '.stl'
+			#get the jobID of the current panel
+			pgDB = dbc.DB_Connect(self.credentials)
+			pgDB.open()
+			sql_jobid_query = f"SELECT jobid FROM bundle WHERE bundleguid = '{panel[1]}'"
+			jobid = pgDB.query(sql_jobid_query)
+			pgDB.close()
+			
+			#if output/jobID doesn't exist create the folder then set name = filepath/panelguid.png
+			if os.path.exists(f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/'):
+				name = (f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/' + str(panel[0]) + '.stl')
+			else:
+				os.makedirs(f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/')
+				name = (f'Python_Script/dataExtract_EHX/out/{jobid[0][0]}/' + str(panel[0]) + '.stl')
 			shape.save(name)
 
 if __name__ == '__main__':

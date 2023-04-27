@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw    #Requires Python >=3.7
 from util import dataBaseConnect as dbc
+import os
 #import math						#Built in to Python, only needed for safe rounding
 
 class GenPreview():
@@ -8,12 +9,12 @@ class GenPreview():
 		self.credentials = dbc.getCred()
 		pgDB = dbc.DB_Connect(self.credentials)
 		pgDB.open()
-		#select the panelguids from the database
+		#select the panelguids and bundleids from the database
 		sql_select_query = 'SELECT * FROM panel'
 		self.panelData = []
 		result = pgDB.query(sql_select_query)
 		for row in result:
-			self.panelData.append([row[1]])
+			self.panelData.append([row[1], row[0]])
 		#select the panelguid, elementguid, type, and elevation points from the elements table
 		self.elementData = []
 		sql_select_query = 'SELECT * FROM elements'
@@ -21,15 +22,25 @@ class GenPreview():
 		for row in result2:
 			self.elementData.append([row[0],row[1],row[2],row[17],row[18],row[19],
 		       						row[20],row[21],row[22],row[23],row[24]])
+		pgDB.close()
 
 
 	def previewMain(self):
 		#loop through all panelData rows, ct is counter, row is data
 		for row in self.panelData:
-
-			#create the name for the output file
-			#directory/label_panelguid.png
-			name = ('Python_Script/dataExtract_EHX/output/' + row[0] + '.png')
+			#get the jobID of the current panel
+			pgDB = dbc.DB_Connect(self.credentials)
+			pgDB.open()
+			sql_jobid_query = f"SELECT jobid FROM bundle WHERE bundleguid = '{row[1]}'"
+			jobid = pgDB.query(sql_jobid_query)
+			pgDB.close()
+			
+			#if output/jobID doesn't exist create the folder then set name = filepath/panelguid.png
+			if os.path.exists(f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/'):
+				name = (f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/' + row[0] + '.png')
+			else:
+				os.makedirs(f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/')
+				name = (f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/' + row[0] + '.png')
 
 			#find the boundries of each panel
 			minheight = 10000
