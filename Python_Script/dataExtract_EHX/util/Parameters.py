@@ -4,14 +4,14 @@ import dataBaseConnect as dbc
 
 class Parameters: #This class is designed to fetch all parameters from parameter table based on sectionName 
 
-    parmList = []
+    _parmList = []
 
     def __init__(self, tabs):
-        self.tabNames = tabs
+        self._tabNames = tabs
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
-        for tab in self.tabNames:
+        for tab in self._tabNames:
             sql_var = tab
             sql_select_query=f"""
                                 select 
@@ -28,13 +28,13 @@ class Parameters: #This class is designed to fetch all parameters from parameter
                                         where sectionname = '{sql_var}') jsonOBJ;
                                 """
             results = pgDB.query(sqlStatement=sql_select_query)
-            self.parmList.append(results[0][0])
+            self._parmList.append(results[0][0])
         pgDB.close()
     
     def getParm(self,secName, description): #This function is used for retrieving variable name from parameter information
-        index = self.tabNames.index(secName)
-        dtype = self.parmList[index][description]["datatype"]
-        dVar = self.parmList[index][description]["value"]
+        index = self._tabNames.index(secName)
+        dtype = self._parmList[index][description]["datatype"]
+        dVar = self._parmList[index][description]["value"]
         match dtype:
             case "STRING":
                 return str(dVar)
