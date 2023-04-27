@@ -56,7 +56,7 @@ class Clear:
                         SELECT e1x
                         FROM elements
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
-                        and elementguid != '{elementguid}'
+                        and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e1x * 25.4) and (e1x * 25.4) <= {MaxX} and {MinY} <= (e1y * 25.4) and (e1y * 25.4) <= {MaxY}) 
                         or ({MinX} <= (e4x * 25.4) and (e4x * 25.4) <= {MaxX} and {MinY} <= (e4y * 25.4) and (e4y * 25.4) <= {MaxY}));
                         """
@@ -94,6 +94,7 @@ class Clear:
                             FROM elements
                             WHERE panelguid = '{results[0][1]}' and description NOT IN 
                             ('Sheathing','TopPlate','BottomPlate','VeryTopPlate') and elementguid != '{elementguid}' 
+                            and type != 'Sheet'
                             and (({MinX} <= e1x and e1x <= {MaxX} and {MinY} <= e1y and e1y <= {MaxY}) 
                             or ({MinX} <= e4x and e4x <= {MaxX} and {MinY} <= e4y and e4y <= {MaxY}));
                             """
@@ -141,7 +142,7 @@ class Clear:
                         SELECT e2x
                         FROM elements
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
-                        and elementguid != '{elementguid}' 
+                        and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e2x * 25.4) and (e2x * 25.4) <= {MaxX} and {MinY} <= (e2y * 25.4) and (e2y * 25.4) <= {MaxY}) 
                         or ({MinX} <= (e3x * 25.4) and (e3x * 25.4) <= {MaxX} and {MinY} <= (e3y * 25.4) and (e3y * 25.4) <= {MaxY}));
                         """
@@ -183,7 +184,7 @@ class Clear:
                             SELECT e3x
                             FROM elements
                             WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
-                            and elementguid != '{elementguid}'
+                            and elementguid != '{elementguid}' and type != 'Sheet'
                             and (({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 
                             or ({MinX} <= e3x and e3x <= {MaxX} and {MinY} <= e3y and e3y <= {MaxY}));
                             """

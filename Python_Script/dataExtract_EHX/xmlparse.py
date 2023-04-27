@@ -22,7 +22,7 @@ class xmlParse():
 			(element['PanelGuid'],element['BoardGuid'],elemtype,
 			element['FamilyMember'],element['FamilyMemberName'],
 			element['Material']['Size'],element['Material']['ActualThickness'],
-			element['Material']['ActualWidth'],element['Material']['MaterialsId'],
+			element['Material']['ActualWidth'],element['Material']['Description'],
 			element['BottomView']['Point'][0]['X'],element['BottomView']['Point'][0]['Y'],
 			element['BottomView']['Point'][1]['X'],element['BottomView']['Point'][1]['Y'],
 			element['BottomView']['Point'][2]['X'],element['BottomView']['Point'][2]['Y'],
@@ -37,7 +37,7 @@ class xmlParse():
 			(element['PanelGuid'],element['BoardGuid'],elemtype,
 			element['FamilyMember'],element['FamilyMemberName'],
 			element['Material']['Size'],element['Material']['ActualThickness'],
-			element['Material']['ActualWidth'],element['Material']['MaterialsId'],
+			element['Material']['ActualWidth'],element['Material']['Description'],
 			element['BottomView']['Point'][0]['X'],element['BottomView']['Point'][0]['Y'],
 			element['BottomView']['Point'][1]['X'],element['BottomView']['Point'][1]['Y'],
 			element['BottomView']['Point'][2]['X'],element['BottomView']['Point'][2]['Y'],
@@ -319,14 +319,14 @@ class xmlParse():
 		#Query used for writing data to the database
 		sql_insert_query="""
 							INSERT INTO elements(panelguid,elementguid,type,familymember,description,
-												size,actual_thickness,actual_width,materialsid,b1x,b1y,b2x,
+												size,actual_thickness,actual_width,materialdesc,b1x,b1y,b2x,
 												b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id)
 							VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
 							ON CONFLICT (elementguid)
 							DO UPDATE SET panelguid = EXCLUDED.panelguid, type = EXCLUDED.type,
 							familymember = EXCLUDED.familymember, description = EXCLUDED.description,
 							size = EXCLUDED.size,actual_thickness = EXCLUDED.actual_thickness,
-							actual_width = EXCLUDED.actual_width,materialsid = EXCLUDED.materialsid,
+							actual_width = EXCLUDED.actual_width,materialdesc = EXCLUDED.materialdesc,
 							b1x = EXCLUDED.b1x,b1y = EXCLUDED.b1y,b2x = EXCLUDED.b2x,b2y = EXCLUDED.b2y,
 							b3x = EXCLUDED.b3x,b3y = EXCLUDED.b3y,b4x = EXCLUDED.b4x,b4y = EXCLUDED.b4y,
 							e1x = EXCLUDED.e1x,e1y = EXCLUDED.e1y,e2x = EXCLUDED.e2x,e2y = EXCLUDED.e2y,
