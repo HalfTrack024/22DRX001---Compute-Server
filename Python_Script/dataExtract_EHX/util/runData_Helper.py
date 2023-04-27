@@ -24,10 +24,3 @@ class BoardData_RBC:
     board : list[BoardData_RBC]
     missions : list[missionData_RBC]
 
-
-    def __init__(self) -> None:
-        dbc.credentials()
-        pgDB = dbc.DB_Connect()
-        pgDB.open()
-        
-        self.centerPos = 0
