@@ -1,5 +1,5 @@
-import numpy as np					#pip install numpy
-from stl import mesh				#pip install numpy-stl
+import numpy as np							#pip install numpy
+from stl import mesh						#pip install numpy-stl
 from util import dataBaseConnect as dbc
 import os
 
