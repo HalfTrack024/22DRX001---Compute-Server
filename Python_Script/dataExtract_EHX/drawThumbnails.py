@@ -36,11 +36,10 @@ class GenPreview():
 			pgDB.close()
 			
 			#if output/jobID doesn't exist create the folder then set name = filepath/panelguid.png
-			if os.path.exists(f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/'):
-				name = (f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/' + row[0] + '.png')
-			else:
+			if not os.path.exists(f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/'):
 				os.makedirs(f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/')
-				name = (f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/' + row[0] + '.png')
+
+			name = (f'Python_Script/dataExtract_EHX/output/{jobid[0][0]}/' + row[0] + '.png')
 
 			#find the boundries of each panel
 			minheight = 10000
