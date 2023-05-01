@@ -4,33 +4,21 @@ def genTables(credentials):
     #Table query comands
     commands = (
             """
-            CREATE TABLE elements (
-            panelguid VARCHAR (255),
-            elementguid VARCHAR(255) PRIMARY KEY,
-            type VARCHAR(255)
-            ,familymember VARCHAR(255)
-            ,description VARCHAR(255)
-            ,size VARCHAR(255)
-            ,actual_thickness NUMERIC(6,3)
-            ,actual_width NUMERIC(6,3)
-            ,materialdesc VARCHAR(255)
-            ,b1x NUMERIC(6,3)
-            ,b1y NUMERIC(6,3)
-            ,b2x NUMERIC(6,3)
-            ,b2y NUMERIC(6,3)
-            ,b3x NUMERIC(6,3)
-            ,b3y NUMERIC(6,3)
-            ,b4x NUMERIC(6,3)
-            ,b4y NUMERIC(6,3)
-            ,e1x NUMERIC(6,3)
-            ,e1y NUMERIC(6,3)
-            ,e2x NUMERIC(6,3)
-            ,e2y NUMERIC(6,3)
-            ,e3x NUMERIC(6,3)
-            ,e3y NUMERIC(6,3)
-            ,e4x NUMERIC(6,3)
-            ,e4y NUMERIC(6,3)
-            ,assembly_id VARCHAR(255)
+            CREATE TABLE "materialData" (
+            "byteSize" INTEGER,
+            "numOfStuds" INTEGER,
+            "uiItemLength" INTEGER,
+            "uiItemHeight" INTEGER,
+            "uiItemThickness" INTEGER,
+            "sMtrlCode" INTEGER,
+            "uiOpCode" INTEGER,
+            "sPrinterWrite" VARCHAR (100),
+            "sType" VARCHAR (20),
+            "uiItemID" INTEGER,
+            "sCADPath" VARCHAR (100),
+            "sProjectName" VARCHAR (100),
+            "sItemName" VARCHAR (100),
+            PRIMARY KEY ("sItemName")
             );
 
             """
