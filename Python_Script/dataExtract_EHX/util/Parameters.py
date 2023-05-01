@@ -24,7 +24,7 @@ class Parameters: #This class is designed to fetch all parameters from parameter
                                                             'max', "max", 
                                                             'min', "min", 
                                                             'datatype', "DataType")	as parms
-                                        from ec1_parameters
+                                        from parameters
                                         where sectionname = '{sql_var}') jsonOBJ;
                                 """
             results = pgDB.query(sqlStatement=sql_select_query)
@@ -54,6 +54,7 @@ if __name__ == "__main__":
             "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
             "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
             "Program Settings And Parameters","Device Offsets","Program Settings and Parameters"]
+    
     parms = Parameters(tabNames)
     val = parms.getParm("Positions", "Stud Stop width")
     print(type(val))

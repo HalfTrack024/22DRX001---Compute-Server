@@ -97,7 +97,7 @@ select
 		select	
 		description,
 		json_build_object('value', value, 'max', "max", 'min', "min", 'datatype', "DataType")	as parms
-		from ec1_parameters) jsonOBJ;
+		from parameters) jsonOBJ;
                         """
 
     results = pgDB.query(sqlStatement=sql_select_query)

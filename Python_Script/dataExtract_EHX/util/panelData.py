@@ -13,7 +13,7 @@ class Panel:
         sql_var= panelguid
         sql_select_query=f"""
                         SELECT thickness, studheight, walllength, category
-                        FROM panel
+                        FROM cad2fab.system_panels
                         WHERE panelguid = '{sql_var}';
                         """
         #
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     #get panel details dimensions
     sql_var= "4a4909bf-f877-4f2f-8692-84d7c6518a2d"
     sql_select_query=f"""SELECT "label", height, thickness, studheight, walllength
-                        FROM panel
+                        FROM cad2fab.system_panels
                         WHERE panelguid='{sql_var}';
                     """
     
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     #initialize Panel
     itterPanel = Panel(results)
     sql_select_query=f"""SELECT elementguid, "type", description, "size", b1x
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE panelguid = '{sql_var}' AND e1y = 1.5
                         ORDER BY b1x ASC;
                     """

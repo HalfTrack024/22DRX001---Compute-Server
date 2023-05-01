@@ -16,11 +16,11 @@ class missionData_RBC:
     info_11 : int
 
 class BoardData_RBC:
-    board : missionData_RBC
+    boardPick : missionData_RBC
     boardPlace : missionData_RBC 
     Fastening : list[missionData_RBC]   
 
-class BoardData_RBC:
+class Layer_RBC:
     board : list[BoardData_RBC]
     missions : list[missionData_RBC]
 
