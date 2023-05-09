@@ -1,4 +1,3 @@
-import dataBaseConnect as dbc
 
 class missionData_RBC:
     # Base Class of a mission statement that is required
@@ -14,6 +13,7 @@ class missionData_RBC:
     info_09 : float
     info_10 : int
     info_11 : int
+    info_12 : int
 
 class BoardData_RBC:
     boardPick : missionData_RBC
@@ -23,4 +23,5 @@ class BoardData_RBC:
 class Layer_RBC:
     board : list[BoardData_RBC]
     missions : list[missionData_RBC]
+
 
