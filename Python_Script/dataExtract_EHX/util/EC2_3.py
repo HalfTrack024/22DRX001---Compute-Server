@@ -3,7 +3,8 @@ import panelData
 import runData_Helper as rdh
 from Parameters import Parameters
 import panelData
-
+import pandas as pd
+import json
     
 
 class RunData:
@@ -50,11 +51,11 @@ class RunData:
         # for sheet in results:
         #     self.getMaterials(sheet)
 
-        #self.rdEC2_Main()
+        #ec2RunData = self.rdEC2_Main()
         #self.rdEC3_Main()
 
 
-    def rdEC2_Main(self): #Main Call to assign what work will be allowed to complete on EC2
+    def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
         lvl20 = self.ec2Parm.getParm("Programs Settings and Parameters", "Run Level 20 missions (True/False)")
         lvl30 = self.ec2Parm.getParm("Programs Settings and Parameters", "Run Level 30 missions (True/False)")
         lvl40 = self.ec2Parm.getParm("Programs Settings and Parameters", "Run Level 40 missions (True/False)")
@@ -114,42 +115,52 @@ class RunData:
                         order by b1x;
                         """    
         results = pgDB.query(sqlStatement=sql_select_query) 
-        pgDB.close()
-        boards = list[rdh.BoardData_RBC]
+        
+        layerData = rdh.Layer_RBC(2)
+
         for sheet in results:
             sheet = sheet[0]
-            boardData = rdh.BoardData_RBC
+            
 
             # Board Pick
-            board = rdh.missionData_RBC
-            board.missionID = 400
-            board.info_01 = sheet['e1x'] # e1x
-            board.info_02 = sheet['e1y'] # e1y
-            board.info_03 = sheet['actual_width']
-            board.info_04 = sheet['e2y']
-            board.info_05 = sheet['actual_thickness']
-            board.info_06 = 1 #TBD got to get panel thickness
-            board.info_11 = self.getMaterial(sheet['materialdesc'])
-            board.info_12 = getStack(board.info_11)
-            
-            boardData.boardPick = board
+            pick = rdh.missionData_RBC(400)
+            pick.info_01 = sheet['e1x'] # e1x
+            pick.info_02 = sheet['e1y'] # e1y
+            pick.info_03 = sheet['actual_width']
+            pick.info_04 = sheet['e2y']
+            pick.info_05 = sheet['actual_thickness']
+            pick.info_06 = 1 #TBD got to get panel thickness
+            pick.info_11 = self.getMaterial(sheet['materialdesc'])
+            pick.info_12 = getStack(pick.info_11)
 
             # Board Place
-            board = rdh.missionData_RBC
-            board.missionID = self.fastenTypes
-            board.info_01 = sheet['e1x'] # e1x
-            board.info_02 = sheet['e1y'] # e1y
-            board.info_03 = 0
-            board.info_04 = 0
-            board.info_05 = sheet['actual_thickness']
-            board.info_06 = 1 #TBD got to get panel thickness
-            board.info_11 = self.getMaterial(sheet['materialdesc'])
-            board.info_12 = getStack(board.info_11)
-            
+            place = rdh.missionData_RBC(401) #self.fastenTypes
+            place.info_01 = sheet['e1x'] # e1x
+            place.info_02 = sheet['e1y'] # e1y
+            place.info_03 = 0
+            place.info_04 = 0
+            place.info_05 = 0 #sheet['actual_thickness']
+            place.info_06 = 1 #TBD got to get panel thickness
+            place.info_11 = 0
+            place.info_12 = 0
+
             # Fastening
-            
-            
-            boards.append()
+
+            boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
+
+            sql_var1= self.panel.guid
+            sql_var2 = layer
+            sql_select_query=f"""
+                            SELECT to_jsonb(panel)
+                            from cad2fab.system_elements panel
+                            where panelguid = '{sql_var1}' AND "type" = 'Sheet' and b1y = {sql_var2}
+                            order by b1x;
+                            """    
+            results = pgDB.query(sqlStatement=sql_select_query)           
+            layerData.addBoard(boardData)
+
+        return layerData     
+
 
 
 
@@ -161,7 +172,7 @@ class RunData:
         pass         
 
         
-def getStack():
+def getStack(matType):
     pass
 
 
