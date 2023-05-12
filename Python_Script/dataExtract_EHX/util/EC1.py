@@ -4,7 +4,7 @@ import panelData
 
 class MtrlData:
 
-    mrtldata = []
+    mtrldata = ()
 
     def __init__(self, panelData : panelData.Panel):
         #Assigns Panel Instance to Mtrl 
@@ -19,38 +19,62 @@ class MtrlData:
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_var = self.panel.guid
-        sql_select_query=f"""SELECT elementguid, "type", description, "size", actual_thickness, actual_width
+        sql_select_query=f"""SELECT DISTINCT ON ("size") "type", description, "size", actual_thickness, actual_width
                     FROM elements
                     WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board'
-                    ORDER BY b1x ASC;
+                    ORDER BY "size" ASC;
                 """       
 
         results = pgDB.query(sqlStatement=sql_select_query)
         pgDB.close()
-        for element in results:            
-            self.mrtldata.append(self.mdBuild(element))
+        if len(results) == 1:            
+            self.mrtldata = self.mdBuild(results[0])
+        else:
+            print("returned to many options")
 
-    def mdBuild(self, element):
-        
+        self.mdInsert()
+
+    def mdBuild(self, studs): # This function will assemble the entry line of Material Data
         uiItemLength = self.panel.studHeight
-        uiItemHeight = float(element[4])
-        uiItemThickness = float(element[5])
-        sMtrlCode = self.getMatCode(element[3])
+        uiItemHeight = float(studs[3]) * 25.4 # convert from inches to mm
+        uiItemThickness = float(studs[4]) * 25.4 # convert from inches to mm
+        sMtrlCode = self.getMatCode(studs[2])
         uiOpCode = 0
         sPrinterWrite = 0	
         sType = 0
-        uiItemID = element[0]	
+        uiItemID = 0
         sCADPath = 0
         sProjectName = 0	
         sItemName = self.panel.guid
 
-        line = [uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType,
-                 uiItemID, sCADPath, sProjectName, sItemName]
+        line = (1,1, uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
         return line
     
-    def getMatCode(studType):
+    def getMatCode(self, studType): # returns material code for size of material (1: 2x4, 2:2x6)
         #NEED TO DETERMINE HOW TO GET STUD MATERIAL CODE
         pass
+
+    def mdInsert(self): # Inserts "mtrldata" list into table "materialData"
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        #send OpData to JobData table
+        sql_JobData_query = '''
+                            INSERT INTO "materialData"
+                            ("byteSize", "numOfStuds", "uiItemLength", "uiItemHeight", "uiItemThickness", "sMtrlCode", "uiOpCode", "sPrinterWrite", "sType", "uiItemID", "sCADPath", "sProjectName", "sItemName")
+                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                            '''
+        #make a list of tuples for querymany
+        jdQueryData = []
+        jdQueryData.append(self.mrtldata)        
+
+        tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        pgDB.close()
+
+
+    
+
+
 
 
 class JobData():
