@@ -1,11 +1,8 @@
 import dataBaseConnect as dbc
-import panelData
 import runData_Helper as rdh
 from Parameters import Parameters
 import panelData
-import pandas as pd
 import json
-    
 
 class RunData:
     refMatTypes = ["OSB", "Dow", "ZIP", "DENSGLAS","SOUNDBOARD","Neopor"]
@@ -20,26 +17,25 @@ class RunData:
         ec2TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
             "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
             "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters"]
+            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application"]
         self.ec2Parm = Parameters(ec2TabNames)
         ec3TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
             "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
             "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters"]
-        self.ec3Parm = Parameters(ec3TabNames)        
+            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application"] 
+        #self.ec3Parm = Parameters(ec3TabNames)        
         
-        layers : list[rdh.BoardData_RBC]
 
         self.rdMain() # Main Call to Programs
         
     def rdMain(self): #Main Call for Run Data. 
-                # Open Database Connection
+        # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_var1= self.panel.guid
         sql_select_query=f"""
-                        SELECT "size", actual_thickness, materialdesc, b1x, b1y, b2y, e1y, e2y
+                        SELECT distinct b1y "size", actual_thickness, materialdesc, b1x, b1y, b2y, e1y, e2y
                         FROM cad2fab.system_elements
                         where panelguid = '{sql_var1}' AND "type" = 'Sheet'
                         order by b1x, e1y;
@@ -50,31 +46,56 @@ class RunData:
 
         # for sheet in results:
         #     self.getMaterials(sheet)
+        self.layers = [0,0.437]
+        sRunData_EC2 = self.rdEC2_Main()
+        
+        pgDB.open()
+        sql_var1= self.panel.guid
+        sql_var2= json.loads(sRunData_EC2)["_stationID"]
+        sql_var3= sRunData_EC2
 
-        #ec2RunData = self.rdEC2_Main()
-        #self.rdEC3_Main()
+        pgDB.open()
+        #send OpData to JobData table
+        sql_JobData_query = '''
+                            INSERT INTO cad2fab."ec2_3RunData"
+                            ("sItemName", "stationID", "rundata")
+                            VALUES(%s,%s,%s);
+                            '''
+        #make a list of tuples for querymany
+        jdQueryData = []
+        jdQueryData.append([sql_var1, sql_var2, sql_var3])        
+
+        tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        pgDB.close()
+
+        sRunData_EC3 = self.rdEC3_Main()
+
+
 
 
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
-        lvl20 = self.ec2Parm.getParm("Programs Settings and Parameters", "Run Level 20 missions (True/False)")
-        lvl30 = self.ec2Parm.getParm("Programs Settings and Parameters", "Run Level 30 missions (True/False)")
-        lvl40 = self.ec2Parm.getParm("Programs Settings and Parameters", "Run Level 40 missions (True/False)")
-
+        lvl20 = self.ec2Parm.getParm("Application", "Run Level 20 missions (True/false)")
+        lvl30 = self.ec2Parm.getParm("Application", "Run Level 30 missions (True/false)")
+        lvl40 = self.ec2Parm.getParm("Application", "Run Level 40 missions (True/false)")
+        layers = rdh.Layers_RBC(11)
         if lvl20: #Applying Sheathing
-            for layer in self.layers:
-                self.getSheets(layer)
+            for layer in self.layers:                
+                layers.addLayer(self.getSheets(layer))
 
         if lvl30: #Fastening
             self.getFastener()
         
         if lvl40: #Milling CutOuts
             self.getRoughOut()
+        
+        # returns a converted layers object to a json string
+        return layers.toJSON()
 
 
     def rdEC3_Main(self): #Main Call to assign what work will be allowed to complete on EC3
-        lvl20 = self.ec3Parm.getParm("Programs Settings and Parameters", "Run Level 20 missions (True/False)")
-        lvl30 = self.ec3Parm.getParm("Programs Settings and Parameters", "Run Level 30 missions (True/False)")
-        lvl40 = self.ec3Parm.getParm("Programs Settings and Parameters", "Run Level 40 missions (True/False)")
+        lvl20 = self.ec3Parm.getParm("Application", "Run Level 20 missions (True/False)")
+        lvl30 = self.ec3Parm.getParm("Application", "Run Level 30 missions (True/False)")
+        lvl40 = self.ec3Parm.getParm("Application", "Run Level 40 missions (True/False)")
 
         if lvl20:
             self.getSheets(0)
@@ -101,7 +122,7 @@ class RunData:
                         
 
             
-    def getSheets(self, layer): #This fucntion will load the sheets of Material to the 
+    def getSheets(self, layer) -> rdh.Layer_RBC: #This fucntion will load the sheets of Material to the 
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -116,7 +137,7 @@ class RunData:
                         """    
         results = pgDB.query(sqlStatement=sql_select_query) 
         
-        layerData = rdh.Layer_RBC(2)
+        layerData = rdh.Layer_RBC(self.layers.index(layer))
 
         for sheet in results:
             sheet = sheet[0]

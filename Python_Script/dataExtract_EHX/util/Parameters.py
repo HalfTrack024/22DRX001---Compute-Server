@@ -2,7 +2,7 @@ import dataBaseConnect as dbc
 
 
 
-class Parameters: #This class is designed to fetch all parameters from parameter table based on sectionName 
+class Parameters(): #This class is designed to fetch all parameters from parameter table based on sectionName 
 
     _parmList = []
 
@@ -50,12 +50,9 @@ class Parameters: #This class is designed to fetch all parameters from parameter
 
 
 if __name__ == "__main__":
-    tabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
-            "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
-            "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters"]
+    tabNames = ["Application"]
     
     parms = Parameters(tabNames)
-    val = parms.getParm("Positions", "Stud Stop width")
+    val = parms.getParm("Application", "Run Level 20 missions (True/false)")
     print(type(val))
     print(val)
