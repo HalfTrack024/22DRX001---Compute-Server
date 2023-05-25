@@ -67,7 +67,8 @@ class xmlParse():
 			serial = 1
 		#how to generate the serial number?
 		jobIN = [(serial,self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']),]
-		
+		#Header List
+		self.sCadFilepath = str(self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID'])
 		#Query used for inserting the data
 		sql_insert_query="""
 							INSERT INTO cad2fab.system_jobs(serial,jobid,loaddate)
@@ -88,7 +89,6 @@ class xmlParse():
 			for bundle in level["Bundle"]:
 				#Data to import to the database
 				bundleIN.append((bundle['BundleGuid'],bundle['JobID'],level['Description'],bundle['Label'],bundle['Type']),)
-
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
 		pgDB.open()
 		#Query used for inserting data to the database
@@ -125,7 +125,7 @@ class xmlParse():
 											bundle['Panel']['StudHeight'],bundle['Panel']['WallLength'],
 											bundle['Panel']['Category'],bundle['Panel']['BoardFeet']),)
 							
-							HeaderInfo.append(("Dummy",bundle['Panel']['PanelGuid'],"Dummy",round(float(bundle['Panel']['Height'])*25.4),round(float(bundle['Panel']['WallLength'])*25.4),round(float(bundle['Panel']['Thickness'])*25.4)),)
+							HeaderInfo.append((self.sCadFilepath,bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],round(float(bundle['Panel']['Height'])*25.4),round(float(bundle['Panel']['WallLength'])*25.4),round(float(bundle['Panel']['Thickness'])*25.4),1),)
 						c+=1
 						#reset counter at the end of the strings
 						if c == 29:
@@ -137,7 +137,8 @@ class xmlParse():
 									panel['Height'],panel['Thickness'],panel['StudSpacing'],
 									panel['StudHeight'],panel['WallLength'],panel['Category'],
 									panel['BoardFeet']),)
-					HeaderInfo.append(("Dummy",panel['PanelGuid'],"Dummy",round(float(panel['Height'])*25.4),round(float(panel['WallLength'])*25.4),round(float(panel['Thickness'])*25.4)),)
+					
+					HeaderInfo.append((self.sCadFilepath,panel['BundleGuid'],panel['PanelGuid'],round(float(panel['Height'])*25.4),round(float(panel['WallLength'])*25.4),round(float(panel['Thickness'])*25.4),1),)
 
 		#Insert the panel data to the Database
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
@@ -156,8 +157,8 @@ class xmlParse():
 							"""
 		pgDB.querymany(sql_insert_query, panelIN)
 		sql_insert_query_2="""
-								INSERT INTO cad2fab.system_headers(scadfilepath,sitemname,sordername,uiitemheight,uiitemlength,uiitemthickness)
-								VALUES(%s,%s,%s,%s,%s,%s)
+								INSERT INTO cad2fab.system_headers(scadfilepath,sordername,sitemname,uiitemheight,uiitemlength,uiitemthickness,uiitemid)
+								VALUES(%s,%s,%s,%s,%s,%s,%s)
 								ON CONFLICT (sitemname)
 								DO UPDATE SET uiitemheight = EXCLUDED.uiitemheight, uiitemlength = EXCLUDED.uiitemlength,
 								uiitemthickness = EXCLUDED.uiitemthickness
