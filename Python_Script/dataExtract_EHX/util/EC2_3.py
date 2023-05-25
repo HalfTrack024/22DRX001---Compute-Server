@@ -144,7 +144,7 @@ class RunData:
             pick.info_05 = sheet['actual_thickness']
             pick.info_06 = 1 #TBD got to get panel thickness
             pick.info_11 = 0 #TBD determine board type number
-            pick.info_12 = getStack(pick.info_11)
+            pick.info_12 = material.getMaterial()
 
             # Board Place
             place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
@@ -160,7 +160,7 @@ class RunData:
             # Fastening
 
             boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
-            boardData.addFastener
+            
             sql_var1= self.panel.guid
             sql_var2 = layer
             sql_select_query=f"""
@@ -169,13 +169,18 @@ class RunData:
                             where panelguid = '{sql_var1}' AND "type" = 'Sheet' and b1y = {sql_var2}
                             order by b1x;
                             """    
-            results = pgDB.query(sqlStatement=sql_select_query)           
+            results = pgDB.query(sqlStatement=sql_select_query)    
+
+            for element in results:
+                self.getboardFastener(element)
+
             layerData.addBoard(boardData)
 
         return layerData     
 
 
-    def setboardFastener(self) -> list[rdh.missionData_RBC]:
+    def getboardFastener(self, element) -> list[rdh.missionData_RBC]:
+        
         pass
 
 
