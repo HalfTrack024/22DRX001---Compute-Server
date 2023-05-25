@@ -59,7 +59,7 @@ class xmlParse():
 	def insertJob(self):
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
 		pgDB.open()
-		sql_serial_query = 'SELECT serial FROM jobs ORDER BY serial DESC'
+		sql_serial_query = 'SELECT serial FROM cad2fab.system_jobs ORDER BY serial DESC'
 		serial = pgDB.query(sql_serial_query)
 		if len(serial) != 0:
 			serial = int(serial[0][0]) + 1
@@ -70,7 +70,7 @@ class xmlParse():
 		
 		#Query used for inserting the data
 		sql_insert_query="""
-							INSERT INTO jobs(serial,jobid,loaddate)
+							INSERT INTO cad2fab.system_jobs(serial,jobid,loaddate)
 							VALUES (%s,%s,NOW())
 							ON CONFLICT (serial,jobid)
 							DO UPDATE SET loaddate = NOW();
@@ -93,7 +93,7 @@ class xmlParse():
 		pgDB.open()
 		#Query used for inserting data to the database
 		sql_insert_query="""
-							INSERT INTO bundle(bundleguid,jobid,level_description,label,type)
+							INSERT INTO cad2fab.system_bundles(bundleguid,jobid,level_description,label,type)
 							VALUES (%s,%s,%s,%s,%s)
 							ON CONFLICT (bundleguid)
 							DO UPDATE SET jobid = EXCLUDED.jobid, level_description = EXCLUDED.level_description,
@@ -107,6 +107,7 @@ class xmlParse():
 		c = 0
 		#List column data for panels table
 		panelIN = []
+		HeaderInfo = []
 		#Loop through all the levels in the job
 		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
 			#Loop through all the bundles in the level
@@ -123,6 +124,8 @@ class xmlParse():
 											bundle['Panel']['Thickness'],bundle['Panel']['StudSpacing'],
 											bundle['Panel']['StudHeight'],bundle['Panel']['WallLength'],
 											bundle['Panel']['Category'],bundle['Panel']['BoardFeet']),)
+							
+							HeaderInfo.append(("Dummy",bundle['Panel']['PanelGuid'],"Dummy",round(float(bundle['Panel']['Height'])*25.4),round(float(bundle['Panel']['WallLength'])*25.4),round(float(bundle['Panel']['Thickness'])*25.4)),)
 						c+=1
 						#reset counter at the end of the strings
 						if c == 29:
@@ -134,12 +137,14 @@ class xmlParse():
 									panel['Height'],panel['Thickness'],panel['StudSpacing'],
 									panel['StudHeight'],panel['WallLength'],panel['Category'],
 									panel['BoardFeet']),)
+					HeaderInfo.append(("Dummy",panel['PanelGuid'],"Dummy",round(float(panel['Height'])*25.4),round(float(panel['WallLength'])*25.4),round(float(panel['Thickness'])*25.4)),)
+
 		#Insert the panel data to the Database
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
 		pgDB.open()
 		#Query used for writing data to the database
 		sql_insert_query="""
-							INSERT INTO panel(bundleguid, panelguid, label, height, thickness,
+							INSERT INTO cad2fab.system_panels(bundleguid, panelguid, label, height, thickness,
 							studspacing, studheight, walllength, category, boardfeet)
 							VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
 							ON CONFLICT (panelguid)
@@ -150,6 +155,14 @@ class xmlParse():
 							category = EXCLUDED.category, boardfeet = EXCLUDED.boardfeet;
 							"""
 		pgDB.querymany(sql_insert_query, panelIN)
+		sql_insert_query_2="""
+								INSERT INTO cad2fab.system_headers(scadfilepath,sitemname,sordername,uiitemheight,uiitemlength,uiitemthickness)
+								VALUES(%s,%s,%s,%s,%s,%s)
+								ON CONFLICT (sitemname)
+								DO UPDATE SET uiitemheight = EXCLUDED.uiitemheight, uiitemlength = EXCLUDED.uiitemlength,
+								uiitemthickness = EXCLUDED.uiitemthickness
+							"""
+		pgDB.querymany(sql_insert_query_2, HeaderInfo)
 		pgDB.close()
 			
 
@@ -318,7 +331,7 @@ class xmlParse():
 		pgDB.open()
 		#Query used for writing data to the database
 		sql_insert_query="""
-							INSERT INTO elements(panelguid,elementguid,type,familymember,description,
+							INSERT INTO cad2fab.system_elements(panelguid,elementguid,type,familymember,description,
 												size,actual_thickness,actual_width,materialdesc,b1x,b1y,b2x,
 												b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id)
 							VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
@@ -346,7 +359,7 @@ class xmlParse():
 
 if __name__ == "__main__":
 	#get filepath to XML file from user
-	filepath = "Python_Script/dataExtract_EHX/xmlFiles/221415.xml"
+	filepath = "xmlFiles/221415.xml"
 
 	#init the class
 	xmlParse(filepath)

@@ -2,7 +2,7 @@ import psycopg2 as psy              #Requires Python >=3.6
 import psycopg2.extras as psyE
 
 def getCred():
-    f = open(r'Python_Script\dataExtract_EHX\util\credentials.txt', 'r')
+    f = open(r'util\credentials.txt', 'r')
     credits = f.read().splitlines()
     #Get credentials from the user
     return credits
