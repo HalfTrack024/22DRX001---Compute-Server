@@ -3,9 +3,10 @@ import runData_Helper as rdh
 from Parameters import Parameters
 import panelData
 import json
+from material import Material
 
 class RunData:
-    refMatTypes = ["OSB", "DOW", "ZIP", "DENSGLAS","SOUNDBOARD","NEOPOR"]
+    
     fastenTypes : list[str]
     materialTypes : list[str]
     layers : list[float]
@@ -107,21 +108,7 @@ class RunData:
             self.getRoughOut()
 
 
-    def getMaterial(self, sheet):
-        #Board Pick
-        
-        
-        
-        mat : str = sheet[2]
-        for reftype in self.refMatTypes:        
-            if reftype in mat:
-                if self.materialTypes.count > 0:
-                    if not reftype in self.materialTypes:
-                        self.materialTypes.append(reftype)
-                    if not float(sheet[4]) in self.layers:
-                        self.layers.append(float(sheet[1]))
-                else:
-                    self.materialTypes.append(reftype)
+
                         
 
             
@@ -143,8 +130,10 @@ class RunData:
         layerData = rdh.Layer_RBC(self.layers.index(layer))
 
         for sheet in results:
+            #change list to object
             sheet = sheet[0]
-            
+            print(type(sheet))
+            material = Material(sheet)
 
             # Board Pick
             pick = rdh.missionData_RBC(400)
@@ -154,7 +143,7 @@ class RunData:
             pick.info_04 = sheet['e2y']
             pick.info_05 = sheet['actual_thickness']
             pick.info_06 = 1 #TBD got to get panel thickness
-            pick.info_11 = self.getMaterial(sheet['materialdesc'])
+            pick.info_11 = 0 #TBD determine board type number
             pick.info_12 = getStack(pick.info_11)
 
             # Board Place
