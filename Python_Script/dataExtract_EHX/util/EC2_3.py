@@ -5,7 +5,7 @@ import panelData
 import json
 
 class RunData:
-    refMatTypes = ["OSB", "Dow", "ZIP", "DENSGLAS","SOUNDBOARD","Neopor"]
+    refMatTypes = ["OSB", "DOW", "ZIP", "DENSGLAS","SOUNDBOARD","NEOPOR"]
     fastenTypes : list[str]
     materialTypes : list[str]
     layers : list[float]
@@ -109,6 +109,9 @@ class RunData:
 
     def getMaterial(self, sheet):
         #Board Pick
+        
+        
+        
         mat : str = sheet[2]
         for reftype in self.refMatTypes:        
             if reftype in mat:
@@ -183,7 +186,8 @@ class RunData:
         return layerData     
 
 
-
+    def setboardFastener(self) -> rdh.missionData_RBC:
+        pass
 
 
     def getFastener(self):
