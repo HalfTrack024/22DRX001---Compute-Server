@@ -18,13 +18,13 @@ class RunData:
         ec2TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
             "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
             "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application"]
+            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application", "Material"]
         self.ec2Parm = Parameters(ec2TabNames)
         ec3TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
             "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
             "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application"] 
-        #self.ec3Parm = Parameters(ec3TabNames)        
+            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application", "Material"] 
+        #self.ec3Parm = Parameters(ec3TabNames)
         
 
         self.rdMain() # Main Call to Programs
@@ -133,7 +133,7 @@ class RunData:
             #change list to object
             sheet = sheet[0]
             print(type(sheet))
-            material = Material(sheet)
+            material = Material(sheet, self.ec2Parm)
 
             # Board Pick
             pick = rdh.missionData_RBC(400)
@@ -147,7 +147,7 @@ class RunData:
             pick.info_12 = getStack(pick.info_11)
 
             # Board Place
-            place = rdh.missionData_RBC(401) #self.fastenTypes
+            place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
             place.info_01 = sheet['e1x'] # e1x
             place.info_02 = sheet['e1y'] # e1y
             place.info_03 = 0
@@ -160,7 +160,7 @@ class RunData:
             # Fastening
 
             boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
-
+            boardData.addFastener
             sql_var1= self.panel.guid
             sql_var2 = layer
             sql_select_query=f"""
@@ -175,7 +175,7 @@ class RunData:
         return layerData     
 
 
-    def setboardFastener(self) -> rdh.missionData_RBC:
+    def setboardFastener(self) -> list[rdh.missionData_RBC]:
         pass
 
 
