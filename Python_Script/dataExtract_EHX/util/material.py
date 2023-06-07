@@ -94,5 +94,5 @@ class Material:
         return self.material
     
     def getPlaceType(self) -> int:
-        re
+        return self.placeNum
         
