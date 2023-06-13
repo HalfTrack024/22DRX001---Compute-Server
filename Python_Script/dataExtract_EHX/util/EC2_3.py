@@ -2,6 +2,7 @@ import dataBaseConnect as dbc
 import runData_Helper as rdh
 from Parameters import Parameters
 import panelData
+import machineData
 import json
 from material import Material
 
@@ -11,20 +12,14 @@ class RunData:
     materialTypes : list[str]
     layers : list[float]
 
-
-    def __init__(self, panel : panelData.Panel):
+    def __init__(self, panel : panelData.Panel, machine : machineData.Line):
         self.panel = panel
-
-        ec2TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
-            "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
-            "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application", "Material"]
-        self.ec2Parm = Parameters(ec2TabNames)
-        ec3TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
-            "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
-            "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application", "Material"] 
-        #self.ec3Parm = Parameters(ec3TabNames)
+        self.machine = machine
+        # This is used to evaluate if the layer count stored matches the panel. 
+        # If Not re-run load balancing prediction 
+        if self.machine.predictlayercount != self.panel.getLayerCount():
+            self.machine.changePrediction(self.panel.getLayerCount())
+        
         
 
         self.rdMain() # Main Call to Programs
@@ -33,21 +28,9 @@ class RunData:
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
-        pgDB.open()
-        sql_var1= self.panel.guid
-        sql_select_query=f"""
-                        SELECT distinct b1y "size", actual_thickness, materialdesc, b1x, b1y, b2y, e1y, e2y
-                        FROM cad2fab.system_elements
-                        where panelguid = '{sql_var1}' AND "type" = 'Sheet'
-                        order by b1x, e1y;
-                        """        
-        #
-        results = pgDB.query(sqlStatement=sql_select_query) 
-        pgDB.close()
 
-        # for sheet in results:
-        #     self.getMaterials(sheet)
         self.layers = [0,0.437]
+
         sRunData_EC2 = self.rdEC2_Main()
         
         pgDB.open()
@@ -75,18 +58,16 @@ class RunData:
 
 
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
-        lvl20 = self.ec2Parm.getParm("Application", "Run Level 20 missions (True/false)")
-        lvl30 = self.ec2Parm.getParm("Application", "Run Level 30 missions (True/false)")
-        lvl40 = self.ec2Parm.getParm("Application", "Run Level 40 missions (True/false)")
+        loadbalance = self.machine.getPrediction()
         layers = rdh.Layers_RBC(11)
-        if lvl20: #Applying Sheathing
+        if self.runlvl.get('ec2_20'): #Applying Sheathing
             for layer in self.layers:                
                 layers.addLayer(self.getSheets(layer))
 
-        if lvl30: #Fastening
+        if self.runlvl.get('ec2_30'): #Fastening
             self.getFastener()
         
-        if lvl40: #Milling CutOuts
+        if self.runlvl.get('ec2_40'): #Milling CutOuts
             self.getRoughOut()
         
         # returns a converted layers object to a json string
@@ -94,17 +75,14 @@ class RunData:
 
 
     def rdEC3_Main(self): #Main Call to assign what work will be allowed to complete on EC3
-        lvl20 = self.ec3Parm.getParm("Application", "Run Level 20 missions (True/False)")
-        lvl30 = self.ec3Parm.getParm("Application", "Run Level 30 missions (True/False)")
-        lvl40 = self.ec3Parm.getParm("Application", "Run Level 40 missions (True/False)")
 
-        if lvl20:
+        if self.runlvl['ec3_20']:
             self.getSheets(0)
 
-        if lvl30:
+        if self.runlvl['ec3_30']:
             self.getFastener()
         
-        if lvl40:
+        if self.runlvl['ec3_40']:
             self.getRoughOut()
 
 
@@ -131,20 +109,21 @@ class RunData:
 
         for sheet in results:
             #change list to object
-            sheet = sheet[0]
+            sheet : dict = sheet[0]
             print(type(sheet))
             material = Material(sheet, self.ec2Parm)
 
             # Board Pick
             pick = rdh.missionData_RBC(400)
-            pick.info_01 = sheet['e1x'] # e1x
-            pick.info_02 = sheet['e1y'] # e1y
+            pick.info_01 = sheet.get('e1x') # e1x
+            pick.info_02 = sheet.get('e1y') # e1y
             pick.info_03 = sheet['actual_width']
             pick.info_04 = sheet['e2y']
             pick.info_05 = sheet['actual_thickness']
             pick.info_06 = 1 #TBD got to get panel thickness
             pick.info_11 = 0 #TBD determine board type number
             pick.info_12 = material.getMaterial()
+            
 
             # Board Place
             place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
@@ -158,29 +137,16 @@ class RunData:
             place.info_12 = 0
 
             # Fastening
-
+            # Pick and Place Locations are added to the list
             boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
-            
-            sql_var1= self.panel.guid
-            sql_var2 = layer
-            sql_select_query=f"""
-                            SELECT to_jsonb(panel)
-                            from cad2fab.system_elements panel
-                            where panelguid = '{sql_var1}' AND "type" = 'Sheet' and b1y = {sql_var2}
-                            order by b1x;
-                            """    
-            results = pgDB.query(sqlStatement=sql_select_query)    
-
-            for element in results:
-                self.getboardFastener(element)
+            #Now we have to add the missions for temp fastening that board
 
             layerData.addBoard(boardData)
 
         return layerData     
 
 
-    def getboardFastener(self, element) -> list[rdh.missionData_RBC]:
-        
+    def getboardFastener(self, element) -> list[rdh.missionData_RBC]:        
         pass
 
 
@@ -190,9 +156,8 @@ class RunData:
     def getRoughOut(self):
         pass         
 
-        
-def getStack(matType):
-    pass
+
+
 
 
 
@@ -200,5 +165,8 @@ def getStack(matType):
 if __name__ == "__main__":
     panel = panelData.Panel("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
     sheeting = RunData(panel)
+
+
+    
     sheeting.getSheets(0)
 
