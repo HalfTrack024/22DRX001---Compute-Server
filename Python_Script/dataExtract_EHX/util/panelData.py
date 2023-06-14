@@ -52,7 +52,7 @@ class Panel:
         pass
     
     def getLayerCount(self):
-        return self._layerPos.count()
+        return len(self._layerPos)
     
     def getLayerMaterial(self, index):
         return self._layerMat[index]

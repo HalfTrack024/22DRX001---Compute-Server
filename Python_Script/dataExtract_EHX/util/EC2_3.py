@@ -1,8 +1,7 @@
 import dataBaseConnect as dbc
 import runData_Helper as rdh
 from Parameters import Parameters
-import panelData
-import machineData
+import panelData, machineData
 import json
 from material import Material
 
@@ -58,11 +57,26 @@ class RunData:
 
 
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
+        #Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
         loadbalance = self.machine.getPrediction()
         layers = rdh.Layers_RBC(11)
-        if self.runlvl.get('ec2_20'): #Applying Sheathing
-            for layer in self.layers:                
-                layers.addLayer(self.getSheets(layer))
+        
+
+
+        #Determine how much material is being placed with EC2
+        match loadbalance.get('oEC2_Place'):
+            case 100:
+                #Condition if only one layer is being applied by EC2           
+                layers.addLayer(self.getSheets(self.panel.getLayerPosition(0), 2))
+            case 200:
+                layers.addLayer(self.getSheets(self.panel.getLayerPosition(0), 2))
+                layers.addLayer(self.getSheets(self.panel.getLayerPosition(1)), 2)
+            case 123:
+                for i in range(self.panel.getLayerCount()):
+                     layers.addLayer(self.getSheets(self.panel.getLayerPosition(i)))
+            case default:
+                print('no material is placed with EC2')
+
 
         if self.runlvl.get('ec2_30'): #Fastening
             self.getFastener()
@@ -90,7 +104,7 @@ class RunData:
                         
 
             
-    def getSheets(self, layer) -> rdh.Layer_RBC: #This fucntion will load the sheets of Material to the 
+    def getSheets(self, layer, station) -> rdh.Layer_RBC: #This fucntion will load the sheets of Material to the 
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -105,21 +119,20 @@ class RunData:
                         """    
         results = pgDB.query(sqlStatement=sql_select_query) 
         
-        layerData = rdh.Layer_RBC(self.layers.index(layer))
+        layerData = rdh.Layer_RBC(layer)
 
         for sheet in results:
             #change list to object
             sheet : dict = sheet[0]
-            print(type(sheet))
-            material = Material(sheet, self.ec2Parm)
+            material = Material(sheet, self.machine.getSystemParms(station))
 
             # Board Pick
             pick = rdh.missionData_RBC(400)
             pick.info_01 = sheet.get('e1x') # e1x
             pick.info_02 = sheet.get('e1y') # e1y
-            pick.info_03 = sheet['actual_width']
-            pick.info_04 = sheet['e2y']
-            pick.info_05 = sheet['actual_thickness']
+            pick.info_03 = sheet.get('actual_width')
+            pick.info_04 = sheet.get('e2y')
+            pick.info_05 = sheet.get('actual_thickness')
             pick.info_06 = 1 #TBD got to get panel thickness
             pick.info_11 = 0 #TBD determine board type number
             pick.info_12 = material.getMaterial()
@@ -127,8 +140,8 @@ class RunData:
 
             # Board Place
             place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
-            place.info_01 = sheet['e1x'] # e1x
-            place.info_02 = sheet['e1y'] # e1y
+            place.info_01 = sheet.get('e1x') # e1x
+            place.info_02 = sheet.get('e1y') # e1y
             place.info_03 = 0
             place.info_04 = 0
             place.info_05 = 0 #sheet['actual_thickness']
@@ -164,7 +177,8 @@ class RunData:
 
 if __name__ == "__main__":
     panel = panelData.Panel("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
-    sheeting = RunData(panel)
+    machine = machineData.Line()
+    sheeting = RunData(panel, machine)
 
 
     

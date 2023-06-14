@@ -33,13 +33,13 @@ class Material:
                 self.material = reftype
                 break
         #Searches the parameters to determine what fastener should be used with the specified material
-        matParmsIndex = parms._tabNames.index('Material')
-        for matType in parms._parmList[matParmsIndex]:
+        matParms = parms._parmList.get('Material')
+        for matType in matParms:
             if self.material in matType:
                 if str(self._length) in matType:
                     if str(self._width) in matType:
                         if self.getThickFraction() in matType:
-                            self.fastener = parms._parmList[matParmsIndex][matType]['value']
+                            self.fastener = matParms.get(matType)['value']
                             self.placeNum = self.refFastener[self.fastener][1]
                             self.fastenNum = self.refFastener[self.fastener][0]                            
                             break

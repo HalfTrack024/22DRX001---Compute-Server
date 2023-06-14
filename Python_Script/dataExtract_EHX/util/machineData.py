@@ -34,12 +34,12 @@ class Line(EC1, EC2, EC3):
     
 
     def __init__(self) -> None:
-        ec1 = EC1()
-        ec2 = EC2()
-        ec3 = EC3()
+        self.ec1 = EC1()
+        self.ec2 = EC2()
+        self.ec3 = EC3()
         self.determine = []
-        self.determine.extend(ec2.runlvl.values())
-        self.determine.extend(ec3.runlvl.values())
+        self.determine.extend(self.ec2.runlvl.values())
+        self.determine.extend(self.ec3.runlvl.values())
         
         self.predictlayercount = 1
 
@@ -54,6 +54,16 @@ class Line(EC1, EC2, EC3):
         self.determine[6] = layercount
 
         self.predict = dt.processBuilder(self.determine)
+
+    def getSystemParms(self, systemIndex):
+        """EC1: 1, EC2:2, EC3:3"""
+        match systemIndex:
+            case 1:
+                return 0
+            case 2: 
+                return self.ec2.parmData
+            case 3:
+                return self.ec3.parmData
 
 
     
