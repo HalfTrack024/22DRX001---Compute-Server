@@ -4,6 +4,8 @@ from Parameters import Parameters
 import panelData, machineData
 import json
 from material import Material
+import logging
+from datetime import datetime
 
 class RunData:
     
@@ -73,13 +75,22 @@ class RunData:
                      layers.addLayer(self.getSheets(self.panel.getLayerPosition(i)))
             case default:
                 print('no material is placed with EC2')
+        #Determine how if material is being fastened 
+        match loadbalance.get('oEC2_Fasten'):
+            case 100:
+                pass
+            case 200:
+                pass
+            case 123:
+                pass
 
-
-        if self.runlvl.get('ec2_30'): #Fastening
-            self.getFastener()
-        
-        if self.runlvl.get('ec2_40'): #Milling CutOuts
-            self.getRoughOut()
+        match loadbalance.get('oEC2_Routing'):
+            case 100:
+                pass
+            case 200:
+                pass
+            case 123:
+                pass            
         
         # returns a converted layers object to a json string
         return layers.toJSON()
@@ -147,9 +158,9 @@ class RunData:
             place.info_12 = 0
 
             # Fastening
-            self.getboardFastener(pick, material, station)
+            fasteners = self.getboardFastener(pick, material, station)
             # Pick and Place Locations are added to the list
-            boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
+            boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place, boardfasten = fasteners )
             #Now we have to add the missions for temp fastening that board
 
             layerData.addBoard(boardData)
@@ -167,8 +178,8 @@ class RunData:
         sql_wEnd = board.info_01 + board.info_03 #Trailing Edge of the Board (Width)
         #Get parameters to determine min and max window to temp fasten material
         if station == 2: 
-            sql_vMin = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Min Vertical') 
-            sql_vMax = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Max Vertical')
+            sql_vMin = machine.ec2.parmData.getParm('ZL Core', 'Y Min Vertical') 
+            sql_vMax = machine.ec2.parmData.getParm('ZL Core', 'Y Max Vertical')
         elif station == 3: 
             sql_vMin = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Min Vertical')
             sql_vMax = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Max Vertical')    
@@ -180,30 +191,50 @@ class RunData:
                                 panelguid = '{sql_var1}' 
                                 and description not in ('Nog', 'Sheathing') 
                                 and e1y < '{sql_vMax}'/25.4 and e2y > '{sql_vMin}'/25.4
-                                and e1x >= '{sql_wStart}' and e1x < '{sql_wEnd}'
+                                and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
                             """    
         results = pgDB.query(sqlStatement=sql_select_query) 
         pgDB.close()
         # Process Results
-        result : dict
         fastenlst = []
         for result  in results:
+            result : dict = result[0]
+            fasten = rdh.missionData_RBC
+            fasten.missionID = iMaterial.getFastenType()
+            #Vertical vs Horizantal Vertial dimension is less than 6inch
+            #Vertical
+            if  result.get('e2y') - result.get('e1y') < 6*25.4:
+                fasten.info_01 = (result.get('e1x') + 0.75) * 25.4 #X Start Position
+                fasten.info_03 = (result.get('e1x') + 0.75) * 25.4 #X End Position
+                if result.get('e1y') < sql_vMin:
+                    fasten.info_02 = sql_vMin * 25.4 #Y Start Position
+                else:
+                    fasten.info_02 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                if result.get('e2y') > sql_vMax:
+                    fasten.info_04 = sql_vMax * 25.4 #Y End Position
+                else:
+                    fasten.info_04 = (result.get('e2y') - 0.75) * 25.4 #Y End Position
+            # Horizantal
+            elif result.get('e4x') - result.get('e1x') < 6*25.4:
+                fasten.info_02 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                fasten.info_04 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                if result.get('e1x') < sql_wStart:
+                    fasten.info_01 = sql_wStart * 25.4
+                else:
+                    fasten.info_01 = result.get('e1x')
+                if result.get('e4x') < sql_wEnd:
+                    fasten.info_01 = sql_wEnd * 25.4
+                else:
+                    fasten.info_01 = (result.get('e4x') - 0.75) * 25.4
+            else:
+                logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
 
-            #Vertical vs Horizantal
-            if result.get('ey1') == result.get('ey2'):
-                fasten = rdh.missionData_RBC
-                fasten.missionID = iMaterial.getFastenType()
-                if result.get('ey1') < sql_vMin:
-                    fasten.info_02 = sql_vMin 
-                else:
-                    fasten.info_02 = result.get('ey1') + 0.75
+
+            fastenlst.append(fasten)
+
+        return fastenlst
+
                 
-                if result.get('ey2') > sql_vMax:
-                    fasten.info_04 = sql_vMax
-                else:
-                    fasten.info_04 = result.get('ey2') - 0.75
-            elif
-            
 
 
 
@@ -222,6 +253,12 @@ class RunData:
 
 
 if __name__ == "__main__":
+    today = datetime.now()
+    loggfile = 'app_' + str(today) + '.log'
+    print(today)
+
+    logging.basicConfig(filename='app.log', level=logging.INFO)
+    logging.info('Started')
     panel = panelData.Panel("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
     machine = machineData.Line()
     sheeting = RunData(panel, machine)
