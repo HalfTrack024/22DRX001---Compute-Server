@@ -1,7 +1,14 @@
 import sys
+from datetime import datetime
 from util import dataBaseConnect as dbc
 from util import panelData as pd
 from util import EC1
+import logging
+
+today = datetime.now
+loggfile = 'app_' + str(today) + '.log'
+logging.basicConfig(filename=loggfile)
+logging.info('Started')
 
 #testing jobID: 221415WALLS
 print(sys.argv[1])
@@ -35,3 +42,4 @@ for panelGuid in results:
     ## Robot Cell 2
 
 
+logging.info('finished')

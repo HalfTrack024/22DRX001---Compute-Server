@@ -40,15 +40,15 @@ class BoardData_RBC():
     boardPlace : missionData_RBC 
     _fastening : list[missionData_RBC]  = []
     
-    def __init__(self, boardpick : missionData_RBC, boardplace : missionData_RBC):
+    def __init__(self, boardpick : missionData_RBC, boardplace : missionData_RBC, boardfasten : list):
         self.boardPick = boardpick
         self.boardPlace = boardplace
-
-    def addFastener(self, fasteners : missionData_RBC):
-        self._fastening.append(fasteners)
+        self._fastening = boardfasten
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__)
+    
+
 
 class Layer_RBC:
     _layerID : int = 0
