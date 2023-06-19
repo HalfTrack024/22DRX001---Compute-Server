@@ -95,4 +95,7 @@ class Material:
     
     def getPlaceType(self) -> int:
         return self.placeNum
+    
+    def getFastenType(self) -> int:
+        return self.fastenNum
         

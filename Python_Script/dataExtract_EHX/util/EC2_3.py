@@ -17,8 +17,7 @@ class RunData:
         # This is used to evaluate if the layer count stored matches the panel. 
         # If Not re-run load balancing prediction 
         if self.machine.predictlayercount != self.panel.getLayerCount():
-            self.machine.changePrediction(self.panel.getLayerCount())
-        
+            self.machine.changePrediction(self.panel.getLayerCount())        
         
 
         self.rdMain() # Main Call to Programs
@@ -52,8 +51,6 @@ class RunData:
         pgDB.close()
 
         sRunData_EC3 = self.rdEC3_Main()
-
-
 
 
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
@@ -118,7 +115,7 @@ class RunData:
                         order by b1x;
                         """    
         results = pgDB.query(sqlStatement=sql_select_query) 
-        
+        pgDB.close()
         layerData = rdh.Layer_RBC(layer)
 
         for sheet in results:
@@ -150,6 +147,7 @@ class RunData:
             place.info_12 = 0
 
             # Fastening
+            self.getboardFastener(pick, material, station)
             # Pick and Place Locations are added to the list
             boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
             #Now we have to add the missions for temp fastening that board
@@ -159,8 +157,56 @@ class RunData:
         return layerData     
 
 
-    def getboardFastener(self, element) -> list[rdh.missionData_RBC]:        
-        pass
+    def getboardFastener(self, board : rdh.missionData_RBC, iMaterial : Material, station) -> list[rdh.missionData_RBC]:        
+        # Open Database Connection
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var1= self.panel.guid #Panel ID        
+        sql_wStart =  board.info_01 #Leading Edge of the Board (Width)        
+        sql_wEnd = board.info_01 + board.info_03 #Trailing Edge of the Board (Width)
+        #Get parameters to determine min and max window to temp fasten material
+        if station == 2: 
+            sql_vMin = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Min Vertical') 
+            sql_vMax = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Max Vertical')
+        elif station == 3: 
+            sql_vMin = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Min Vertical')
+            sql_vMax = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Max Vertical')    
+        
+        sql_select_query=f"""
+                            select to_jsonb(se) 
+                            from cad2fab.system_elements se
+                            where 
+                                panelguid = '{sql_var1}' 
+                                and description not in ('Nog', 'Sheathing') 
+                                and e1y < '{sql_vMax}'/25.4 and e2y > '{sql_vMin}'/25.4
+                                and e1x >= '{sql_wStart}' and e1x < '{sql_wEnd}'
+                            """    
+        results = pgDB.query(sqlStatement=sql_select_query) 
+        pgDB.close()
+        # Process Results
+        result : dict
+        fastenlst = []
+        for result  in results:
+
+            #Vertical vs Horizantal
+            if result.get('ey1') == result.get('ey2'):
+                fasten = rdh.missionData_RBC
+                fasten.missionID = iMaterial.getFastenType()
+                if result.get('ey1') < sql_vMin:
+                    fasten.info_02 = sql_vMin 
+                else:
+                    fasten.info_02 = result.get('ey1') + 0.75
+                
+                if result.get('ey2') > sql_vMax:
+                    fasten.info_04 = sql_vMax
+                else:
+                    fasten.info_04 = result.get('ey2') - 0.75
+            elif
+            
+
+
+
 
 
     def getFastener(self):
