@@ -44,9 +44,11 @@ class Panel:
         pgDB.close()
         self._layerPos = []
         self._layerMat = []
+        self._LayerFastener = []
         for layer in results:
             self._layerPos.append(layer[0])
             self._layerMat.append(layer[1])
+            self._LayerFastener.append(0)
 
     def getPanel(self, panelGUID):
         pass
@@ -59,6 +61,15 @@ class Panel:
     
     def getLayerPosition(self, index):
         return self._layerPos[index]
+    
+    def getLayerIndex(self, pos):
+        return self._layerPos.index(pos)
+    
+    def updateLayerFastener(self, index, typeval):
+        self._LayerFastener[index] = typeval
+    
+    def getLayerFastener(self, index):
+        return self._LayerFastener[index]
     
 if __name__ == "__main__":
     #get panel details dimensions

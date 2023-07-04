@@ -10,14 +10,14 @@ class GenPreview():
 		pgDB = dbc.DB_Connect(self.credentials)
 		pgDB.open()
 		#select the panelguids and bundleids from the database
-		sql_select_query = 'SELECT * FROM panel'
+		sql_select_query = 'SELECT * FROM cad2fab.system_panels'
 		self.panelData = []
 		result = pgDB.query(sql_select_query)
 		for row in result:
 			self.panelData.append([row[1], row[0]])
 		#select the panelguid, elementguid, type, and elevation points from the elements table
 		self.elementData = []
-		sql_select_query = 'SELECT * FROM elements'
+		sql_select_query = 'SELECT * FROM cad2fab.system_elements'
 		result2 = pgDB.query(sql_select_query)
 		for row in result2:
 			self.elementData.append([row[0],row[1],row[2],row[17],row[18],row[19],
@@ -31,7 +31,7 @@ class GenPreview():
 			#get the jobID of the current panel
 			pgDB = dbc.DB_Connect(self.credentials)
 			pgDB.open()
-			sql_jobid_query = f"SELECT jobid FROM bundle WHERE bundleguid = '{row[1]}'"
+			sql_jobid_query = f"SELECT jobid FROM cad2fab.system_bundles WHERE bundleguid = '{row[1]}'"
 			jobid = pgDB.query(sql_jobid_query)
 			pgDB.close()
 			
