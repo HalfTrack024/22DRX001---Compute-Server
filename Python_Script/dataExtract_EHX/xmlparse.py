@@ -85,7 +85,6 @@ class xmlParse():
 		#Loop through all levels in the job
 		jobdata = xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
 		leveldata = jobdata["Level"]
-		print(type(leveldata))
 		if type(leveldata) == dict:
 			data = []
 			data.append(leveldata)
@@ -119,7 +118,6 @@ class xmlParse():
 		#Loop through all the levels in the job
 		jobdata = xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
 		leveldata = jobdata["Level"]
-		print(type(leveldata))
 		if type(leveldata) == dict:
 			data = []
 			data.append(leveldata)
@@ -190,7 +188,6 @@ class xmlParse():
 		#loop through all the levels in the job
 		jobdata = xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
 		leveldata = jobdata["Level"]
-		print(type(leveldata))
 		if type(leveldata) == dict:
 			data = []
 			data.append(leveldata)
