@@ -84,7 +84,14 @@ class xmlParse():
 		#List to insert to bundles table
 		bundleIN = []
 		#Loop through all levels in the job
-		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
+		jobdata = xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
+		leveldata = jobdata["Level"]
+		if type(leveldata) == dict:
+			data = []
+			data.append(leveldata)
+		else:
+			data = leveldata
+		for level in data:
 			#Loop through all bundles in the level
 			for bundle in level["Bundle"]:
 				#Data to import to the database
@@ -109,7 +116,14 @@ class xmlParse():
 		panelIN = []
 		HeaderInfo = []
 		#Loop through all the levels in the job
-		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
+		jobdata = xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
+		leveldata = jobdata["Level"]
+		if type(leveldata) == dict:
+			data = []
+			data.append(leveldata)
+		else:
+			data = leveldata
+		for level in data:
 			#Loop through all the bundles in the level
 			for bundle in level["Bundle"]:
 				#Loop through all the panels in the bundle
@@ -173,7 +187,14 @@ class xmlParse():
 		#List of data for elements table
 		self.elementIN = []
 		#loop through all the levels in the job
-		for level in xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]["Level"]:
+		jobdata = xmlParse.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
+		leveldata = jobdata["Level"]
+		if type(leveldata) == dict:
+			data = []
+			data.append(leveldata)
+		else:
+			data = leveldata
+		for level in data:
 			#loop through all the bundles in the level
 			for bundle in level["Bundle"]:
 				#loop through all the panels in the bundle
@@ -360,7 +381,7 @@ class xmlParse():
 
 if __name__ == "__main__":
 	#get filepath to XML file from user
-	filepath = "xmlFiles/221415.xml"
+	filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
 
 	#init the class
 	xmlParse(filepath)

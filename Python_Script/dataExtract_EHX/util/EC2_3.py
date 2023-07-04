@@ -1,29 +1,27 @@
+import json
+import logging
+from datetime import datetime
+import numpy as np
+import panelData, machineData
 import dataBaseConnect as dbc
 import runData_Helper as rdh
-from Parameters import Parameters
-import panelData
-import json
+#from Parameters import Parameters
+from material import Material
+
 
 class RunData:
-    refMatTypes = ["OSB", "DOW", "ZIP", "DENSGLAS","SOUNDBOARD","NEOPOR"]
+    
     fastenTypes : list[str]
     materialTypes : list[str]
     layers : list[float]
 
-
-    def __init__(self, panel : panelData.Panel):
+    def __init__(self, panel : panelData.Panel, machine : machineData.Line):
         self.panel = panel
-
-        ec2TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
-            "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
-            "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application"]
-        self.ec2Parm = Parameters(ec2TabNames)
-        ec3TabNames = ["Stud Inverter speeds","Nail Tool MS","Axis LBH","Axis HSP","Computer Settings",
-            "Joint Rules","Studfeeder","Axis Width","Axis GUM","Axis GUF","Axis NPM","Positions",
-            "Nail Tool FS","Stud stack positions","Axis NPF","Axis WAN","Axis SPR",
-            "Program Settings And Parameters","Device Offsets","Program Settings and Parameters", "Application"] 
-        #self.ec3Parm = Parameters(ec3TabNames)        
+        self.machine = machine
+        # This is used to evaluate if the layer count stored matches the panel. 
+        # If Not re-run load balancing prediction 
+        if self.machine.predictlayercount != self.panel.getLayerCount():
+            self.machine.changePrediction(self.panel.getLayerCount())        
         
 
         self.rdMain() # Main Call to Programs
@@ -32,21 +30,9 @@ class RunData:
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
-        pgDB.open()
-        sql_var1= self.panel.guid
-        sql_select_query=f"""
-                        SELECT distinct b1y "size", actual_thickness, materialdesc, b1x, b1y, b2y, e1y, e2y
-                        FROM cad2fab.system_elements
-                        where panelguid = '{sql_var1}' AND "type" = 'Sheet'
-                        order by b1x, e1y;
-                        """        
-        #
-        results = pgDB.query(sqlStatement=sql_select_query) 
-        pgDB.close()
 
-        # for sheet in results:
-        #     self.getMaterials(sheet)
         self.layers = [0,0.437]
+
         sRunData_EC2 = self.rdEC2_Main()
         
         pgDB.open()
@@ -71,61 +57,83 @@ class RunData:
         sRunData_EC3 = self.rdEC3_Main()
 
 
-
-
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
-        lvl20 = self.ec2Parm.getParm("Application", "Run Level 20 missions (True/false)")
-        lvl30 = self.ec2Parm.getParm("Application", "Run Level 30 missions (True/false)")
-        lvl40 = self.ec2Parm.getParm("Application", "Run Level 40 missions (True/false)")
-        layers = rdh.Layers_RBC(11)
-        if lvl20: #Applying Sheathing
-            for layer in self.layers:                
-                layers.addLayer(self.getSheets(layer))
+        #Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
+        loadbalance = self.machine.getPrediction()
+        layers = rdh.Layers_RBC(11)        
 
-        if lvl30: #Fastening
-            self.getFastener()
+        #Determine how much material is being placed with EC2
+        missionPlace = [None, None, None, None, None]  
+        match loadbalance.get('oEC2_Place'):
+            case 100:
+                #Condition if only one layer is being applied by EC2  
+                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+            case 200:
+                #Layer 1 
+                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                #Layer 2
+                missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 2)
+            case 123:
+                for i in range(self.panel.getLayerCount()):
+                    missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i))
+                   
+            case default:
+                logging.info('no material is placed with EC2')
+
+
+        #Determine if EC2 is fastening material that was loaded 
+        missionFasten = [None, None, None, None, None] 
+        match loadbalance.get('oEC2_Fasten'):
+            case 100:
+                pass
+                missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 2)
+            case 200:
+                missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 2)
+                missionFasten[1] = self.getFastener(self.panel.getLayerPosition(1), 2)              
+            case 123:
+                pass
+            case default:
+                logging.info('no material is fastened with EC2')
+
         
-        if lvl40: #Milling CutOuts
-            self.getRoughOut()
+        #Determine if EC2 is Routing any material
+        missionRoute = [None, None, None, None, None] 
+        match loadbalance.get('oEC2_Routing'):
+            case 100:
+                pass
+            case 200:
+                pass
+            case 123:
+                pass   
+            case default:
+                logging.info('no material is Routed with EC2')
+
+        #Combine Place, Fasten, and Route Data to Layer 
+        for i in range(self.panel.getLayerCount()):
+            layer = rdh.Layer_RBC(self.panel.getLayerPosition(i))
+            if missionPlace[i] != None: layer = self.getSheets(self.panel.getLayerPosition(i), 2) #Determine if any boards have been placed for that layer
+            if missionFasten[i] != None: layer.addMission(missionFasten[i])  #Determine if any fasteners have been used for that layer
+            if missionRoute[i] != None: layer.addMission(missionRoute[i])   #Determine if any routing have been used for that layer    
+            layers.addLayer(layer)
         
-        # returns a converted layers object to a json string
+        # Returns a converted layers object to a json string
+        sample = layers.toJSON()
+        print(sample)
         return layers.toJSON()
-
+ 
 
     def rdEC3_Main(self): #Main Call to assign what work will be allowed to complete on EC3
-        lvl20 = self.ec3Parm.getParm("Application", "Run Level 20 missions (True/False)")
-        lvl30 = self.ec3Parm.getParm("Application", "Run Level 30 missions (True/False)")
-        lvl40 = self.ec3Parm.getParm("Application", "Run Level 40 missions (True/False)")
 
-        if lvl20:
+        if self.runlvl['ec3_20']:
             self.getSheets(0)
 
-        if lvl30:
+        if self.runlvl['ec3_30']:
             self.getFastener()
         
-        if lvl40:
+        if self.runlvl['ec3_40']:
             self.getRoughOut()
-
-
-    def getMaterial(self, sheet):
-        #Board Pick
-        
-        
-        
-        mat : str = sheet[2]
-        for reftype in self.refMatTypes:        
-            if reftype in mat:
-                if self.materialTypes.count > 0:
-                    if not reftype in self.materialTypes:
-                        self.materialTypes.append(reftype)
-                    if not float(sheet[4]) in self.layers:
-                        self.layers.append(float(sheet[1]))
-                else:
-                    self.materialTypes.append(reftype)
-                        
-
             
-    def getSheets(self, layer) -> rdh.Layer_RBC: #This fucntion will load the sheets of Material to the 
+    def getSheets(self, layer, station) -> rdh.Layer_RBC: #This fucntion will load the sheets of Material to the 
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -139,28 +147,30 @@ class RunData:
                         order by b1x;
                         """    
         results = pgDB.query(sqlStatement=sql_select_query) 
-        
-        layerData = rdh.Layer_RBC(self.layers.index(layer))
+        pgDB.close()
+        layerData = rdh.Layer_RBC(layer)
 
         for sheet in results:
-            sheet = sheet[0]
+            #change list to object
+            sheet : dict = sheet[0]
+            material = Material(sheet, self.machine.getSystemParms(station))
             
-
             # Board Pick
             pick = rdh.missionData_RBC(400)
-            pick.info_01 = sheet['e1x'] # e1x
-            pick.info_02 = sheet['e1y'] # e1y
-            pick.info_03 = sheet['actual_width']
-            pick.info_04 = sheet['e2y']
-            pick.info_05 = sheet['actual_thickness']
+            pick.info_01 = sheet.get('e1x') # e1x
+            pick.info_02 = sheet.get('e1y') # e1y
+            pick.info_03 = sheet.get('actual_width')
+            pick.info_04 = sheet.get('e2y')
+            pick.info_05 = sheet.get('actual_thickness')
             pick.info_06 = 1 #TBD got to get panel thickness
-            pick.info_11 = self.getMaterial(sheet['materialdesc'])
-            pick.info_12 = getStack(pick.info_11)
+            pick.info_11 = 0 #TBD determine board type number
+            pick.info_12 = material.getMaterial()
+            
 
             # Board Place
-            place = rdh.missionData_RBC(401) #self.fastenTypes
-            place.info_01 = sheet['e1x'] # e1x
-            place.info_02 = sheet['e1y'] # e1y
+            place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
+            place.info_01 = sheet.get('e1x') # e1x
+            place.info_02 = sheet.get('e1y') # e1y
             place.info_03 = 0
             place.info_04 = 0
             place.info_05 = 0 #sheet['actual_thickness']
@@ -169,42 +179,180 @@ class RunData:
             place.info_12 = 0
 
             # Fastening
+            fasteners = self.getboardFastener(pick, material, station)
+            # Pick and Place Locations are added to the list
+            boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place, boardfasten = fasteners )
+            #Now we have to add the missions for temp fastening that board
 
-            boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place)
-
-            sql_var1= self.panel.guid
-            sql_var2 = layer
-            sql_select_query=f"""
-                            SELECT to_jsonb(panel)
-                            from cad2fab.system_elements panel
-                            where panelguid = '{sql_var1}' AND "type" = 'Sheet' and b1y = {sql_var2}
-                            order by b1x;
-                            """    
-            results = pgDB.query(sqlStatement=sql_select_query)           
             layerData.addBoard(boardData)
+
+        #this information will be used when building fastener requirements for layer
+        layIndex = self.panel.getLayerIndex(layer)
+        fast = material.fastenNum
+        self.panel.updateLayerFastener(layIndex, fast)
 
         return layerData     
 
 
-    def setboardFastener(self) -> rdh.missionData_RBC:
-        pass
+    def getboardFastener(self, board : rdh.missionData_RBC, iMaterial : Material, station) -> list[rdh.missionData_RBC]:        
+        # Open Database Connection
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var1= self.panel.guid #Panel ID        
+        sql_wStart =  board.info_01 #Leading Edge of the Board (Width)        
+        sql_wEnd = board.info_01 + board.info_03 #Trailing Edge of the Board (Width)
+        #Get parameters to determine min and max window to temp fasten material
+        if station == 2: 
+            sql_vMin = machine.ec2.parmData.getParm('ZL Core', 'Y Min Vertical') 
+            sql_vMax = machine.ec2.parmData.getParm('ZL Core', 'Y Max Vertical')
+        elif station == 3: 
+            sql_vMin = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Min Vertical')
+            sql_vMax = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Max Vertical')    
+        
+        sql_select_query=f"""
+                            select to_jsonb(se) 
+                            from cad2fab.system_elements se
+                            where 
+                                panelguid = '{sql_var1}' 
+                                and description not in ('Nog', 'Sheathing') 
+                                and e1y < '{sql_vMax}'/25.4 and e2y > '{sql_vMin}'/25.4
+                                and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
+                            """    
+        results = pgDB.query(sqlStatement=sql_select_query) 
+        pgDB.close()
+        # Process Results
+        fastenlst : list [rdh.missionData_RBC]= []
+        for result  in results:
+            result : dict = result[0]
+            fasten = rdh.missionData_RBC(iMaterial.getFastenType())
+            #fasten.missionID = iMaterial.getFastenType()
+            #Vertical vs Horizantal Vertial dimension is less than 6inch
+            #Vertical
+            if  result.get('e2y') - result.get('e1y') < 6*25.4:
+                fasten.info_01 = (result.get('e1x') + 0.75) * 25.4 #X Start Position
+                fasten.info_03 = (result.get('e1x') + 0.75) * 25.4 #X End Position
+                if result.get('e1y') < sql_vMin:
+                    fasten.info_02 = sql_vMin * 25.4 #Y Start Position
+                else:
+                    fasten.info_02 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                if result.get('e2y') > sql_vMax:
+                    fasten.info_04 = sql_vMax * 25.4 #Y End Position
+                else:
+                    fasten.info_04 = (result.get('e2y') - 0.75) * 25.4 #Y End Position
+            # Horizantal
+            elif result.get('e4x') - result.get('e1x') < 6*25.4:
+                fasten.info_02 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                fasten.info_04 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                if result.get('e1x') < sql_wStart:
+                    fasten.info_01 = sql_wStart * 25.4
+                else:
+                    fasten.info_01 = result.get('e1x')
+                if result.get('e4x') < sql_wEnd:
+                    fasten.info_01 = sql_wEnd * 25.4
+                else:
+                    fasten.info_01 = (result.get('e4x') - 0.75) * 25.4
+            else:
+                logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
 
 
-    def getFastener(self):
-        pass
+            fastenlst.append(fasten)
+
+        return fastenlst
+
+                
+
+
+
+
+
+    def getFastener(self, layer, station) -> list [rdh.missionData_RBC]:
+        # Open Database Connection
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var1= self.panel.guid #Panel ID        
+        sql_wStart =  0 #Leading Edge of the Board (Width)        
+        sql_wEnd = self.panel.panelLength #Trailing Edge of the Board (Width)
+        #Get parameters to determine min and max window to temp fasten material
+        if station == 2: 
+            sql_vMin = machine.ec2.parmData.getParm('ZL Core', 'Y Min Vertical') 
+            sql_vMax = machine.ec2.parmData.getParm('ZL Core', 'Y Max Vertical')
+        elif station == 3: 
+            sql_vMin = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Min Vertical')
+            sql_vMax = machine.ec2.parmData.getParm([], 'ZL Core', 'Y Max Vertical')    
+        
+        sql_select_query=f"""
+                            select to_jsonb(se) 
+                            from cad2fab.system_elements se
+                            where 
+                                panelguid = '{sql_var1}' 
+                                and description not in ('Nog', 'Sheathing') 
+                                and e1y < '{sql_vMin}'/25.4 and e2y > '{sql_vMax}'/25.4
+                                and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
+                            """    
+        results = pgDB.query(sqlStatement=sql_select_query) 
+        pgDB.close()
+        # Process Results
+        fastenlst : list [rdh.missionData_RBC]= []
+        for result  in results:
+            result : dict = result[0]
+            fasten = rdh.missionData_RBC(self.panel.getLayerFastener(self.panel.getLayerPosition(layer)))
+
+            #Vertical vs Horizantal Vertial dimension is less than 6inch
+            #Vertical
+            if  result.get('e2y') - result.get('e1y') < 6*25.4:
+                fasten.info_01 = (result.get('e1x') + 0.75) * 25.4 #X Start Position
+                fasten.info_03 = (result.get('e1x') + 0.75) * 25.4 #X End Position
+                if result.get('e1y') < sql_vMin:
+                    fasten.info_02 = sql_vMin * 25.4 #Y Start Position
+                else:
+                    fasten.info_02 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                if result.get('e2y') > sql_vMax:
+                    fasten.info_04 = sql_vMax * 25.4 #Y End Position
+                else:
+                    fasten.info_04 = (result.get('e2y') - 0.75) * 25.4 #Y End Position
+            # Horizantal
+            elif result.get('e4x') - result.get('e1x') < 6*25.4:
+                fasten.info_02 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                fasten.info_04 = (result.get('e1y') + 0.75) * 25.4 #Y Start Position
+                if result.get('e1x') < sql_wStart:
+                    fasten.info_01 = sql_wStart * 25.4
+                else:
+                    fasten.info_01 = result.get('e1x')
+                if result.get('e4x') < sql_wEnd:
+                    fasten.info_01 = sql_wEnd * 25.4
+                else:
+                    fasten.info_01 = (result.get('e4x') - 0.75) * 25.4
+            else:
+                logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
+
+
+            fastenlst.append(fasten)
+
+        return fastenlst
 
     def getRoughOut(self):
         pass         
 
-        
-def getStack(matType):
-    pass
+
+
 
 
 
 
 if __name__ == "__main__":
+    today = datetime.now()
+    loggfile = 'app_' + str(today) + '.log'
+    print(today)
+
+    logging.basicConfig(filename='app.log', level=logging.INFO)
+    logging.info('Started')
     panel = panelData.Panel("4a4909bf-f877-4f2f-8692-84d7c6518a2d")
-    sheeting = RunData(panel)
+    machine = machineData.Line()
+    sheeting = RunData(panel, machine)
+
+
+    
     sheeting.getSheets(0)
 

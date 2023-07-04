@@ -1,4 +1,5 @@
 import json
+import ast
 
 class missionData_RBC:
     missionID : int
@@ -18,8 +19,8 @@ class missionData_RBC:
     def __init__(self, missionID):
         self.missionID = missionID
 
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+    def toJSON(self):
+        return self.__dict__
     
     def setInfo(self, info : list):
         self.info_01 = info[0]
@@ -40,15 +41,26 @@ class BoardData_RBC():
     boardPlace : missionData_RBC 
     _fastening : list[missionData_RBC]  = []
     
-    def __init__(self, boardpick : missionData_RBC, boardplace : missionData_RBC):
+    def __init__(self, boardpick : missionData_RBC, boardplace : missionData_RBC, boardfasten : list [missionData_RBC]):
         self.boardPick = boardpick
         self.boardPlace = boardplace
-
-    def addFastener(self, fasteners : missionData_RBC):
-        self._fastening.append(fasteners)
+        self._fastening = boardfasten
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+        data = { }
+        data["boardpick"] = self.boardPick.__dict__
+        print(type(self.boardPick))
+        data["boardplace"] = self.boardPlace.__dict__
+        jArr = []
+        for i in range(len(self._fastening)):
+            jArr.append(self._fastening[i].toJSON()) 
+        data["boardmissions"] = jArr           
+
+                
+        #data["mission"] = mission
+        return data
+    
+
 
 class Layer_RBC:
     _layerID : int = 0
@@ -65,31 +77,66 @@ class Layer_RBC:
         else:
             self._board.append(board)
 
-    def addMission(self, mission : BoardData_RBC):
+    def addMission(self, mission : missionData_RBC):
         if len(self._missions) == 0: 
             self._missions = []
-            self._missions.append(board)
+            self._missions.append(mission)
         else:
-            self._missions.append(board)
+            self._missions.append(mission)
+
+    def addMission(self, mission : list[missionData_RBC]):
+        self._missions.extend(mission)
         
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+        #jObj = { }
+        jPar = { }
+        jArr = []
+        for i in range(len(self._board)):
+            #jObj["board" + str(i)] = self._board[i].toJSON()
+            jArr.append(self._board[i].toJSON())
+        jPar["Boards"] = jArr
+        #jArr.clear()
+        jArr2 = []
+        for i in range(len(self._missions)):
+            jArr2.append(self._missions[i].toJSON())
+            #jObj["mission" + str(i)] = self._missions[i].toJSON()     
+        jPar["Missions"] = jArr2   
+        #data = json.dumps(jPar, default=lambda o: o.__dict__)
+        return jPar
+        
+        #return jObj
 
 class Layers_RBC:
-    _stationID : int
+    
     _layers : list[Layer_RBC] = []
-    def __init__(self, stationID):
-        self._stationID = stationID
-
+    #_stationID : int
+    def __init__(self, stationID : int):
+        #self._stationID = stationID
+        pass
     def addLayer(self, layer : Layer_RBC):
         if len(self._layers) == 0: 
-            self._layers = []
+            #self._layers = []
             self._layers.append(layer)
         else:
             self._layers.append(layer)
 
+    def getCount(self):
+        return len(self._layers)
+    
+    def getLayer(self, index):
+        return self._layers[index]
+
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+        jObj = { }
+        #data = json.dumps(self, default=lambda o: o.__dict__)
+        i = 0
+        for i in range(len(self._layers)):
+            jObj[str(i)] = self._layers[i].toJSON()
+        
+        data = json.dumps(jObj, default=lambda o: o.__dict__)
+        print(data)
+        return data
+
 
 if __name__ == "__main__":
     data = [1,2,3,4,5,6,7,8,9,10,11,12]
@@ -109,11 +156,19 @@ if __name__ == "__main__":
     mission = missionData_RBC(130)
     #mission.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
 
-    board = BoardData_RBC(pick, place)
+    board = BoardData_RBC(pick, place, [place, place])
     #board.fastening.append([1,2,3,4,5,6,7,8,9,10,11,12])
     layer = Layer_RBC(board)
+    board = BoardData_RBC(pick, place, [])
+    
     layer.addBoard(board)
-    rbcData = Layers_RBC(layer)
+    layer.addMission([place, place])
+    rbcData = Layers_RBC(55)
     rbcData.addLayer(layer)
-    jsondd = rbcData.toJSON()
-    print(jsondd)
+    layer.addMission([place, place])
+    rbcData.addLayer(layer)
+
+    data1 = rbcData.toJSON()
+
+
+    print(data1)

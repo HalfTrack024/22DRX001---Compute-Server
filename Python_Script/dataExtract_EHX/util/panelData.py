@@ -30,59 +30,52 @@ class Panel:
         self.plateInnerBottom = 1.5
         self.plateInnerTop  = 1.5 + self.studHeight
 
+        #Get and Add Unique layers to 
+        pgDB.open()
+        sql_var= panelguid
+        sql_select_query=f"""
+                        select distinct b1y "type" , materialdesc 
+                        from cad2fab.system_elements
+                        where "type" = 'Sheet' and panelguid = '{sql_var}';
+                        """
+        #
+        results = pgDB.query(sqlStatement=sql_select_query)
+        #dbc.printResult(results)
+        pgDB.close()
+        self._layerPos = []
+        self._layerMat = []
+        self._LayerFastener = []
+        for layer in results:
+            self._layerPos.append(layer[0])
+            self._layerMat.append(layer[1])
+            self._LayerFastener.append(0)
+
     def getPanel(self, panelGUID):
         pass
     
+    def getLayerCount(self):
+        return len(self._layerPos)
+    
+    def getLayerMaterial(self, index):
+        return self._layerMat[index]
+    
+    def getLayerPosition(self, index):
+        return self._layerPos[index]
+    
+    def getLayerIndex(self, pos):
+        return self._layerPos.index(pos)
+    
+    def updateLayerFastener(self, index, typeval):
+        self._LayerFastener[index] = typeval
+    
+    def getLayerFastener(self, index):
+        return self._LayerFastener[index]
     
 if __name__ == "__main__":
-    credentials = dbc.getCred()
-    pgDB = dbc.DB_Connect(credentials)
-    pgDB.open()
     #get panel details dimensions
     sql_var= "4a4909bf-f877-4f2f-8692-84d7c6518a2d"
-    sql_select_query=f"""SELECT "label", height, thickness, studheight, walllength
-                        FROM cad2fab.system_panels
-                        WHERE panelguid='{sql_var}';
-                    """
-    
-    results = pgDB.query(sqlStatement=sql_select_query)
-    print(type(results[0][4]))
+
     #initialize Panel
-    itterPanel = Panel(results)
-    sql_select_query=f"""SELECT elementguid, "type", description, "size", b1x
-                        FROM cad2fab.system_elements
-                        WHERE panelguid = '{sql_var}' AND e1y = 1.5
-                        ORDER BY b1x ASC;
-                    """
-    results = pgDB.query(sqlStatement=sql_select_query)
+    itterPanel = Panel(sql_var)
+
     
-    clear = fc.Clear()
-    oplistFS = [False,False,False,False,False,False,False]
-    oplistMS = [False,False,False,False,False,False,False]
-    #still need to add the parameters to pass to the functions below
-    if clear.studStopFS() == True: 
-        #add for when stud stop is allowed
-        oplistFS[0] = True
-        pass
-    if clear.hammerFS() == True:
-        #add for when hammer is allowed
-        oplistFS[1] = True
-        pass
-    if clear.studStopMS() == True:
-        #add for when stud stop is allowed
-        oplistMS[0] = True
-        pass
-    if clear.hammerMS() == True:
-        #add for when hammer is allowed
-        oplistMS[1] = True
-        if (oplistFS[0] == True) and (oplistFS[1] == True) and (oplistMS[0] == True):
-            oplistMS[4] = True
-            oplistFS[4] = True
-        pass
-    
-    opcodeFS = Panel.genOPCode(oplistFS)
-    opcodeMS = Panel.genOPCode(oplistMS)
-    results = pgDB.query(sqlStatement=sql_select_query)
-    dbc.printResult(data=results)
-    results = pgDB.query(sqlStatement=sql_select_query)
-    pgDB.close()
