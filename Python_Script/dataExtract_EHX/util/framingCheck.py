@@ -8,7 +8,7 @@ class Clear:
         #get parameters for stud stop and hammer that are universal
         sql_select_query="""
                         SELECT description, value
-                        FROM EC1_parameters
+                        FROM public.parameters
                         WHERE description IN (  'Stud Stop thickness', 
                                                 'Stud Stop width', 
                                                 'Hammer Units Thickness', 
@@ -37,7 +37,7 @@ class Clear:
         #query the e1x, panelid and type from the current element
         sql_select_query=f"""
                         SELECT e1x, panelguid, type
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE elementguid = '{elementguid}' 
                         ORDER BY e1x ASC;
                         """
@@ -54,7 +54,7 @@ class Clear:
         # a description of sheathing,TopPlate,BottomPlate, and VeryTopPlate
         sql_select_query=f"""
                         SELECT e1x
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
                         and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e1x * 25.4) and (e1x * 25.4) <= {MaxX} and {MinY} <= (e1y * 25.4) and (e1y * 25.4) <= {MaxY}) 
@@ -74,7 +74,7 @@ class Clear:
         #query the e4x, panelid and type from the current element
         sql_select_query=f"""
                         SELECT e4x, panelguid, type
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e4x ASC;
                         """
@@ -91,7 +91,7 @@ class Clear:
             #bottom plate, or very top plate and aren't the current element
             sql_select_query=f"""
                             SELECT e2x
-                            FROM elements
+                            FROM cad2fab.system_elements
                             WHERE panelguid = '{results[0][1]}' and description NOT IN 
                             ('Sheathing','TopPlate','BottomPlate','VeryTopPlate') and elementguid != '{elementguid}' 
                             and type != 'Sheet'
@@ -116,7 +116,7 @@ class Clear:
         #query e2x, panelguid, type of the current element
         sql_select_query=f"""
                         SELECT e2x, panelguid, type
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e2x ASC;
                         """
@@ -127,7 +127,7 @@ class Clear:
         #query the studheight from the panels table
         sql_select_query=f"""
                         SELECT studheight
-                        FROM panel
+                        FROM cad2fab.system_panels
                         WHERE panelguid = '{results[0][1]}'
                         """
         height = pgDB.query(sql_select_query)
@@ -140,7 +140,7 @@ class Clear:
         # or very top plate and aren't the current element
         sql_select_query=f"""
                         SELECT e2x
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
                         and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e2x * 25.4) and (e2x * 25.4) <= {MaxX} and {MinY} <= (e2y * 25.4) and (e2y * 25.4) <= {MaxY}) 
@@ -160,7 +160,7 @@ class Clear:
         # query e3x, panelguid and type from the current element
         sql_select_query=f"""
                         SELECT e3x, panelguid, type
-                        FROM elements
+                        FROM cad2fab.system_elements
                         WHERE elementguid = '{elementguid}'
                         ORDER BY e3x ASC;
                         """
@@ -168,7 +168,7 @@ class Clear:
         #query the studheight from the panels table
         sql_select_query=f"""
                         SELECT studheight
-                        FROM panel
+                        FROM cad2fab.system_panels
                         WHERE panelguid = '{results[0][1]}'
                         """
         height = pgDB.query(sqlStatement=sql_select_query)
@@ -182,7 +182,7 @@ class Clear:
             # sheathing, top plate, bottom plate, or very top plate
             sql_select_query=f"""
                             SELECT e3x
-                            FROM elements
+                            FROM cad2fab.system_elements
                             WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate')
                             and elementguid != '{elementguid}' and type != 'Sheet'
                             and (({MinX} <= e2x and e2x <= {MaxX} and {MinY} <= e2y and e2y <= {MaxY}) 

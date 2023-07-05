@@ -20,7 +20,7 @@ class MtrlData:
         pgDB.open()
         sql_var = self.panel.guid
         sql_select_query=f"""SELECT DISTINCT ON ("size") "type", description, "size", actual_thickness, actual_width
-                    FROM elements
+                    FROM cad2fab.system_elements
                     WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board'
                     ORDER BY "size" ASC;
                 """       
@@ -35,19 +35,19 @@ class MtrlData:
         self.mdInsert()
 
     def mdBuild(self, studs): # This function will assemble the entry line of Material Data
-        uiItemLength = self.panel.studHeight
-        uiItemHeight = float(studs[3]) * 25.4 # convert from inches to mm
-        uiItemThickness = float(studs[4]) * 25.4 # convert from inches to mm
-        sMtrlCode = self.getMatCode(studs[2])
+        uiItemLength = (self.panel.studHeight)
+        uiItemHeight = (str(float(studs[3]) * 25.4).split('.')[0]) # convert from inches to mm
+        uiItemThickness = (str(float(studs[4]) * 25.4).split('.')[0])  # convert from inches to mm
+        sMtrlCode = 0 ### THIS HAS TO BE ADDED AT ONCE THE JOB IS LOADED TO QUEUE
         uiOpCode = 0
-        sPrinterWrite = 0	
-        sType = 0
+        sPrinterWrite = ' '	
+        sType = ' '
         uiItemID = 0
-        sCADPath = 0
-        sProjectName = 0	
+        sCADPath = ' '
+        sProjectName = ' '	
         sItemName = self.panel.guid
 
-        line = (1,1, uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
+        line = (1, uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
         return line
     
     def getMatCode(self, studType): # returns material code for size of material (1: 2x4, 2:2x6)
@@ -60,9 +60,9 @@ class MtrlData:
         pgDB.open()
         #send OpData to JobData table
         sql_JobData_query = '''
-                            INSERT INTO "materialData"
-                            ("byteSize", "numOfStuds", "uiItemLength", "uiItemHeight", "uiItemThickness", "sMtrlCode", "uiOpCode", "sPrinterWrite", "sType", "uiItemID", "sCADPath", "sProjectName", "sItemName")
-                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                            INSERT INTO cad2fab.sf3_jobdata 
+                            (numofstuds, uiitemlength, uiitemheight, uiitemthickness, smtrlcode, uiopcode, sprinterwrite, stype, uiitemid, scadpath, sprojectname, sitemname)
+                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
                             '''
         #make a list of tuples for querymany
         jdQueryData = []
@@ -103,7 +103,7 @@ class JobData():
 
         sql_select_query=f"""
                         SELECT thickness, studheight, walllength, category
-                        FROM panel
+                        FROM cad2fab.system_panels
                         WHERE panelguid = '{panelguid}';
                         """
         #
@@ -125,7 +125,7 @@ class JobData():
         #get parameters for stud stop and hammer that are universal
         sql_select_query="""
                         SELECT description, value
-                        FROM ec1_parameters
+                        FROM public.parameters
                         WHERE description IN (  'Stud Stop thickness', 
                                                 'Stud Stop width', 
                                                 'Hammer Units Thickness', 
@@ -156,7 +156,7 @@ class JobData():
         #query relevant data from elements table
         sql_elemData_query = f'''
         SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
-        FROM elements
+        FROM cad2fab.system_elements
         WHERE panelguid = '{panelguid}'
         ORDER BY b1x ASC;
         '''
@@ -202,7 +202,7 @@ class JobData():
                     sql_subelem_query = f'''
                     SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
                     e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
-                    FROM elements
+                    FROM cad2fab.system_elements
                     WHERE panelguid = '{panelguid}' and assembly_id = '{elem[-1]}' and type != 'Sub-Assembly Cutout'
                     ORDER BY b1x ASC;
                     '''
@@ -246,7 +246,7 @@ class JobData():
 
         #send OpData to JobData table
         sql_JobData_query = '''
-        INSERT INTO jobdata(panelguid, xpos, optext, opcode_fs, zpos_fs, ypos_fs, ssuppos_fs, 
+        INSERT INTO cad2fab.fm3_jobdata(panelguid, xpos, optext, opcode_fs, zpos_fs, ypos_fs, ssuppos_fs, 
         opcode_ms, zpos_ms, ypos_ms, ssuppos_ms, imgname, obj_id, loaddate)
         VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW())
         ON CONFLICT (panelguid,obj_id)
@@ -828,7 +828,7 @@ class JobData():
     
 
 if __name__ == "__main__":
-    #panel = panelData.Panel("0ae67cc2-5433-467a-9964-4fa935b4cda9")
-    #matData = MtrlData(panel)
-    jobdata = JobData("6cbbcbbc-bae8-4bc7-8935-309230e646c0")
+    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    matData = MtrlData(panel)    
+    jobdata = JobData("3daa6007-f4d7-4084-8d86-e1463f3403c9")
     test = jobdata.jdMain()
