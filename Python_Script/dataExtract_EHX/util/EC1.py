@@ -26,15 +26,23 @@ class MtrlData:
                 """       
 
         results = pgDB.query(sqlStatement=sql_select_query)
+        
+        sql_select_query=f"""SELECT count(description) 
+                    FROM cad2fab.system_elements
+                    WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board';
+        """     
+        resultcount = pgDB.query(sqlStatement=sql_select_query)
         pgDB.close()
+
+        
         if len(results) == 1:            
-            self.mrtldata = self.mdBuild(results[0])
+            self.mrtldata = self.mdBuild(results[0], resultcount[0])
         else:
             print("returned to many options")
 
         self.mdInsert()
 
-    def mdBuild(self, studs): # This function will assemble the entry line of Material Data
+    def mdBuild(self, studs, count): # This function will assemble the entry line of Material Data
         uiItemLength = (self.panel.studHeight)
         uiItemHeight = (str(float(studs[3]) * 25.4).split('.')[0]) # convert from inches to mm
         uiItemThickness = (str(float(studs[4]) * 25.4).split('.')[0])  # convert from inches to mm
@@ -47,7 +55,7 @@ class MtrlData:
         sProjectName = ' '	
         sItemName = self.panel.guid
 
-        line = (1, uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
+        line = (count, uiItemLength, uiItemHeight, uiItemThickness, sMtrlCode, uiOpCode, sPrinterWrite, sType, uiItemID, sCADPath, sProjectName, sItemName)
         return line
     
     def getMatCode(self, studType): # returns material code for size of material (1: 2x4, 2:2x6)
