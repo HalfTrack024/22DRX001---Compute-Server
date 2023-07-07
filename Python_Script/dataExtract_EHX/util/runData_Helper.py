@@ -49,7 +49,6 @@ class BoardData_RBC():
     def toJSON(self):
         data = { }
         data["boardpick"] = self.boardPick.__dict__
-        print(type(self.boardPick))
         data["boardplace"] = self.boardPlace.__dict__
         jArr = []
         for i in range(len(self._fastening)):
@@ -134,7 +133,6 @@ class Layers_RBC:
             jObj[str(i)] = self._layers[i].toJSON()
         
         data = json.dumps(jObj, default=lambda o: o.__dict__)
-        print(data)
         return data
 
 
