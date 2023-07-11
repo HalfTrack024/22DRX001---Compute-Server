@@ -19,7 +19,7 @@ class MtrlData:
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_var = self.panel.guid
-        sql_select_query=f"""SELECT DISTINCT ON ("size") "type", description, "size", actual_thickness, actual_width
+        sql_select_query=f"""SELECT DISTINCT ON ("size") "type", description, "size", actual_thickness, actual_width, species
                     FROM cad2fab.system_elements
                     WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board'
                     ORDER BY "size" ASC;
@@ -46,7 +46,7 @@ class MtrlData:
         uiItemLength = (self.panel.studHeight)
         uiItemHeight = (str(float(studs[3]) * 25.4).split('.')[0]) # convert from inches to mm
         uiItemThickness = (str(float(studs[4]) * 25.4).split('.')[0])  # convert from inches to mm
-        sMtrlCode = 0 ### THIS HAS TO BE ADDED AT ONCE THE JOB IS LOADED TO QUEUE
+        sMtrlCode = studs[5]
         uiOpCode = 0
         sPrinterWrite = ' '	
         sType = ' '
