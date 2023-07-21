@@ -3,18 +3,18 @@ import ast
 
 class missionData_RBC:
     missionID : int
-    info_01 : float
-    info_02 : float
-    info_03 : float
-    info_04 : float
-    info_05 : float
-    info_06 : float
-    info_07 : float
-    info_08 : float 
-    info_09 : float
-    info_10 : int
-    info_11 : int
-    info_12 : int
+    Info_01 : float
+    Info_02 : float
+    Info_03 : float
+    Info_04 : float
+    Info_05 : float
+    Info_06 : float
+    Info_07 : float
+    Info_08 : float 
+    Info_09 : float
+    Info_10 : int
+    Info_11 : int
+    Info_12 : int
     
     def __init__(self, missionID):
         self.missionID = missionID
@@ -23,18 +23,18 @@ class missionData_RBC:
         return self.__dict__
     
     def setInfo(self, info : list):
-        self.info_01 = info[0]
-        self.info_02 = info[1]
-        self.info_03 = info[2]
-        self.info_04 = info[3]
-        self.info_05 = info[4]
-        self.info_06 = info[5]
-        self.info_07 = info[6]
-        self.info_08 = info[7]
-        self.info_09 = info[8]
-        self.info_10 = info[9]
-        self.info_11 = info[10]
-        self.info_12 = info[11]
+        self.Info_01 = info[0]
+        self.Info_02 = info[1]
+        self.Info_03 = info[2]
+        self.Info_04 = info[3]
+        self.Info_05 = info[4]
+        self.Info_06 = info[5]
+        self.Info_07 = info[6]
+        self.Info_08 = info[7]
+        self.Info_09 = info[8]
+        self.Info_10 = info[9]
+        self.Info_11 = info[10]
+        self.Info_12 = info[11]
 
 class BoardData_RBC():
     boardPick : missionData_RBC
@@ -48,12 +48,12 @@ class BoardData_RBC():
 
     def toJSON(self):
         data = { }
-        data["boardpick"] = self.boardPick.__dict__
-        data["boardplace"] = self.boardPlace.__dict__
+        data["BoardPick"] = self.boardPick.__dict__
+        data["BoardPlace"] = self.boardPlace.__dict__
         jArr = []
         for i in range(len(self._fastening)):
             jArr.append(self._fastening[i].toJSON()) 
-        data["boardmissions"] = jArr           
+        data["Fastening"] = jArr           
 
                 
         #data["mission"] = mission
@@ -93,13 +93,13 @@ class Layer_RBC:
         for i in range(len(self._board)):
             #jObj["board" + str(i)] = self._board[i].toJSON()
             jArr.append(self._board[i].toJSON())
-        jPar["Boards"] = jArr
+        jPar["Board"] = jArr
         #jArr.clear()
         jArr2 = []
         for i in range(len(self._missions)):
             jArr2.append(self._missions[i].toJSON())
             #jObj["mission" + str(i)] = self._missions[i].toJSON()     
-        jPar["Missions"] = jArr2   
+        jPar["Mission"] = jArr2   
         #data = json.dumps(jPar, default=lambda o: o.__dict__)
         return jPar
         
@@ -111,7 +111,8 @@ class Layers_RBC:
     #_stationID : int
     def __init__(self, stationID : int):
         #self._stationID = stationID
-        pass
+        self._layers.clear()
+
     def addLayer(self, layer : Layer_RBC):
         if len(self._layers) == 0: 
             #self._layers = []
@@ -142,14 +143,14 @@ if __name__ == "__main__":
 
     #pick.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
     place = missionData_RBC(402)
-    place.info_01 = 1#sheet['e1x'] # e1x
-    place.info_02 = 2#sheet['e1y'] # e1y
-    place.info_03 = 0
-    place.info_04 = 0
-    place.info_05 = 0 #sheet['actual_thickness']
-    place.info_06 = 1 #TBD got to get panel thickness
-    place.info_11 = 0
-    place.info_12 = 0
+    place.Info_01 = 1#sheet['e1x'] # e1x
+    place.Info_02 = 2#sheet['e1y'] # e1y
+    place.Info_03 = 0
+    place.Info_04 = 0
+    place.Info_05 = 0 #sheet['actual_thickness']
+    place.Info_06 = 1 #TBD got to get panel thickness
+    place.Info_11 = 0
+    place.Info_12 = 0
     #place.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
     mission = missionData_RBC(130)
     #mission.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])

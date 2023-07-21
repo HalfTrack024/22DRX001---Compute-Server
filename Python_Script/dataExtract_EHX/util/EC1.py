@@ -43,9 +43,9 @@ class MtrlData:
         self.mdInsert()
 
     def mdBuild(self, studs, count): # This function will assemble the entry line of Material Data
-        uiItemLength = (self.panel.studHeight)
-        uiItemHeight = (str(float(studs[3]) * 25.4).split('.')[0]) # convert from inches to mm
-        uiItemThickness = (str(float(studs[4]) * 25.4).split('.')[0])  # convert from inches to mm
+        uiItemLength = round(self.panel.studHeight * 25.4, 0)
+        uiItemHeight = round(float(studs[3]) * 25.4, 0) # convert from inches to mm
+        uiItemThickness = round(float(studs[4]) * 25.4, 0)  # convert from inches to mm
         sMtrlCode = studs[5]
         uiOpCode = 0
         sPrinterWrite = ' '	
@@ -71,6 +71,13 @@ class MtrlData:
                             INSERT INTO cad2fab.sf3_jobdata 
                             (numofstuds, uiitemlength, uiitemheight, uiitemthickness, smtrlcode, uiopcode, sprinterwrite, stype, uiitemid, scadpath, sprojectname, sitemname)
                             VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                            ON CONFLICT (sitemname)
+                            DO UPDATE SET numofstuds = EXCLUDED.numofstuds,
+                            uiitemlength = EXCLUDED.uiitemlength, uiitemheight = EXCLUDED.uiitemheight,
+                            uiitemthickness = EXCLUDED.uiitemthickness,smtrlcode = EXCLUDED.smtrlcode,
+                            uiopcode = EXCLUDED.uiopcode,sprinterwrite = EXCLUDED.sprinterwrite,
+                            stype = EXCLUDED.stype,uiitemid = EXCLUDED.uiitemid,
+                            scadpath = EXCLUDED.scadpath,sprojectname = EXCLUDED.sprojectname;
                             '''
         #make a list of tuples for querymany
         jdQueryData = []

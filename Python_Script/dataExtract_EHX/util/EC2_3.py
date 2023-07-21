@@ -11,7 +11,14 @@ from material import Material
 
 class RunData:
     
-    fastenTypes : list[str]
+    fastenTypes = {
+        'OSB' : 1,
+        'PLYWOOD' : 2,
+        'GLASROC' : 3,
+        'ZIP R3' : 4,
+        'ZIP R6' : 5,
+        'ZIP R9' : 6,
+    }
     materialTypes : list[str]
     layers : list[float]
 
@@ -35,9 +42,9 @@ class RunData:
 
         sRunData_EC2 = self.rdEC2_Main()
         
-        
+        #Insert EC2 Run Data to DataBase
         sql_var1= self.panel.guid
-        sql_var2= 11
+        sql_var2= 12
         sql_var3= sRunData_EC2
 
         pgDB.open()
@@ -50,17 +57,30 @@ class RunData:
         #make a list of tuples for querymany
         jdQueryData = []
         jdQueryData.append([sql_var1, sql_var2, sql_var3])        
-
-
-
-        #######@@@@@@ Temp block
-        #####   tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
-        #######@@@@@@
-        
+        tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        #Close Connection
         pgDB.close()
 
         sRunData_EC3 = self.rdEC3_Main()
 
+        #Insert EC2 Run Data to DataBase
+        sql_var1= self.panel.guid
+        sql_var2= 22
+        sql_var3= sRunData_EC3
+
+        pgDB.open()
+        #send OpData to JobData table
+        sql_JobData_query = '''
+                            INSERT INTO cad2fab.rbc_jobdata
+                            (sItemName, stationID, jobdata)
+                            VALUES(%s,%s,%s);
+                            '''
+        #make a list of tuples for querymany
+        jdQueryData = []
+        jdQueryData.append([sql_var1, sql_var2, sql_var3])        
+        tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
+        #Close Connection
+        pgDB.close()
 
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
         #Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
@@ -121,7 +141,7 @@ class RunData:
             layers.addLayer(layer)
         
         # Returns a converted layers object to a json string
-        sample = layers.toJSON()
+        #sample = layers.toJSON()
         return layers.toJSON()
  
 
@@ -212,26 +232,26 @@ class RunData:
             
             # Board Pick
             pick = rdh.missionData_RBC(400)
-            pick.info_01 = round(sheet.get('e1x')*25.4, 2) # e1x
-            pick.info_02 = round(sheet.get('e1y')*25.4, 2) # e1y
-            pick.info_03 = round(sheet.get('actual_width')*25.4, 2)
-            pick.info_04 = round(sheet.get('e2y')*25.4, 2)
-            pick.info_05 = round(sheet.get('actual_thickness')*25.4, 2)
-            pick.info_06 = 1 #TBD got to get panel thickness
-            pick.info_11 = 0 #TBD determine board type number
-            pick.info_12 = material.getMaterial()
+            pick.Info_01 = round(sheet.get('e1x')*25.4, 2) # e1x
+            pick.Info_02 = round(sheet.get('e1y')*25.4, 2) # e1y
+            pick.Info_03 = round(sheet.get('actual_width')*25.4, 2)
+            pick.Info_04 = round(sheet.get('e2y')*25.4, 2)
+            pick.Info_05 = round(sheet.get('actual_thickness')*25.4, 2)
+            pick.Info_06 = round(self.panel.panelThickness*25.4 + pick.Info_05, 2) 
+            pick.Info_11 = material.getMaterialCode()
+            pick.Info_12 = material.getMaterial()
             
 
             # Board Place
             place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
-            place.info_01 = round(sheet.get('e1x')*25.4, 2) # e1x
-            place.info_02 = round(sheet.get('e1y')*25.4, 2) # e1y
-            place.info_03 = 0
-            place.info_04 = 0
-            place.info_05 = 0 #sheet['actual_thickness']
-            place.info_06 = 1 #TBD got to get panel thickness
-            place.info_11 = 0
-            place.info_12 = 0
+            place.Info_01 = round(sheet.get('e1x')*25.4, 2) # e1x
+            place.Info_02 = round(sheet.get('e1y')*25.4, 2) # e1y
+            place.Info_03 = 0
+            place.Info_04 = 0
+            place.Info_05 = 0 #sheet['actual_thickness']
+            place.Info_06 = 1 #TBD got to get panel thickness
+            place.Info_11 = 0
+            place.Info_12 = 0
 
             # Fastening
             fasteners = self.getboardFastener(pick, material, station)
@@ -255,15 +275,15 @@ class RunData:
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
         sql_var1= self.panel.guid #Panel ID        
-        sql_wStart =  round(board.info_01 /25.4,2)  #Leading Edge of the Board (Width)        
-        sql_wEnd = round((board.info_01 + board.info_03)*25.4, 2) #Trailing Edge of the Board (Width)
+        sql_wStart =  round(board.Info_01 /25.4,2)  #Leading Edge of the Board (Width)        
+        sql_wEnd = round((board.Info_01 + board.Info_03)/25.4, 2) #Trailing Edge of the Board (Width)
         #Get parameters to determine min and max window to temp fasten material
         if station == 2: 
-            sql_vMin = machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') 
-            sql_vMax = machine.ec3.parmData.getParm('ZL Core', 'Y Max Vertical')
+            sql_vMin = 0 #machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') /25.4
+            sql_vMax = machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
         elif station == 3: 
-            sql_vMin = machine.ec3.parmData.getParm([], 'ZL Core', 'Y Min Vertical')
-            sql_vMax = machine.ec3.parmData.getParm([], 'ZL Core', 'Y Max Vertical')    
+            sql_vMin = 0 #machine.ec3.parmData.getParm([], 'ZL Core', 'Y Min Vertical') / 25.4
+            sql_vMax = machine.ec3.parmData.getParm([], 'ZL Core', 'Y Middle Vertical') / 25.4
         
         sql_select_query=f"""
                             select to_jsonb(se) 
@@ -271,8 +291,10 @@ class RunData:
                             where 
                                 panelguid = '{sql_var1}' 
                                 and description not in ('Nog', 'Sheathing') 
-                                and e1y < '{sql_vMax}'/25.4 and e2y > '{sql_vMin}'/25.4
-                                and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
+                                and e1y < '{sql_vMax}' and e2y > '{sql_vMin}'
+                                and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}' 
+                                and b2y = 0
+                                order by b3x
                             """    
         results = pgDB.query(sqlStatement=sql_select_query) 
         pgDB.close()
@@ -284,33 +306,46 @@ class RunData:
             #fasten.missionID = iMaterial.getFastenType()
             #Vertical vs Horizantal Vertial dimension is less than 6inch
             #Vertical
-            if  result.get('e2y') - result.get('e1y') < 6*25.4:
-                fasten.info_01 = round((result.get('e1x') + 0.75) * 25.4,2) #X Start Position
-                fasten.info_03 = round((result.get('e1x') + 0.75) * 25.4, 2) #X End Position
+            if  result.get('e2y') - result.get('e1y') > 3:
+                if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
+                    fasten.Info_01 = round((result.get('e1x') + 0.75) * 25.4,2) #X Start Position
+                    fasten.Info_03 = round((result.get('e1x') + 0.75) * 25.4, 2) #X End Position    
+                elif sql_wEnd < result.get('e4x'): #Condition when stud is overhanging the board on the positive side
+                    fasten.Info_01 = round((result.get('e1x') + 0.375) * 25.4,2) #X Start Position
+                    fasten.Info_03 = round((result.get('e1x') + 0.375) * 25.4, 2) #X End Position
+                elif sql_wStart > result.get('e1x'): #Condition when stud is overhanging the board on the positive side
+                    fasten.Info_01 = round((result.get('e1x') - 0.375) * 25.4,2) #X Start Position
+                    fasten.Info_03 = round((result.get('e1x') - 0.375) * 25.4, 2) #X End Position    
+                else:
+                    logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
+                    break               
                 if result.get('e1y') < sql_vMin:
-                    fasten.info_02 = round(sql_vMin, 2) #Y Start Position
+                    fasten.Info_02 = round(sql_vMin * 25.4, 2) #Y Start Position
                 else:
-                    fasten.info_02 = round((result.get('e1y') + 0.75)*25.4, 2) #Y Start Position
+                    fasten.Info_02 = round((result.get('e1y') + 0.75)*25.4, 2) #Y Start Position
                 if result.get('e2y') > sql_vMax:
-                    fasten.info_04 = round(sql_vMax, 2) #Y End Position
+                    fasten.Info_04 = round((sql_vMax - 0.75)*25.4, 2) #Y End Position
                 else:
-                    fasten.info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
+                    fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
+                fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)    
             # Horizantal
-            elif result.get('e4x') - result.get('e1x') < 6*25.4:
-                fasten.info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
-                fasten.info_04 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
+            elif result.get('e4x') - result.get('e1x') > 3:
+                fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
+                fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
                 if result.get('e1x') < sql_wStart:
-                    fasten.info_01 = round(sql_wStart * 25.4, 2)
+                    fasten.Info_01 = round((sql_wStart + 0.75) * 25.4, 2)
                 else:
-                    fasten.info_01 = round(result.get('e1x')*25.4, 2)
-                if result.get('e4x') < sql_wEnd:
-                    fasten.info_01 = round(sql_wEnd * 25.4, 2)
+                    fasten.Info_01 = round((result.get('e1x')+ 0.75)*25.4, 2)
+                if result.get('e4x') > sql_wEnd:
+                    fasten.Info_03 = round(sql_wEnd * 25.4, 2)
                 else:
-                    fasten.info_01 = round((result.get('e4x') - 0.75) * 25.4, 2)
+                    fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
+                fasten.Info_10 = round(fasten.Info_03 - fasten.Info_01, 2)
             else:
                 logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
 
-
+            
+            
             fastenlst.append(fasten)
 
         return fastenlst
@@ -330,61 +365,96 @@ class RunData:
         sql_wStart =  0 #Leading Edge of the Board (Width)        
         sql_wEnd = self.panel.panelLength #Trailing Edge of the Board (Width)
         #Get parameters to determine min and max window to temp fasten material
-        if station == 2: 
-            sql_vMin = machine.ec2.parmData.getParm('ZL Core', 'Y Min Vertical') 
-            sql_vMax = machine.ec2.parmData.getParm('ZL Core', 'Y Max Vertical')
+        if station == 2:        
+            sql_vMin = round(machine.ec2.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
+            sql_vMax = round(machine.ec2.parmData.getParm('ZL Core', 'Y Max Vertical') / 25.4, 2)
         elif station == 3: 
-            sql_vMin = machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical')
-            sql_vMax = machine.ec3.parmData.getParm('ZL Core', 'Y Max Vertical')    
+            sql_vMin = round(machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
+            sql_vMax = round(machine.ec3.parmData.getParm('ZL Core', 'Y Max Vertical') / 25.4, 2)
         
         sql_select_query=f"""
                             select to_jsonb(se) 
                             from cad2fab.system_elements se
                             where 
                                 panelguid = '{sql_var1}' 
-                                and description not in ('Nog', 'Sheathing') 
-                                and e1y < '{sql_vMin}'/25.4 and e2y > '{sql_vMax}'/25.4
+                                and description = 'Sheathing' 
+                                and b1y = '{layer}'
+                                and e1y < '{sql_vMin}' and e2y > '{sql_vMax}'
                                 and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
-                            """    
-        results = pgDB.query(sqlStatement=sql_select_query) 
-        pgDB.close()
-        # Process Results
+                            """            
+        resultSheath = pgDB.query(sqlStatement=sql_select_query) #Look at Sheaths for Edge Conditions
         fastenlst : list [rdh.missionData_RBC]= []
-        for result  in results:
-            result : dict = result[0]
-            fasten = rdh.missionData_RBC(self.panel.getLayerFastener(self.panel.getLayerIndex(layer)))
-
-            #Vertical vs Horizantal Vertial dimension is less than 6inch
-            #Vertical
-            if  result.get('e2y') - result.get('e1y') < 6*25.4:
-                fasten.info_01 = round((result.get('e1x') + 0.75) * 25.4, 2) #X Start Position
-                fasten.info_03 = round((result.get('e1x') + 0.75) * 25.4, 2) #X End Position
-                if result.get('e1y') < sql_vMin:
-                    fasten.info_02 = round(sql_vMin *2, 2) #Y Start Position
-                else:
-                    fasten.info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
-                if result.get('e2y') > sql_vMax:
-                    fasten.info_04 = round(sql_vMax, 2) #Y End Position
-                else:
-                    fasten.info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
-            # Horizantal
-            elif result.get('e4x') - result.get('e1x') < 6*25.4:
-                fasten.info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
-                fasten.info_04 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
-                if result.get('e1x') < sql_wStart:
-                    fasten.info_01 = round(sql_wStart * 25.4, 2)
-                else:
-                    fasten.info_01 = result.get('e1x')
-                if result.get('e4x') < sql_wEnd:
-                    fasten.info_01 = round(sql_wEnd * 25.4, 2)
-                else:
-                    fasten.info_01 = round((result.get('e4x') - 0.75) * 25.4, 2)
-            else:
-                logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
+        for sheet in resultSheath:
+            sheet : dict = sheet[0]
+            sql_wStart = sheet.get('e1x')
+            sql_wEnd = sheet.get('e4x')
 
 
-            fastenlst.append(fasten)
+            sql_select_query=f"""
+                                select to_jsonb(se) 
+                                from cad2fab.system_elements se
+                                where 
+                                    panelguid = '{sql_var1}' 
+                                    and description not in ('Nog', 'Sheathing') 
+                                    and e1y < '{sql_vMax}' and e2y > '{sql_vMin}'
+                                    and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}' 
+                                    and b2y = 0
+                                    order by b3x
+                                """    
+            results = pgDB.query(sqlStatement=sql_select_query) 
+            
+            # Process Results
+            
+            for result  in results:
+                result : dict = result[0]
+                fasten = rdh.missionData_RBC(130)
+                #fasten.missionID = iMaterial.getFastenType()
+                #Vertical vs Horizantal Vertial dimension is less than 6inch
+                #Vertical
+                if  result.get('e2y') - result.get('e1y') > 3:
+                    if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
+                        fasten.Info_01 = round((result.get('e1x') + 0.75) * 25.4,2) #X Start Position
+                        fasten.Info_03 = round((result.get('e1x') + 0.75) * 25.4, 2) #X End Position    
+                    elif sql_wEnd < result.get('e4x'): #Condition when stud is overhanging the board on the positive side
+                        fasten.Info_01 = round((result.get('e1x') + 0.375) * 25.4,2) #X Start Position
+                        fasten.Info_03 = round((result.get('e1x') + 0.375) * 25.4, 2) #X End Position
+                    elif sql_wStart > result.get('e1x'): #Condition when stud is overhanging the board on the positive side
+                        fasten.Info_01 = round((result.get('e1x') - 0.375) * 25.4,2) #X Start Position
+                        fasten.Info_03 = round((result.get('e1x') - 0.375) * 25.4, 2) #X End Position    
+                    else:
+                        logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
+                        break               
+                    if result.get('e1y') < sql_vMin:
+                        fasten.Info_02 = round((sql_vMin + 0.75) * 25.4, 2) #Y Start Position
+                    else:
+                        fasten.Info_02 = round((result.get('e1y') + 0.75)*25.4, 2) #Y Start Position
+                    if result.get('e2y') > sql_vMax:
+                        fasten.Info_04 = round((sql_vMax - 0.75)*25.4, 2) #Y End Position
+                    else:
+                        fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
+                    fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)
+                # Horizantal
+                elif result.get('e4x') - result.get('e1x') > 3:
+                    fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
+                    fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
+                    if result.get('e1x') < sql_wStart:
+                        fasten.Info_01 = round((sql_wStart + 0.75) * 25.4, 2)
+                    else:
+                        fasten.Info_01 = round((result.get('e1x')+ 0.75)*25.4, 2)
+                    if result.get('e4x') > sql_wEnd:
+                        fasten.Info_03 = round(sql_wEnd * 25.4, 2)
+                    else:
+                        fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
+                    
+                    fasten.Info_10 = round(fasten.Info_03 - fasten.Info_01, 2)
 
+                else:
+                    logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
+
+                
+
+                fastenlst.append(fasten)
+        pgDB.close()
         return fastenlst
 
     def getRoughOut(self):
@@ -402,7 +472,9 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename='app.log', level=logging.INFO)
     logging.info('Started')
-    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    #panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    panel = panelData.Panel("dad19741-d4f6-4900-94cf-e353c2dc7382")
+
     machine = machineData.Line()
     sheeting = RunData(panel, machine)
 
