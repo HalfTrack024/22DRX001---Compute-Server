@@ -100,7 +100,7 @@ class RunData:
                 missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 2)
             case 123:
                 for i in range(self.panel.getLayerCount()):
-                    missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i))
+                    missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 2)
                    
             case default:
                 logging.info('no material is placed with EC2')
@@ -115,7 +115,8 @@ class RunData:
                 missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 2)
                 missionFasten[1] = self.getFastener(self.panel.getLayerPosition(1), 2)              
             case 123:
-                pass
+                for i in range(self.panel.getLayerCount()):
+                    missionFasten[i] = self.getFastener(self.panel.getLayerPosition(i), 2)
             case default:
                 logging.info('no material is fastened with EC2')
 
@@ -124,11 +125,14 @@ class RunData:
         missionRoute = [None, None, None, None, None] 
         match loadbalance.get('oEC2_Routing'):
             case 100:
-                pass
+                #missionRoute[0] = self.getRoughOutCut(self.panel.getLayerPosition(0), 2)
+                missionRoute[0] = self.getEndCut(self.panel.getLayerPosition(0), 2)
             case 200:
-                pass
+                #missionRoute[0] = self.getRoughOutCut(self.panel.getLayerPosition(1), 2)
+                missionRoute[0] = self.getEndCut(self.panel.getLayerPosition(1), 2)
             case 123:
-                pass   
+                #missionRoute[0] = self.getRoughOutCut(self.panel.getLayerPosition(1), 2)
+                missionRoute[0] = self.getEndCut(self.panel.getLayerPosition(1), 2)
             case default:
                 logging.info('no material is Routed with EC2')
 
@@ -178,7 +182,8 @@ class RunData:
                 missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 3)
                 missionFasten[1] = self.getFastener(self.panel.getLayerPosition(1), 3)              
             case 123:
-                pass
+                for i in range(self.panel.getLayerCount()):
+                    missionPlace[i] = self.getFastener(self.panel.getLayerPosition(i), 3)
             case default:
                 logging.info('no material is fastened with EC3')
 
@@ -270,6 +275,7 @@ class RunData:
 
     
     def getboardFastener(self, board : rdh.missionData_RBC, iMaterial : Material, station) -> list[rdh.missionData_RBC]:        
+        studSpace = 406
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -314,8 +320,8 @@ class RunData:
                     fasten.Info_01 = round((result.get('e1x') + 0.375) * 25.4,2) #X Start Position
                     fasten.Info_03 = round((result.get('e1x') + 0.375) * 25.4, 2) #X End Position
                 elif sql_wStart > result.get('e1x'): #Condition when stud is overhanging the board on the positive side
-                    fasten.Info_01 = round((result.get('e1x') - 0.375) * 25.4,2) #X Start Position
-                    fasten.Info_03 = round((result.get('e1x') - 0.375) * 25.4, 2) #X End Position    
+                    fasten.Info_01 = round((result.get('e4x') - 0.375) * 25.4,2) #X Start Position
+                    fasten.Info_03 = round((result.get('e4x') - 0.375) * 25.4, 2) #X End Position    
                 else:
                     logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
                     break               
@@ -327,7 +333,10 @@ class RunData:
                     fasten.Info_04 = round((sql_vMax - 0.75)*25.4, 2) #Y End Position
                 else:
                     fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
-                fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)    
+                #fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)  
+                motionlength = fasten.Info_04 - fasten.Info_02
+                fastenCount = round(motionlength, 2)/ studSpace  
+                fasten.Info_10 = round(motionlength / fastenCount)
             # Horizantal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
@@ -340,7 +349,9 @@ class RunData:
                     fasten.Info_03 = round(sql_wEnd * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
-                fasten.Info_10 = round(fasten.Info_03 - fasten.Info_01, 2)
+                motionlength = fasten.Info_03 - fasten.Info_01
+                fastenCount = round(fasten.Info_03 - fasten.Info_01, 2)/ studSpace
+                fasten.Info_10 = round(motionlength / fastenCount)
             else:
                 logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
 
@@ -357,6 +368,7 @@ class RunData:
 
 
     def getFastener(self, layer, station) -> list [rdh.missionData_RBC]:
+        studSpace = 406
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -379,7 +391,7 @@ class RunData:
                                 panelguid = '{sql_var1}' 
                                 and description = 'Sheathing' 
                                 and b1y = '{layer}'
-                                and e1y < '{sql_vMin}' and e2y > '{sql_vMax}'
+                                and e1y < '{sql_vMin}' and e2y < '{sql_vMax}'
                                 and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
                             """            
         resultSheath = pgDB.query(sqlStatement=sql_select_query) #Look at Sheaths for Edge Conditions
@@ -388,7 +400,7 @@ class RunData:
             sheet : dict = sheet[0]
             sql_wStart = sheet.get('e1x')
             sql_wEnd = sheet.get('e4x')
-
+            sql_vMax = sheet.get('e2y')
 
             sql_select_query=f"""
                                 select to_jsonb(se) 
@@ -396,7 +408,7 @@ class RunData:
                                 where 
                                     panelguid = '{sql_var1}' 
                                     and description not in ('Nog', 'Sheathing') 
-                                    and e1y < '{sql_vMax}' and e2y > '{sql_vMin}'
+                                    and e2y <= '{sql_vMax}' and e2y >= '{sql_vMin}'
                                     and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}' 
                                     and b2y = 0
                                     order by b3x
@@ -419,8 +431,8 @@ class RunData:
                         fasten.Info_01 = round((result.get('e1x') + 0.375) * 25.4,2) #X Start Position
                         fasten.Info_03 = round((result.get('e1x') + 0.375) * 25.4, 2) #X End Position
                     elif sql_wStart > result.get('e1x'): #Condition when stud is overhanging the board on the positive side
-                        fasten.Info_01 = round((result.get('e1x') - 0.375) * 25.4,2) #X Start Position
-                        fasten.Info_03 = round((result.get('e1x') - 0.375) * 25.4, 2) #X End Position    
+                        fasten.Info_01 = round((result.get('e4x') - 0.375) * 25.4,2) #X Start Position
+                        fasten.Info_03 = round((result.get('e4x') - 0.375) * 25.4, 2) #X End Position    
                     else:
                         logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
                         break               
@@ -432,7 +444,9 @@ class RunData:
                         fasten.Info_04 = round((sql_vMax - 0.75)*25.4, 2) #Y End Position
                     else:
                         fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
-                    fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)
+                    motionlength = fasten.Info_04 - fasten.Info_02
+                    fastenCount = round(motionlength, 2)/ studSpace  
+                    fasten.Info_10 = round(motionlength / fastenCount)
                 # Horizantal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
@@ -446,7 +460,9 @@ class RunData:
                     else:
                         fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
                     
-                    fasten.Info_10 = round(fasten.Info_03 - fasten.Info_01, 2)
+                    motionlength = fasten.Info_03 - fasten.Info_01
+                    fastenCount = (round(motionlength, 2)/ studSpace) + 1  
+                    fasten.Info_10 = round(motionlength / fastenCount)
 
                 else:
                     logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
@@ -457,10 +473,77 @@ class RunData:
         pgDB.close()
         return fastenlst
 
-    def getRoughOut(self):
-        pass         
+    def getRoughOutCut(self, layer):
+        # Open Database Connection
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var1= self.panel.guid
+        sql_var2 = layer
+        sql_select_query=f"""
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '{sql_var1}' AND description = 'Rough cutout' 
+                        order by b1x;
+                        """    
+    
+        results = pgDB.query(sqlStatement=sql_select_query) 
+        pgDB.close()         
+        routelst : list [rdh.missionData_RBC]= []
+        routerDIA = 12
+        
+        for result  in results:
+            result : dict = result[0]      
+
+    def getEndCut(self, layer):
+        # Open Database Connection
+        credentials = dbc.getCred()
+        pgDB = dbc.DB_Connect(credentials)
+        pgDB.open()
+        sql_var1= self.panel.guid
+        sql_var2 = layer
+        sql_select_query=f"""
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '{sql_var1}' AND "type" = 'Sheet' and actual_width < 48
+                        order by b1x;
+                        """    
+    
+        results = pgDB.query(sqlStatement=sql_select_query) 
+        pgDB.close()         
+        routelst : list [rdh.missionData_RBC]= []
+        routerDIA = 12
+        
+        for result  in results:
+            result : dict = result[0]
+            
+            cutBottomTop = False
+            while cutBottomTop == False:
+                route = rdh.missionData_RBC(160)
+                #R1 Cut
+                if not cutBottomTop:
+                    if  result.get('e1x') > 0 and result.get('e3x') > 0:
+                        route.Info_01 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
+                        route.Info_02 = 0
+                        route.Info_03 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
+                        route.Info_04 = 1500 
+                    else:
+                        logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
+                        break 
+                if not cutBottomTop:
+                    if  result.get('e1x') > 0 and result.get('e3x') > 0:
+                        route.Info_01 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
+                        route.Info_02 = 1500
+                        route.Info_03 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
+                        route.Info_04 = round((result.get('e2y') + routerDIA) * 25.4, 2) 
+                    else:
+                        logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
+                        break         
 
 
+                routelst.append(route)
+
+        return routelst
 
 
 
@@ -472,8 +555,8 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename='app.log', level=logging.INFO)
     logging.info('Started')
-    #panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
-    panel = panelData.Panel("dad19741-d4f6-4900-94cf-e353c2dc7382")
+    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    #panel = panelData.Panel("dad19741-d4f6-4900-94cf-e353c2dc7382")
 
     machine = machineData.Line()
     sheeting = RunData(panel, machine)

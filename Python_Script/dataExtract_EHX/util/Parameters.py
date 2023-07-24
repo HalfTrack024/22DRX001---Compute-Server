@@ -8,6 +8,7 @@ class Parameters(): #This class is designed to fetch all parameters from paramet
 
     def __init__(self, tabs: list, minID, maxID):
         self._tabNames = tabs
+        self._parmList : dict = {}
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
         pgDB.open()
@@ -34,6 +35,7 @@ class Parameters(): #This class is designed to fetch all parameters from paramet
                             ) struct;
                             """
         results = pgDB.query(sqlStatement=sql_select_query)
+        
         self._parmList : dict = results[0][0]
         pgDB.close()
     
@@ -44,7 +46,7 @@ class Parameters(): #This class is designed to fetch all parameters from paramet
             case "string":
                 return str(dVar)
             case "bool":
-                return bool(dVar)
+                return bool(int(dVar, base=2))
             case "int":
                 return int(dVar)
             case "double":

@@ -13,6 +13,7 @@ class EC1:
 class EC2:
 
     def __init__(self) -> None:
+        self.runlvl = {}
         self.parmData = Parameters([], 10, 19)
         self.runlvl = {
             'ec2_20' : self.parmData.getParm("Application", "Run Level 20 missions (True/false)"), 
@@ -22,6 +23,7 @@ class EC2:
 class EC3:
 
     def __init__(self) -> None:
+        self.runlvl = {}
         self.parmData = Parameters([], 20, 29)
         self.runlvl = {
             'ec3_20' : self.parmData.getParm("Application", "Run Level 20 missions (True/false)"), 
