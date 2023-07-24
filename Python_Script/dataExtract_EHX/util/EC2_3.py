@@ -134,9 +134,10 @@ class RunData:
                 missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
                 missionRoute[1] = missionRouting
             case 123:
-                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
-                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
-                missionRoute[1] = missionRouting
+                #missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+                #missionRoute[1] = missionRouting
+                
             case default:
                 logging.info('no material is Routed with EC2')
 
@@ -197,9 +198,10 @@ class RunData:
         missionRouting = []
         match loadbalance.get('oEC3_Routing'):
             case 100:
-                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
-                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
-                missionRoute[0] = missionRouting
+                #missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
+                #missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+                #missionRoute[0] = missionRouting
+                pass
             case 200:
                 missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
                 missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
@@ -484,7 +486,7 @@ class RunData:
         pgDB.close()
         return fastenlst
 
-    def getRoughOutCut(self, layer):
+    def getRoughOutCut(self, layer, station):
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -506,7 +508,7 @@ class RunData:
         for result  in results:
             result : dict = result[0]      
 
-    def getEndCut(self, layer):
+    def getEndCut(self, layer, station):
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -538,21 +540,24 @@ class RunData:
                         route.Info_02 = 0
                         route.Info_03 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
                         route.Info_04 = 1500 
+                        routelst.append(route)
                     else:
                         logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
                         break 
+                
                 if not cutBottomTop:
                     if  result.get('e1x') > 0 and result.get('e3x') > 0:
                         route.Info_01 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
                         route.Info_02 = 1500
                         route.Info_03 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
                         route.Info_04 = round((result.get('e2y') + routerDIA) * 25.4, 2) 
+                        routelst.append(route)
                     else:
                         logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
                         break         
 
 
-                routelst.append(route)
+
 
         return routelst
 
@@ -566,13 +571,13 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename='app.log', level=logging.INFO)
     logging.info('Started')
-    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
-    #panel = panelData.Panel("dad19741-d4f6-4900-94cf-e353c2dc7382")
+    #panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    panel = panelData.Panel("dad19741-d4f6-4900-94cf-e353c2dc7382")
 
     machine = machineData.Line()
     sheeting = RunData(panel, machine)
 
 
     
-    sheeting.getSheets(0)
+    #sheeting.getSheets(0)
 
