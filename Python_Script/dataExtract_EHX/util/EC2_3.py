@@ -123,16 +123,20 @@ class RunData:
         
         #Determine if EC2 is Routing any material
         missionRoute = [None, None, None, None, None] 
+        missionRouting = []
         match loadbalance.get('oEC2_Routing'):
             case 100:
-                #missionRoute[0] = self.getRoughOutCut(self.panel.getLayerPosition(0), 2)
-                missionRoute[0] = self.getEndCut(self.panel.getLayerPosition(0), 2)
+                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+                missionRoute[0] = missionRouting
             case 200:
-                #missionRoute[0] = self.getRoughOutCut(self.panel.getLayerPosition(1), 2)
-                missionRoute[0] = self.getEndCut(self.panel.getLayerPosition(1), 2)
+                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRoute[1] = missionRouting
             case 123:
-                #missionRoute[0] = self.getRoughOutCut(self.panel.getLayerPosition(1), 2)
-                missionRoute[0] = self.getEndCut(self.panel.getLayerPosition(1), 2)
+                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRoute[1] = missionRouting
             case default:
                 logging.info('no material is Routed with EC2')
 
@@ -190,13 +194,20 @@ class RunData:
         
         #Determine if EC3 is Routing any material
         missionRoute = [None, None, None, None, None] 
+        missionRouting = []
         match loadbalance.get('oEC3_Routing'):
             case 100:
-                pass
+                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+                missionRoute[0] = missionRouting
             case 200:
-                pass
+                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRoute[1] = missionRouting
             case 123:
-                pass   
+                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRoute[1] = missionRouting
             case default:
                 logging.info('no material is Routed with EC3')
 
