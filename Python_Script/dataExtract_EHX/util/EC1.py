@@ -70,7 +70,7 @@ class MtrlData:
         sql_JobData_query = '''
                             INSERT INTO cad2fab.sf3_jobdata 
                             (numofstuds, uiitemlength, uiitemheight, uiitemthickness, smtrlcode, uiopcode, sprinterwrite, stype, uiitemid, scadpath, sprojectname, sitemname)
-                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                             ON CONFLICT (sitemname)
                             DO UPDATE SET numofstuds = EXCLUDED.numofstuds,
                             uiitemlength = EXCLUDED.uiitemlength, uiitemheight = EXCLUDED.uiitemheight,
@@ -194,8 +194,8 @@ class JobData():
                        float(elem[14]) * 25.4,float(elem[15]) * 25.4,float(elem[16]) * 25.4,float(elem[17]) * 25.4,
                        float(elem[18]) * 25.4,float(elem[19]) * 25.4,elem[-1],obj_count]
 
-            #if the element isn't a sheet, top plate, bottom plate, or very top plate
-            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate':
+            #if the element isn't a sheet, top plate, bottom plate, very top plate or Nog
+            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate' and elem[2] != 'Nog':
                 #if the element is a normal stud
                 if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout':
                     #get opData for placeing the element
@@ -479,8 +479,8 @@ class JobData():
                     print(f'error with elementguid: {element[1]} \n Type unknown')
 
                 #generate OpText and OpCodes from list of bools
-                tmpFS = self.genOpCode(OpFS)
-                tmpMS = self.genOpCode(OpMS)
+                tmpFS = JobData.genOpCode(OpFS)
+                tmpMS = JobData.genOpCode(OpMS)
                 #list to append to OpJob & append it
                 OpJobAppend = [tmpFS[0],tmpFS[1],Zpos_2x6[ct], 0, 0,tmpMS[1],Zpos_2x6[ct],0, 0, 'ImgName', count]
                 for i in OpJobAppend:
@@ -496,7 +496,7 @@ class JobData():
 
     def nailSubElement(self,elementList):
         #Used for calling StudStop or Hamer Unit Functions
-        clear = fc.Clear
+        clear = fc.Clear()
         #Top and Bottom Plate variables used to check if Sub-Assembly element is touching
         TopPlate = round(38.1 + self.studHeight,1)
         BottomPlate = 38.1
@@ -516,10 +516,10 @@ class JobData():
             #Sub Assembly Element is only touching Top plate
             if elem[16] == TopPlate and elem[14] != BottomPlate:
                 # Check if StudStop and Hammer are being used for TopPlate side
-                if clear.studStopMS(self,elem[1]) == True:
+                if clear.studStopMS(elem[1]) == True:
                     OpMS[0] = True
 
-                if clear.hammerMS(self,elem[1]) == True:
+                if clear.hammerMS(elem[1]) == True:
                     OpMS[1] = True
 
                 #Set Nailing TopPlate Side in Opcode
@@ -605,7 +605,7 @@ class JobData():
                     Length_of_Header = elem[17] - elem[13]
                     Number_of_NailSpacings = Length_of_Header/HeaderNailSpacing
                     NailCounter = 0
-                    Zpos = round((elem[8] - elem[6])/2,0)
+                    Zpos = round(abs(elem[8]) + 19,0)
                     while NailCounter < Number_of_NailSpacings:  
                         OpJob = []
                         #Xpos
@@ -625,10 +625,10 @@ class JobData():
             # Sub Assembly Element is only Touching Bottom Plate
             if elem[14] == BottomPlate and elem[16] != TopPlate:
                 # Check if StudStop and Hammer are being used for Bottom Plate side
-                if clear.studStopFS(self,elem[1]) == True:
+                if clear.studStopFS(elem[1]) == True:
                     OpFS[0] = True
 
-                if clear.hammerFS(self,elem[1]) == True:
+                if clear.hammerFS(elem[1]) == True:
                     OpFS[1] = True
 
                 # Set Nailing Bottom Plate Side in Opcode
@@ -735,21 +735,25 @@ class JobData():
             # Sub Assembly Element is Touching Top and Bottom Plate
             if elem[14] == BottomPlate and elem[16] == TopPlate:
                 # Check if StudStop and Hammer are being used for Bottom Plate side
-                if clear.studStopFS(self,elem[1]) == True:
+                if clear.studStopFS(elem[1]) == True:
                     OpFS[0] = True
 
-                if clear.hammerFS(self,elem[1]) == True:
+                if clear.hammerFS(elem[1]) == True:
                     OpFS[1] = True
 
                 # Set Nailing Bottom Plate Side in Opcode
                 OpFS[6] = True
 
                 # Check if StudStop and Hammer are being used for Top Plate side
-                if clear.studStopMS(self,elem[1]) == True:
+                if clear.studStopMS(elem[1]) == True:
                     OpMS[0] = True
 
-                if clear.hammerMS(self,elem[1]) == True:
+                if clear.hammerMS(elem[1]) == True:
                     OpMS[1] = True
+                
+                print(OpFS[0],OpFS[1],elem[1])
+                print(OpMS[0],OpMS[1],elem[1])
+                
 
                 # Set Nailing Top Plate Side in Opcode
                 OpMS[6] = True
@@ -843,7 +847,7 @@ class JobData():
     
 
 if __name__ == "__main__":
-    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    panel = panelData.Panel("3e7ed267-40de-40e4-9c38-01c4d983cdd0")
     matData = MtrlData(panel)    
-    jobdata = JobData("3daa6007-f4d7-4084-8d86-e1463f3403c9")
+    jobdata = JobData("3e7ed267-40de-40e4-9c38-01c4d983cdd0")
     test = jobdata.jdMain()
