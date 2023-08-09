@@ -1,8 +1,10 @@
 import psycopg2 as psy              #Requires Python >=3.6
 import psycopg2.extras as psyE
+import logging
+import sys
 
 def getCred():
-    f = open(r'C:\Users\PierreSimard\OneDrive - Brave Control Solutions\Documents\Drexell Wall Framing Line Info\Cad2Fab\dataExtract_EHX\util\credentials.txt','r')
+    f = open(r'Python_Script/dataExtract_EHX/util/credentials.txt', 'r')
     credits = f.read().splitlines()
     #Get credentials from the user
     return credits
@@ -36,11 +38,13 @@ class DB_Connect:
                 password=self.password,
                 host=self.host,
                 port=self.port,
-                database=self.database
+                database=self.database,
+                connect_timeout=2
             )
             #print(self.connection.status)
         except(Exception, psy.Error) as Error:
             print("Failed to Connect: {}".format(Error))
+            sys.exit("Connection Not Found")
         finally:
              #print("Connection Open")
              pass
@@ -54,12 +58,19 @@ class DB_Connect:
             #print("SQL connection closed")
 
     def query(self, sqlStatement):
-        cursor = self.connection.cursor()
-        #print(sqlStatement)
-        cursor.execute(sqlStatement) 
-        result = cursor.fetchall()
-        cursor.close()
-        return result
+        try:
+            cursor = self.connection.cursor()
+            #print(sqlStatement)
+            cursor.execute(sqlStatement) 
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except:
+            print('Query Did Not Complete')
+            logging.info(sqlStatement)
+        finally:
+            pass
+
     
     def querymany(self,sqlStatement,records):
         #records should be a list of tuples

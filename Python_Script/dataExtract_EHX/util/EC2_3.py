@@ -36,6 +36,8 @@ class RunData:
         self.rdMain() # Main Call to Programs
         
     def rdMain(self): #Main Call for Run Data. 
+
+        #raise NotImplementedError("Not implemented")
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -54,7 +56,9 @@ class RunData:
         sql_JobData_query = '''
                             INSERT INTO cad2fab.rbc_jobdata
                             (sItemName, stationID, jobdata)
-                            VALUES(%s,%s,%s);
+                            VALUES(%s,%s,%s)
+                            ON CONFLICT (sitemname, stationID)
+                            DO UPDATE SET jobdata = EXCLUDED.jobdata;
                             '''
         #make a list of tuples for querymany
         jdQueryData = []
@@ -75,7 +79,9 @@ class RunData:
         sql_JobData_query = '''
                             INSERT INTO cad2fab.rbc_jobdata
                             (sItemName, stationID, jobdata)
-                            VALUES(%s,%s,%s);
+                            VALUES(%s,%s,%s)
+                            ON CONFLICT (sitemname, stationID)
+                            DO UPDATE SET jobdata = EXCLUDED.jobdata;
                             '''
         #make a list of tuples for querymany
         jdQueryData = []
@@ -83,6 +89,7 @@ class RunData:
         tmp = pgDB.querymany(sql_JobData_query,jdQueryData)
         #Close Connection
         pgDB.close()
+
 
     def rdEC2_Main(self) -> str: #Main Call to assign what work will be allowed to complete on EC2
         #Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
@@ -395,7 +402,7 @@ class RunData:
                 else:
                     fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
                 motionlength = fasten.Info_03 - fasten.Info_01
-                fastenCount = round(fasten.Info_03 - fasten.Info_01, 2)/ studSpace
+                fastenCount = round(motionlength / studSpace) + 1
                 fasten.Info_10 = round(motionlength / fastenCount) 
                 #fasten.Info_11 = 15              
             else:
@@ -515,8 +522,8 @@ class RunData:
                         fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
                     
                     motionlength = fasten.Info_03 - fasten.Info_01
-                    fastenCount = (round(motionlength, 2)/ studSpace) + 1  
-                    fasten.Info_10 = round(motionlength / fastenCount)
+                    fastenCount = round(motionlength / studSpace) + 1
+                    fasten.Info_10 = round(motionlength / fastenCount) 
                     #fasten.Info_11 = 15
                 else:
                     logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))

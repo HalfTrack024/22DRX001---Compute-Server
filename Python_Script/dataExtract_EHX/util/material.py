@@ -39,7 +39,8 @@ class Material:
         #Material Type
         mat : str = sheet["materialdesc"]
         self.refMatTypes
-        for reftype in self.refMatTypes.keys():        
+        for reftype in self.refMatTypes.keys():  
+            mat = mat.upper()      
             if reftype in mat:
                 self.material = reftype
                 break
