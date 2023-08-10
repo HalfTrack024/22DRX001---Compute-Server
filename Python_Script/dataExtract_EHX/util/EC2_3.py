@@ -208,21 +208,21 @@ class RunData:
         #Determine if EC3 is Routing any material
         missionRoute = [None, None, None, None, None] 
         missionRouting = []
-       # match loadbalance.get('oEC3_Routing'):
-            #case 100:
-             #   missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
-             #   missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
-             #   missionRoute[0] = missionRouting
-            #case 200:
-             #   missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
-             #   missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
-             #   missionRoute[1] = missionRouting
-            #case 123:
-             #   missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
-             #   missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
-             #   missionRoute[1] = missionRouting
-            #case default:
-             #   logging.info('no material is Routed with EC3')
+        match loadbalance.get('oEC3_Routing'):
+            case 100:
+               missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
+               missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+               missionRoute[0] = missionRouting
+            case 200:
+               missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
+               missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+               missionRoute[1] = missionRouting
+            case 123:
+               missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
+               missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+               missionRoute[1] = missionRouting
+            case default:
+               logging.info('no material is Routed with EC3')
 
         #Combine Place, Fasten, and Route Data to Layer 
         for i in range(self.panel.getLayerCount()):
@@ -412,11 +412,6 @@ class RunData:
     
         return fastenlst
 
-                
-
-
-
-
     
     def getFastener(self, layer, station) -> list [rdh.missionData_RBC]:
         studSpace = 406
@@ -532,7 +527,8 @@ class RunData:
         pgDB.close()
         return fastenlst
 
-    def getRoughOutCut(self, layer):
+
+    def getRoughOutCut(self, layer, station):
         # Open Database Connection
         credentials = dbc.getCred()
         pgDB = dbc.DB_Connect(credentials)
@@ -549,38 +545,103 @@ class RunData:
         results = pgDB.query(sqlStatement=sql_select_query) 
         pgDB.close()         
         routelst : list [rdh.missionData_RBC]= []
-        routerDIA = 12
+        routerDIA = 0.5
         
         for result  in results:
             result : dict = result[0] 
-
-
-
             cutBottomTop = False
-            while cutBottomTop == False:
+            count = 0                
+            #R1 Cut
+            if not cutBottomTop:
+                #Bottom Left Corner [x,y]
+                p1 = {'x':0 , 'y':0}
+                #Top Right Corner [x,y]
+                p2 = {'x':0 , 'y':0}
+
+                #Find Bottom Left
+                p1['x'] = result.get('e4x')
+                p1['y'] = result.get('e4y')
+                if result.get('e3x') < p1['x']: p1['x'] = result.get('e3x')
+                if result.get('e2x') < p1['x']: p1['x'] = result.get('e2x')                    
+                if result.get('e1x') < p1['x']: p1['x'] = result.get('e1x')  
+                if result.get('e3y') < p1['y']: p1['y'] = result.get('e3y')
+                if result.get('e2y') < p1['y']: p1['y'] = result.get('e2y')                    
+                if result.get('e1y') < p1['y']: p1['y'] = result.get('e1y')    
+                #Find Top Right
+                p2['x'] = result.get('e4x')
+                p2['y'] = result.get('e4y')
+                if result.get('e3x') > p2['x']: p2['x'] = result.get('e3x')
+                if result.get('e2x') > p2['x']: p2['x'] = result.get('e2x')                    
+                if result.get('e1x') > p2['x']: p2['x'] = result.get('e1x')  
+                if result.get('e3y') > p2['y']: p2['y'] = result.get('e3y')
+                if result.get('e2y') > p2['y']: p2['y'] = result.get('e2y')                    
+                if result.get('e1y') > p2['y']: p2['y'] = result.get('e1y')                        
+                #                                     
+                #R1 Cut 1
                 route = rdh.missionData_RBC(160)
-                #R1 Cut
-                if not cutBottomTop:
-                    if  result.get('e1x') > 0 and result.get('e3x') > 0:
-                        route.Info_01 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
-                        route.Info_02 = 0
-                        route.Info_03 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
-                        route.Info_04 = 1500 
-                    else:
-                        logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
-                        break 
-                if not cutBottomTop:
-                    if  result.get('e1x') > 0 and result.get('e3x') > 0:
-                        route.Info_01 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
-                        route.Info_02 = 1500
-                        route.Info_03 = round((result.get('e3x') + routerDIA/2) * 25.4, 2)
-                        route.Info_04 = round((result.get('e2y') + routerDIA) * 25.4, 2) 
-                    else:
-                        logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
-                        break         
-
-
+                route.Info_01 = round((p1['x'] + routerDIA/2) * 25.4, 2)
+                route.Info_02 = 1500
+                route.Info_03 = round((p1['x'] + routerDIA/2) * 25.4, 2)
+                route.Info_04 = round((p1['y'] + routerDIA/2) * 25.4, 2) 
                 routelst.append(route)
+                count += 1
+
+                #R1 Cut 2
+                route = rdh.missionData_RBC(160)
+                route.Info_01 = round((p1['x'] + routerDIA/2) * 25.4, 2)
+                route.Info_02 = round((p1['y'] + routerDIA/2) * 25.4, 2) 
+                route.Info_03 = round((p1['x'] + routerDIA/2) * 25.4, 2) 
+                route.Info_04 = round((p2['y'] - routerDIA/2) * 25.4, 2) 
+                routelst.append(route)
+                count += 1
+
+                #R1 Cut 3
+                route = rdh.missionData_RBC(160)
+                route.Info_01 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_02 = round((p1['y'] + routerDIA/2) * 25.4, 2) 
+                route.Info_03 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_04 = 1500
+                routelst.append(route)
+                count += 1  
+
+                #R1 Scrap Removal Center of Panel
+                route = rdh.missionData_RBC(200)
+                route.Info_01 = round((p2['x'] - p1['x'])/2 * 25.4, 2)
+                route.Info_02 = round((p2['y'] - p1['y'])/2 * 25.4, 2) 
+                route.Info_03 = 0
+                route.Info_04 = 0
+                routelst.append(route)
+                count += 1      
+
+                #R2 Cut 4
+                route = rdh.missionData_RBC(160)
+                route.Info_01 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_02 = 1500
+                route.Info_03 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_04 = round((p2['y'] + routerDIA/2) * 25.4, 2) 
+                routelst.append(route)
+                count += 1
+
+                #R2 Cut 5
+                route = rdh.missionData_RBC(160)
+                route.Info_01 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_02 = round((p2['y'] - routerDIA/2) * 25.4, 2) 
+                route.Info_03 = round((p1['x'] + routerDIA/2) * 25.4, 2) 
+                route.Info_04 = round((p2['y'] - routerDIA/2) * 25.4, 2)  
+                routelst.append(route)
+                count += 1
+
+                #R2 Cut 6
+                route = rdh.missionData_RBC(160)
+                route.Info_01 = round((p1['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_02 = round((p2['y'] - routerDIA/2) * 25.4, 2) 
+                route.Info_03 = round((p1['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_04 = 1500
+                routelst.append(route)
+                count += 1                  
+            else:
+                logging.warning('Did not add Route for member' + panel.guid + '__'  + result.get('elementguid'))
+                break 
 
         return routelst
 
