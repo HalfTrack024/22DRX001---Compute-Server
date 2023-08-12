@@ -33,7 +33,7 @@ class RunData:
             self.machine.changePrediction(self.panel.getLayerCount())        
         
 
-        self.rdMain() # Main Call to Programs
+        #self.rdMain() # Main Call to Programs
         
     def rdMain(self): #Main Call for Run Data. 
 
@@ -489,7 +489,7 @@ class RunData:
             # Process Results
             for result  in results:
                 result : dict = result[0]
-                fasten = rdh.missionData_RBC(120)
+                fasten = rdh.missionData_RBC(self.panel.getLayerFastener(self.panel.getLayerIndex(layer)))
                 #fasten.missionID = iMaterial.getFastenType()
                 #Vertical vs Horizantal Vertial dimension is less than 6inch
                 #Vertical

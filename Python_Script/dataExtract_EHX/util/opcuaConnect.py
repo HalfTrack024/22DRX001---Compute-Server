@@ -27,5 +27,8 @@ class OPC_Connect:
             status = 9
         finally:
             return status
+        
+    def close(self):
+        self.client.disconnect()
 
 

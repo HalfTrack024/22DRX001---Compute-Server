@@ -10,7 +10,7 @@ class MtrlData:
         #Assigns Panel Instance to Mtrl 
         self.panel = panelData
         
-        self.mdMain()
+        #self.mdMain()
 
     # Main Call for determining Material List
     def mdMain(self):
