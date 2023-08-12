@@ -68,6 +68,7 @@ class DB_Connect:
         except:
             print('Query Did Not Complete')
             logging.info(sqlStatement)
+            self.connection.close()
         finally:
             pass
 

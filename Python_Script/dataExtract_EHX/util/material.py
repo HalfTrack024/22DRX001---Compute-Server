@@ -20,6 +20,7 @@ class Material:
         "STAPLES" : [120, 402],
         "NAILS" : [130, 403]
     }
+    
     materialTypes : list[str]
     def __init__(self, sheet, parms:Parameters) -> None:
         self.sheet = sheet

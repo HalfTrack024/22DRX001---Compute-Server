@@ -33,7 +33,7 @@ class xmlParse():
 			element['ElevationView']['Point'][2]['X'],element['ElevationView']['Point'][2]['Y'],
 			element['ElevationView']['Point'][3]['X'],element['ElevationView']['Point'][3]['Y'],None),
 		)
-		elif subctr != None and elemtype != 'Sub Assembly':
+		elif subctr != None and elemtype != 'Sub Assembly' and elemtype != 'Hole':
 			self.elementIN.append(
 			(element['PanelGuid'],element['BoardGuid'],elemtype,
 			element['FamilyMember'],element['FamilyMemberName'],
@@ -55,6 +55,13 @@ class xmlParse():
 					element['FamilyMember'],element['FamilyMemberName'],
 					None,None,element['Width'],None,None,None,None,None,None,None,None,
 					None,None,None,None,None,None,None,None,None,None,str(subctr)),
+			)
+		elif elemtype == 'Hole':
+			self.elementIN.append(
+				(element['PanelGuid'],element['BoardGuid'],elemtype,
+					element['FamilyMember'],element['FamilyMemberName'],
+					0,0,0,0,0,element['XLocation'],element['YLocation'],0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,str(subctr))
 			)
 
 
@@ -133,15 +140,19 @@ class xmlParse():
 					#Check if the panel is a string
 					#The panel is a string if it is the only panel in a bundle
 					if type(panel) == str:
+						# This would remove very top plates from the panel height
+						height = float(bundle['Panel']['Height'])
+						if (height == 97.125 or height == 109.125 or height == 113.125):
+							height = str(height - 1.5)
 						#All params of the panel are a different string, only add one data to the query
 						if c==0:
 							panelIN.append((bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],
-											bundle['Panel']['Label'],bundle['Panel']['Height'],
+											bundle['Panel']['Label'],height.__str__,
 											bundle['Panel']['Thickness'],bundle['Panel']['StudSpacing'],
 											bundle['Panel']['StudHeight'],bundle['Panel']['WallLength'],
 											bundle['Panel']['Category'],bundle['Panel']['BoardFeet']),)
 							
-							HeaderInfo.append((self.sCadFilepath,bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],round(float(bundle['Panel']['Height'])*25.4),round(float(bundle['Panel']['WallLength'])*25.4),round(float(bundle['Panel']['Thickness'])*25.4),1),)
+							HeaderInfo.append((self.sCadFilepath,bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],round(float(height)*25.4),round(float(bundle['Panel']['WallLength'])*25.4),round(float(bundle['Panel']['Thickness'])*25.4),1),)
 						c+=1
 						#reset counter at the end of the strings
 						if c == 29:
@@ -149,12 +160,16 @@ class xmlParse():
 						#Skip to the next loop if the panel was a string
 						continue
 					#Get the data for non-string panels
+					# This would remove very top plates from the panel height
+					height = float(panel['Height'])
+					if (height == 97.125 or height == 109.125 or height == 113.125):
+						height = str(height - 1.5)
 					panelIN.append((panel['BundleGuid'],panel['PanelGuid'],panel['Label'],
-									panel['Height'],panel['Thickness'],panel['StudSpacing'],
+									height,panel['Thickness'],panel['StudSpacing'],
 									panel['StudHeight'],panel['WallLength'],panel['Category'],
 									panel['BoardFeet']),)
 					
-					HeaderInfo.append((self.sCadFilepath,panel['BundleGuid'],panel['PanelGuid'],round(float(panel['Height'])*25.4),round(float(panel['WallLength'])*25.4),round(float(panel['Thickness'])*25.4),1),)
+					HeaderInfo.append((self.sCadFilepath,panel['BundleGuid'],panel['PanelGuid'],round(float(height)*25.4),round(float(panel['WallLength'])*25.4),round(float(panel['Thickness'])*25.4),1),)
 
 		#Insert the panel data to the Database
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
@@ -207,8 +222,34 @@ class xmlParse():
 						if 'Board' in panel.keys():
 							#loop through all the boards in the panel
 							for board in panel['Board']:
-								#add the board data to the list
-								xmlParse.appendElement(self,board,'Board',None)
+								if board['FamilyMemberName'] != 'TopPlate':
+									#add the board data to the list
+									xmlParse.appendElement(self,board,'Board',None)
+								else:
+									#add the TopPlate data to the list
+									xmlParse.appendElement(self,board,'Board',None)		
+									#Add Hole Data to list
+									offset = 17.3
+									if 'Holes' in board.keys():
+										holeCnt = 1
+										subassemblyCT = 1
+										data = board['Holes']['CircularHoleFeature']
+										if type(data) == dict:
+											holes = []
+											holes.append(data)
+										else:
+											holes = data										
+										for hole in holes:
+											holeSet = {
+											'PanelGuid': board['PanelGuid'],
+											'BoardGuid': board['BoardGuid'] + '-' + str(holeCnt),
+											'FamilyMember': board['FamilyMember'],
+											'FamilyMemberName':'Hole',
+											'XLocation': str(float(hole['XLocation']) + offset),
+											'YLocation': hole['YLocation']
+											}									
+											holeCnt += 1
+											xmlParse.appendElement(self,holeSet,'Hole',subassemblyCT)	
 						#Add sheets to the list if they exist
 						if 'Sheet' in panel.keys():
 							#loop through all the sheets in the panel

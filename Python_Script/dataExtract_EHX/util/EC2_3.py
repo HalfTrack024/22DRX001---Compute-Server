@@ -211,15 +211,15 @@ class RunData:
         match loadbalance.get('oEC3_Routing'):
             case 100:
                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(0), 2))
-               missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+               #missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
                missionRoute[0] = missionRouting
             case 200:
                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
-               missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+               #missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
                missionRoute[1] = missionRouting
             case 123:
                missionRouting.extend(self.getRoughOutCut(self.panel.getLayerPosition(1), 2))
-               missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+               #missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
                missionRoute[1] = missionRouting
             case default:
                logging.info('no material is Routed with EC3')
@@ -305,7 +305,10 @@ class RunData:
             place.Info_04 = 0
             place.Info_05 = 29
             place.Info_06 = round((sheet.get('e1x') + 0.75)*25.4, 2) 
-            place.Info_11 = 0
+            if place.missionID == 401:
+                place.Info_11 = 1
+            else:
+                place.Info_11 = 0
             place.Info_12 = 0
 
             # Fastening
@@ -336,10 +339,10 @@ class RunData:
         #Get parameters to determine min and max window to temp fasten material
         if station == 2: 
             sql_vMin = 0 #machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') /25.4
-            sql_vMax = machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
+            sql_vMax = machine.ec2.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
         elif station == 3: 
             sql_vMin = 0 #machine.ec3.parmData.getParm([], 'ZL Core', 'Y Min Vertical') / 25.4
-            sql_vMax = machine.ec3.parmData.getParm([], 'ZL Core', 'Y Middle Vertical') / 25.4
+            sql_vMax = machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
         
         sql_select_query=f"""
                             select to_jsonb(se) 
@@ -375,7 +378,7 @@ class RunData:
                     fasten.Info_03 = round((result.get('e4x') - 0.375) * 25.4, 2) #X End Position    
                 else:
                     logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
-                    break               
+                    continue               
                 if result.get('e1y') < sql_vMin:
                     fasten.Info_02 = round(sql_vMin * 25.4, 2) #Y Start Position
                 else:
@@ -386,9 +389,14 @@ class RunData:
                     fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
                 #fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)  
                 motionlength = fasten.Info_04 - fasten.Info_02
-                fastenCount = round(motionlength, 2)/ studSpace  
-                fasten.Info_10 = round(motionlength / fastenCount)
-                #fasten.Info_11 = 15
+                fastenCount = round(motionlength / studSpace) + 1
+                fasten.Info_10 = round(motionlength / fastenCount) 
+                if fasten.missionID == 110:
+                    fasten.Info_11 = self.machine.toolIndex
+                    if self.machine.toolIndex >= 8:
+                        self.machine.toolIndex = 1
+                    else:
+                        self.machine.toolIndex = self.machine.toolIndex << 1
             # Horizantal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
@@ -404,7 +412,14 @@ class RunData:
                 motionlength = fasten.Info_03 - fasten.Info_01
                 fastenCount = round(motionlength / studSpace) + 1
                 fasten.Info_10 = round(motionlength / fastenCount) 
-                #fasten.Info_11 = 15              
+                if fasten.Info_10 < 75:
+                    fasten.Info_10 = studSpace
+                if fasten.missionID == 110:
+                    fasten.Info_11 = self.machine.toolIndex
+                    if self.machine.toolIndex >= 8:
+                        self.machine.toolIndex = 1
+                    else:
+                        self.machine.toolIndex = self.machine.toolIndex << 1           
             else:
                 logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
             
@@ -474,7 +489,7 @@ class RunData:
             # Process Results
             for result  in results:
                 result : dict = result[0]
-                fasten = rdh.missionData_RBC(110)
+                fasten = rdh.missionData_RBC(120)
                 #fasten.missionID = iMaterial.getFastenType()
                 #Vertical vs Horizantal Vertial dimension is less than 6inch
                 #Vertical
@@ -490,7 +505,7 @@ class RunData:
                         fasten.Info_03 = round((result.get('e4x') - 0.375) * 25.4, 2) #X End Position    
                     else:
                         logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
-                        break               
+                        continue               
                     if result.get('e1y') < sql_vMin:
                         fasten.Info_02 = round((sql_vMin + 0.75) * 25.4, 2) #Y Start Position
                     else:
@@ -500,9 +515,14 @@ class RunData:
                     else:
                         fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
                     motionlength = fasten.Info_04 - fasten.Info_02
-                    fastenCount = round(motionlength, 2)/ studSpace  
-                    fasten.Info_10 = round(motionlength / fastenCount)
-                    #fasten.Info_11 = 15
+                    fastenCount = round(motionlength / studSpace) + 1
+                    fasten.Info_10 = round(motionlength / fastenCount) 
+                    if fasten.missionID == 110:
+                        fasten.Info_11 = self.machine.toolIndex
+                        if self.machine.toolIndex >= 8:
+                            self.machine.toolIndex = 1
+                        else:
+                            self.machine.toolIndex = self.machine.toolIndex << 1
                 # Horizantal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
@@ -519,7 +539,14 @@ class RunData:
                     motionlength = fasten.Info_03 - fasten.Info_01
                     fastenCount = round(motionlength / studSpace) + 1
                     fasten.Info_10 = round(motionlength / fastenCount) 
-                    #fasten.Info_11 = 15
+                    if fasten.Info_10 < 75:
+                        fasten.Info_10 = studSpace                    
+                    if fasten.missionID == 110:
+                        fasten.Info_11 = self.machine.toolIndex
+                        if self.machine.toolIndex >= 8:
+                            self.machine.toolIndex = 1
+                        else:
+                            self.machine.toolIndex = self.machine.toolIndex << 1
                 else:
                     logging.warning('Did not add fastening for member' + panel.guid + '__'  + result.get('elementguid'))
 
@@ -559,14 +586,17 @@ class RunData:
                 p2 = {'x':0 , 'y':0}
 
                 #Find Bottom Left
-                p1['x'] = result.get('e4x')
-                p1['y'] = result.get('e4y')
-                if result.get('e3x') < p1['x']: p1['x'] = result.get('e3x')
-                if result.get('e2x') < p1['x']: p1['x'] = result.get('e2x')                    
-                if result.get('e1x') < p1['x']: p1['x'] = result.get('e1x')  
-                if result.get('e3y') < p1['y']: p1['y'] = result.get('e3y')
-                if result.get('e2y') < p1['y']: p1['y'] = result.get('e2y')                    
-                if result.get('e1y') < p1['y']: p1['y'] = result.get('e1y')    
+                p1['x'] = result.get('e4x') 
+                p1['y'] = result.get('e4y') 
+                if result.get('e3x') < p1['x']: p1['x'] = result.get('e3x') 
+                if result.get('e2x') < p1['x']: p1['x'] = result.get('e2x')                     
+                if result.get('e1x') < p1['x']: p1['x'] = result.get('e1x')   
+                if result.get('e3y') < p1['y']: p1['y'] = result.get('e3y') 
+                if result.get('e2y') < p1['y']: p1['y'] = result.get('e2y')                     
+                if result.get('e1y') < p1['y']: p1['y'] = result.get('e1y')     
+                p1['x'] =round((p1['x'] + routerDIA/2) * 25.4, 2)
+                p1['y'] =round((p1['y'] + routerDIA/2) * 25.4, 2)  
+
                 #Find Top Right
                 p2['x'] = result.get('e4x')
                 p2['y'] = result.get('e4y')
@@ -575,39 +605,41 @@ class RunData:
                 if result.get('e1x') > p2['x']: p2['x'] = result.get('e1x')  
                 if result.get('e3y') > p2['y']: p2['y'] = result.get('e3y')
                 if result.get('e2y') > p2['y']: p2['y'] = result.get('e2y')                    
-                if result.get('e1y') > p2['y']: p2['y'] = result.get('e1y')                        
+                if result.get('e1y') > p2['y']: p2['y'] = result.get('e1y')     
+                p2['x'] =round((p2['x'] - routerDIA/2) * 25.4, 2)
+                p2['y'] =round((p2['y'] - routerDIA/2) * 25.4, 2)                                     
                 #                                     
                 #R1 Cut 1
                 route = rdh.missionData_RBC(160)
-                route.Info_01 = round((p1['x'] + routerDIA/2) * 25.4, 2)
+                route.Info_01 = p1['x']
                 route.Info_02 = 1500
-                route.Info_03 = round((p1['x'] + routerDIA/2) * 25.4, 2)
-                route.Info_04 = round((p1['y'] + routerDIA/2) * 25.4, 2) 
+                route.Info_03 = p1['x']
+                route.Info_04 = p1['y'] 
                 routelst.append(route)
                 count += 1
 
                 #R1 Cut 2
                 route = rdh.missionData_RBC(160)
-                route.Info_01 = round((p1['x'] + routerDIA/2) * 25.4, 2)
-                route.Info_02 = round((p1['y'] + routerDIA/2) * 25.4, 2) 
-                route.Info_03 = round((p1['x'] + routerDIA/2) * 25.4, 2) 
-                route.Info_04 = round((p2['y'] - routerDIA/2) * 25.4, 2) 
+                route.Info_01 = p1['x']
+                route.Info_02 = p1['y'] 
+                route.Info_03 = p2['x'] 
+                route.Info_04 = p1['y'] 
                 routelst.append(route)
                 count += 1
 
                 #R1 Cut 3
                 route = rdh.missionData_RBC(160)
-                route.Info_01 = round((p2['x'] - routerDIA/2) * 25.4, 2)
-                route.Info_02 = round((p1['y'] + routerDIA/2) * 25.4, 2) 
-                route.Info_03 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_01 = p2['x']
+                route.Info_02 = p1['y'] 
+                route.Info_03 = p2['x']
                 route.Info_04 = 1500
                 routelst.append(route)
                 count += 1  
 
                 #R1 Scrap Removal Center of Panel
                 route = rdh.missionData_RBC(200)
-                route.Info_01 = round((p2['x'] - p1['x'])/2 * 25.4, 2)
-                route.Info_02 = round((p2['y'] - p1['y'])/2 * 25.4, 2) 
+                route.Info_01 = round(p1['x'] + (p2['x'] - p1['x'])/2, 2)
+                route.Info_02 = round(p1['y'] + (p2['y'] - p1['y'])/2, 2) 
                 route.Info_03 = 0
                 route.Info_04 = 0
                 routelst.append(route)
@@ -615,27 +647,27 @@ class RunData:
 
                 #R2 Cut 4
                 route = rdh.missionData_RBC(160)
-                route.Info_01 = round((p2['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_01 = p2['x']
                 route.Info_02 = 1500
-                route.Info_03 = round((p2['x'] - routerDIA/2) * 25.4, 2)
-                route.Info_04 = round((p2['y'] + routerDIA/2) * 25.4, 2) 
+                route.Info_03 = p2['x']
+                route.Info_04 = p2['y'] 
                 routelst.append(route)
                 count += 1
 
                 #R2 Cut 5
                 route = rdh.missionData_RBC(160)
-                route.Info_01 = round((p2['x'] - routerDIA/2) * 25.4, 2)
-                route.Info_02 = round((p2['y'] - routerDIA/2) * 25.4, 2) 
-                route.Info_03 = round((p1['x'] + routerDIA/2) * 25.4, 2) 
-                route.Info_04 = round((p2['y'] - routerDIA/2) * 25.4, 2)  
+                route.Info_01 = p2['x']
+                route.Info_02 = p2['y'] 
+                route.Info_03 = p1['x'] 
+                route.Info_04 = p2['y']  
                 routelst.append(route)
                 count += 1
 
                 #R2 Cut 6
                 route = rdh.missionData_RBC(160)
-                route.Info_01 = round((p1['x'] - routerDIA/2) * 25.4, 2)
-                route.Info_02 = round((p2['y'] - routerDIA/2) * 25.4, 2) 
-                route.Info_03 = round((p1['x'] - routerDIA/2) * 25.4, 2)
+                route.Info_01 = p1['x']
+                route.Info_02 = p2['y'] 
+                route.Info_03 = p1['x']
                 route.Info_04 = 1500
                 routelst.append(route)
                 count += 1                  
@@ -644,7 +676,6 @@ class RunData:
                 break 
 
         return routelst
-
 
 
     def getEndCut(self, layer):
@@ -708,7 +739,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename='app.log', level=logging.INFO)
     logging.info('Started')
     #panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
-    panel = panelData.Panel("f46fa82b-0bd5-4b6c-9e7a-cce56b3143fb")
+    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
 
     machine = machineData.Line()
     sheeting = RunData(panel, machine)
