@@ -1,5 +1,5 @@
-import dataBaseConnect as dbc
-from Parameters import Parameters
+import util.dataBaseConnect as dbc
+from util.Parameters import Parameters
 from fractions import Fraction
 import math
 

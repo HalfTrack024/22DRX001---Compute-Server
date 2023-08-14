@@ -1,5 +1,5 @@
-import dataBaseConnect as dbc
-from Parameters import Parameters
+import util.dataBaseConnect as dbc
+from util.Parameters import Parameters
 # this class is designed to check positional okayness of the framing units Hammer and Stud Stop on both the Mobile and Fix Sides
 class Clear:
     def __init__(self) -> None:

@@ -1,5 +1,5 @@
-import dataBaseConnect as dbc
-import framingCheck as fc
+import util.dataBaseConnect as dbc
+import util.framingCheck as fc
 
 class Panel:
     plateInnerBottom = 0

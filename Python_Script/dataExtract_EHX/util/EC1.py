@@ -1,12 +1,12 @@
-import dataBaseConnect as dbc
-import framingCheck as fc
-import panelData
+import util.dataBaseConnect as dbc
+import util.framingCheck as fc
+from util.panelData import Panel
 
 class MtrlData:
 
     mtrldata = ()
 
-    def __init__(self, panelData : panelData.Panel):
+    def __init__(self, panelData : Panel):
         #Assigns Panel Instance to Mtrl 
         self.panel = panelData
         
@@ -892,7 +892,4 @@ class JobData():
         return(OpElement, count+1)
 
 if __name__ == "__main__":
-    panel = panelData.Panel("3daa6007-f4d7-4084-8d86-e1463f3403c9")
-    matData = MtrlData(panel)    
-    jobdata = JobData("3daa6007-f4d7-4084-8d86-e1463f3403c9")
-    test = jobdata.jdMain()
+    print('Run from singleRun')

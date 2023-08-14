@@ -7,7 +7,7 @@ from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 
-import dataBaseConnect as dbc
+import util.dataBaseConnect as dbc
 
 
 

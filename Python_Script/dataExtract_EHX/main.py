@@ -42,6 +42,8 @@ def checkQueueRequest(opcConnection : OPC_Connect) -> bool:
         requestRunData = True
     else:
         requestRunData = False
+
+    opcConnection.setValue(nodeID, 32)
     return requestRunData
 
 def buildPanelData(opcConnection : OPC_Connect):
@@ -68,12 +70,16 @@ def buildPanelData(opcConnection : OPC_Connect):
 
 
    
-
+# [22DRX001_EC1]/CAD2FAB/Add_Run_Data - BOOL
+# [22DRX001_EC1]/CAD2FAB/PanelGUID - STRING
+# [22DRX001_EC1]/CAD2FAB/Data_Status - ARRAY OF BYTE
+# [22DRX001_EC1]/CAD2FAB/
 
 logging.basicConfig(filename='app.log', level=logging.INFO)
 logging.info('Started')
 runContinuos = True
-#Enter Periodic Loop 
+#Enter Periodic Loop
+ 
 try:
     opc = OPC_Connect()
     opc.open()
