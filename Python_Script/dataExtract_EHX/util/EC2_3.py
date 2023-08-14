@@ -359,7 +359,7 @@ class RunData:
                             order by b3x  
                             """    
         results = pgDB.query(sqlStatement=sql_select_query) 
-        pgDB.close()
+        
         # Process Results
         fastenlst : list [rdh.missionData_RBC]= []
         for result  in results:
@@ -425,10 +425,10 @@ class RunData:
             else:
                 logging.warning('Did not add fastening for member' + self.panel.guid + '__'  + result.get('elementguid'))
             
-            fasten.Info_09 = self.getCWS(result.get('elementguid'))
+            fasten.Info_09 = self.getCWS(result, pgDB)
 
             fastenlst.append(fasten)
-    
+        pgDB.close()
         return fastenlst
 
     
@@ -735,37 +735,39 @@ class RunData:
 
         return routelst
 
-    def getCWS(self, elementGUID):
+    def getCWS(self, element : dict, ipgDB : dbc):
         cwsPos = 0
-        # # Open Database Connection
-        # credentials = dbc.getCred()
-        # pgDB = dbc.DB_Connect(credentials)
-        # pgDB.open()
-        # sql_var1= self.panel.guid #Panel ID        
-        # sql_wStart =  round(board.Info_01 /25.4,2)  #Leading Edge of the Board (Width)        
-        # sql_wEnd = round((board.Info_01 + board.Info_03)/25.4, 2) #Trailing Edge of the Board (Width)
-        # #Get parameters to determine min and max window to temp fasten material
-        # if station == 2: 
-        #     sql_vMin = 0 #machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') /25.4
-        #     sql_vMax = machine.ec2.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
-        # elif station == 3: 
-        #     sql_vMin = 0 #machine.ec3.parmData.getParm([], 'ZL Core', 'Y Min Vertical') / 25.4
-        #     sql_vMax = machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
-        
-        # sql_select_query=f"""
-        #                     select to_jsonb(se) 
-        #                     from cad2fab.system_elements se 
-        #                     where panelguid = '{sql_var1}' 
-        #                     and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout') 
-        #                     and e1y < '{sql_vMax}' 
-        #                     and e2y > '{sql_vMin}' 
-        #                     and e1x < '{sql_wEnd}' 
-        #                     and e4x > '{sql_wStart}' 
-        #                     and b2y = 0 
-        #                     order by b3x  
-        #                     """    
-        # results = pgDB.query(sqlStatement=sql_select_query) 
-        # pgDB.close()
+        if element.get('description') == 'Stud':
+            sql_var1= self.panel.guid #Panel ID    
+            sql_var2= element.get('elementguid')
+            sql_wStart =  element.get('e1x') - 6  #Leading Edge of Window Next to Element In Question        
+            sql_wEnd = element.get('e1x') + 0.25 #Trailing Edge of Window Next to Element In Question   
+            
+            sql_select_query1=f"""
+                                select *
+                                from cad2fab.system_elements se 
+                                where ((e1x between '{sql_wStart}' and '{sql_wEnd}') or (e2x between '{sql_wStart}' and '{sql_wEnd}') or (e3x between '{sql_wStart}' and '{sql_wEnd}') or (e4x between '{sql_wStart}' and '{sql_wEnd}'))
+                                and panelguid = '{sql_var1}'
+                                and elementguid != '{sql_var2}';
+                                """    
+            
+            sql_wStart =  element.get('e3x') - 0.25  #Leading Edge of Window Next to Element In Question        
+            sql_wEnd = element.get('e3x') + 6 #Trailing Edge of Window Next to Element In Question   
+            
+            sql_select_query2=f"""
+                                select *
+                                from cad2fab.system_elements se 
+                                where ((e1x between '{sql_wStart}' and '{sql_wEnd}') or (e2x between '{sql_wStart}' and '{sql_wEnd}') or (e3x between '{sql_wStart}' and '{sql_wEnd}') or (e4x between '{sql_wStart}' and '{sql_wEnd}'))
+                                and panelguid = '{sql_var1}'
+                                and elementguid != '{sql_var2}';
+                                """    
+
+            results_Pre = ipgDB.query(sqlStatement=sql_select_query1) 
+            results_Post = ipgDB.query(sqlStatement=sql_select_query1) 
+            if len(results_Pre) == 0 and len(results_Post) == 0:
+                leadEdge = element.get('e1x')
+                trailEdge = element.get('e3x')
+                cwsPos = round((leadEdge + (trailEdge - leadEdge)/2) * 25.4, 2)
 
 
         return cwsPos
