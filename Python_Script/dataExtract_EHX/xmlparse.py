@@ -4,7 +4,7 @@ from util import dataBaseConnect as dbc
 class xmlParse():
 	def __init__(self,filepath):
 		#open the xml file
-		with open(filepath, 'r') as f:
+		with open(filepath, 'r', encoding='utf-8-sig') as f:
 			set = f.read()
 		#variable data is accessable outside of this function
 		self.data = dc.parse(set)
@@ -13,7 +13,7 @@ class xmlParse():
 		xmlParse.data = self.data
 		xmlParse.credentials = self.credentials
 
-		#self.xmlMain()
+		self.xmlMain()
 	
 
 	def appendElement(self, element, elemtype, subctr):
@@ -147,7 +147,7 @@ class xmlParse():
 						#All params of the panel are a different string, only add one data to the query
 						if c==0:
 							panelIN.append((bundle['Panel']['BundleGuid'],bundle['Panel']['PanelGuid'],
-											bundle['Panel']['Label'],height.__str__,
+											bundle['Panel']['Label'],height,
 											bundle['Panel']['Thickness'],bundle['Panel']['StudSpacing'],
 											bundle['Panel']['StudHeight'],bundle['Panel']['WallLength'],
 											bundle['Panel']['Category'],bundle['Panel']['BoardFeet']),)
@@ -424,7 +424,8 @@ class xmlParse():
 
 if __name__ == "__main__":
 	#get filepath to XML file from user
-	filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
+	#filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
+	filepath = r"Python_Script\dataExtract_EHX\xmlFiles\RANDEK TEST PANELS.EHX"
 
 	#init the class
 	xmlParse(filepath)

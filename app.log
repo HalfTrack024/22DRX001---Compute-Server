@@ -828,3 +828,33 @@ INFO:root:results: [({'b1x': 0, 'b1y': 0, 'b2x': 0, 'b2y': 1, 'b3x': 48, 'b3y': 
 INFO:root:no material is fastened with EC2
 INFO:root:results: [({'b1x': 0, 'b1y': 0, 'b2x': 0, 'b2y': 1, 'b3x': 48, 'b3y': 1, 'b4x': 48, 'b4y': 0, 'e1x': 0, 'e1y': 0.5, 'e2x': 0, 'e2y': 96.5, 'e3x': 48, 'e3y': 96.5, 'e4x': 48, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '3daa6007-f4d7-4084-8d86-e1463f3403c9', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'b07a6596-5655-4b24-b5b0-1f01c259f9c6', 'actual_width': 48, 'familymember': 40, 'materialdesc': '4x8 R3 ZIP', 'actual_thickness': 1},), ({'b1x': 48, 'b1y': 0, 'b2x': 48, 'b2y': 1, 'b3x': 96, 'b3y': 1, 'b4x': 96, 'b4y': 0, 'e1x': 48, 'e1y': 0.5, 'e2x': 48, 'e2y': 96.5, 'e3x': 96, 'e3y': 96.5, 'e4x': 96, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '3daa6007-f4d7-4084-8d86-e1463f3403c9', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'fd83decd-9aee-466d-9a65-c221671504e8', 'actual_width': 48, 'familymember': 40, 'materialdesc': '4x8 R3 ZIP', 'actual_thickness': 1},), ({'b1x': 96, 'b1y': 0, 'b2x': 96, 'b2y': 1, 'b3x': 144, 'b3y': 1, 'b4x': 144, 'b4y': 0, 'e1x': 96, 'e1y': 0.5, 'e2x': 96, 'e2y': 96.5, 'e3x': 144, 'e3y': 96.5, 'e4x': 144, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '3daa6007-f4d7-4084-8d86-e1463f3403c9', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'a8a37701-f0ba-4734-a1d1-c03cdf385f8e', 'actual_width': 48, 'familymember': 40, 'materialdesc': '4x8 R3 ZIP', 'actual_thickness': 1},), ({'b1x': 144, 'b1y': 0, 'b2x': 144, 'b2y': 1, 'b3x': 192, 'b3y': 1, 'b4x': 192, 'b4y': 0, 'e1x': 144, 'e1y': 0.5, 'e2x': 144, 'e2y': 96.5, 'e3x': 192, 'e3y': 96.5, 'e4x': 192, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '3daa6007-f4d7-4084-8d86-e1463f3403c9', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd59306f1-1e4a-49a1-86aa-375926397541', 'actual_width': 48, 'familymember': 40, 'materialdesc': '4x8 R3 ZIP', 'actual_thickness': 1},)]
 INFO:root:no material is placed with EC3
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:Started
+INFO:root:Program Has Stopped
+INFO:root:Started
+INFO:root:Program Has Stopped
+INFO:root:Started
