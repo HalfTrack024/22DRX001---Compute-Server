@@ -201,8 +201,8 @@ class Clear:
         return SSM_Clear
     
         
-if __name__ == "__main__":
-    board = Clear()
-    #Elementtemp = board.studStopMS('1efbe9e1-83e9-4dad-8c50-664bfc5e292a')
-    #print (Elementtemp)
+# if __name__ == "__main__":
+#     board = Clear()
+#     #Elementtemp = board.studStopMS('1efbe9e1-83e9-4dad-8c50-664bfc5e292a')
+#     #print (Elementtemp)
     

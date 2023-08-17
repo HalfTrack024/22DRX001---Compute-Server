@@ -75,7 +75,7 @@ class Line(EC1, EC2, EC3):
 
 
 
-if __name__ == "__main__":
-    machine = Line()
+# if __name__ == "__main__":
+#     machine = Line()
 
-    print(machine.getPrediction())
+#     print(machine.getPrediction())

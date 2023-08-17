@@ -1,14 +1,9 @@
-import json, math
 import logging
-from datetime import datetime
-
-import sys
-#import numpy as np
+#Project Dependencies
 from util.panelData import Panel
 from util.machineData import Line
 import util.dataBaseConnect as dbc
 import util.runData_Helper as rdh
-#from Parameters import Parameters
 from util.material import Material
 
 
@@ -33,8 +28,6 @@ class RunData:
         if self.machine.predictlayercount != self.panel.getLayerCount():
             self.machine.changePrediction(self.panel.getLayerCount())        
         
-
-        #self.rdMain() # Main Call to Programs
         
     def rdMain(self): #Main Call for Run Data. 
 
@@ -408,7 +401,7 @@ class RunData:
                 else:
                     fasten.Info_01 = round((result.get('e1x')+ 0.75)*25.4, 2)
                 if result.get('e4x') > sql_wEnd:
-                    fasten.Info_03 = round(sql_wEnd * 25.4, 2)
+                    fasten.Info_03 = round((sql_wEnd - 0.75) * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
                 motionlength = fasten.Info_03 - fasten.Info_01
@@ -614,70 +607,14 @@ class RunData:
                 p2['x'] =round((p2['x'] - routerDIA/2) * 25.4, 2)
                 p2['y'] =round((p2['y'] - routerDIA/2) * 25.4, 2)                                     
                 #                                     
-                #R1 Cut 1
-                route = rdh.missionData_RBC(160)
-                route.Info_01 = p1['x']
-                route.Info_02 = 1500
-                route.Info_03 = p1['x']
-                route.Info_04 = p1['y'] 
-                routelst.append(route)
-                count += 1
-
-                #R1 Cut 2
-                route = rdh.missionData_RBC(160)
-                route.Info_01 = p1['x']
-                route.Info_02 = p1['y'] 
-                route.Info_03 = p2['x'] 
-                route.Info_04 = p1['y'] 
-                routelst.append(route)
-                count += 1
-
-                #R1 Cut 3
-                route = rdh.missionData_RBC(160)
-                route.Info_01 = p2['x']
-                route.Info_02 = p1['y'] 
-                route.Info_03 = p2['x']
-                route.Info_04 = 1500
-                routelst.append(route)
-                count += 1  
-
-                #R1 Scrap Removal Center of Panel
+                #
                 route = rdh.missionData_RBC(200)
-                route.Info_01 = round(p1['x'] + (p2['x'] - p1['x'])/2, 2)
-                route.Info_02 = round(p2['y'] - scrapToolHalfLen - scrapToolShift, 2) 
-                route.Info_03 = 0
-                route.Info_04 = 0
-                route.Info_12 = 0
-                routelst.append(route)
-                count += 1      
-
-                #R2 Cut 4
-                route = rdh.missionData_RBC(160)
-                route.Info_01 = p2['x']
-                route.Info_02 = 1500
-                route.Info_03 = p2['x']
-                route.Info_04 = p2['y'] 
-                routelst.append(route)
-                count += 1
-
-                #R2 Cut 5
-                route = rdh.missionData_RBC(160)
-                route.Info_01 = p2['x']
-                route.Info_02 = p2['y'] 
-                route.Info_03 = p1['x'] 
-                route.Info_04 = p2['y']  
-                routelst.append(route)
-                count += 1
-
-                #R2 Cut 6
-                route = rdh.missionData_RBC(160)
                 route.Info_01 = p1['x']
-                route.Info_02 = p2['y'] 
-                route.Info_03 = p1['x']
-                route.Info_04 = 1500
-                route.Info_11 = 1
-                routelst.append(route)
-                count += 1                  
+                route.Info_02 = p1['y']
+                route.Info_03 = round(p2['x'] - p1['x'], 2)
+                route.Info_04 = round(p2['y'] - p1['y'], 2)
+                route.Info_05 = 1 
+                routelst.append(route) 
             else:
                 logging.warning('Did not add Route for member' + self.panel.guid + '__'  + result.get('elementguid'))
                 break 
@@ -773,7 +710,4 @@ class RunData:
         return cwsPos
 
 
-
-if __name__ == "__main__":
-    print('Run from singleRun')
 

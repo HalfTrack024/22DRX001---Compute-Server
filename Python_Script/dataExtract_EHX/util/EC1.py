@@ -891,5 +891,4 @@ class JobData():
         # Return OpJob and updated count
         return(OpElement, count+1)
 
-if __name__ == "__main__":
-    print('Run from singleRun')
+

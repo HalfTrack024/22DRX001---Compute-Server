@@ -21,7 +21,7 @@ class OPC_Connect:
         status = 0
         try: 
             node = self.client.get_node(nodeid = nodeID) 
-            node.set_value(new_value)
+            result = node.set_value(new_value)
             status = 1
         except:
             status = 9

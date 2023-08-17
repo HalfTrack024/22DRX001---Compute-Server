@@ -137,37 +137,37 @@ class Layers_RBC:
         return data
 
 
-if __name__ == "__main__":
-    data = [1,2,3,4,5,6,7,8,9,10,11,12]
-    pick = missionData_RBC(400)
+# if __name__ == "__main__":
+#     data = [1,2,3,4,5,6,7,8,9,10,11,12]
+#     pick = missionData_RBC(400)
 
-    #pick.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
-    place = missionData_RBC(402)
-    place.Info_01 = 1#sheet['e1x'] # e1x
-    place.Info_02 = 2#sheet['e1y'] # e1y
-    place.Info_03 = 0
-    place.Info_04 = 0
-    place.Info_05 = 0 #sheet['actual_thickness']
-    place.Info_06 = 1 #TBD got to get panel thickness
-    place.Info_11 = 0
-    place.Info_12 = 0
-    #place.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
-    mission = missionData_RBC(130)
-    #mission.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
+#     #pick.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
+#     place = missionData_RBC(402)
+#     place.Info_01 = 1#sheet['e1x'] # e1x
+#     place.Info_02 = 2#sheet['e1y'] # e1y
+#     place.Info_03 = 0
+#     place.Info_04 = 0
+#     place.Info_05 = 0 #sheet['actual_thickness']
+#     place.Info_06 = 1 #TBD got to get panel thickness
+#     place.Info_11 = 0
+#     place.Info_12 = 0
+#     #place.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
+#     mission = missionData_RBC(130)
+#     #mission.setInfo([1,2,3,4,5,6,7,8,9,10,11,12])
 
-    board = BoardData_RBC(pick, place, [place, place])
-    #board.fastening.append([1,2,3,4,5,6,7,8,9,10,11,12])
-    layer = Layer_RBC(board)
-    board = BoardData_RBC(pick, place, [])
+#     board = BoardData_RBC(pick, place, [place, place])
+#     #board.fastening.append([1,2,3,4,5,6,7,8,9,10,11,12])
+#     layer = Layer_RBC(board)
+#     board = BoardData_RBC(pick, place, [])
     
-    layer.addBoard(board)
-    layer.addMission([place, place])
-    rbcData = Layers_RBC(55)
-    rbcData.addLayer(layer)
-    layer.addMission([place, place])
-    rbcData.addLayer(layer)
+#     layer.addBoard(board)
+#     layer.addMission([place, place])
+#     rbcData = Layers_RBC(55)
+#     rbcData.addLayer(layer)
+#     layer.addMission([place, place])
+#     rbcData.addLayer(layer)
 
-    data1 = rbcData.toJSON()
+#     data1 = rbcData.toJSON()
 
 
-    print(data1)
+#     print(data1)

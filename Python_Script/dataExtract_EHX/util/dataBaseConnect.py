@@ -99,25 +99,25 @@ class DB_Connect:
 
 
 
-if __name__ == "__main__":
-    credentials = getCred()
-    pgDB = DB_Connect(credentials)
-    pgDB.open()
+# if __name__ == "__main__":
+#     credentials = getCred()
+#     pgDB = DB_Connect(credentials)
+#     pgDB.open()
 
-    sql_select_query=f"""
-select 
-	json_object_agg(description, jsonOBJ.parms) 
-	from (
-		select	
-		description,
-		json_build_object('value', value, 'max', "max", 'min', "min", 'datatype', "DataType")	as parms
-		from parameters) jsonOBJ;
-                        """
+#     sql_select_query=f"""
+# select 
+# 	json_object_agg(description, jsonOBJ.parms) 
+# 	from (
+# 		select	
+# 		description,
+# 		json_build_object('value', value, 'max', "max", 'min', "min", 'datatype', "DataType")	as parms
+# 		from parameters) jsonOBJ;
+#                         """
 
-    results = pgDB.query(sqlStatement=sql_select_query)
-    for  row in results:
-        print(type(row))
+#     results = pgDB.query(sqlStatement=sql_select_query)
+#     for  row in results:
+#         print(type(row))
 
-    pgDB.close()
-    #printResult(results)
+#     pgDB.close()
+#     #printResult(results)
 

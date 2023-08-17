@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 import logging
 import glob, shutil
 import xmlparse
@@ -7,6 +8,7 @@ from util.EC1 import MtrlData, JobData
 from util.EC2_3 import RunData
 from util.panelData import Panel
 from util.machineData import Line
+import json
 
 # This Program will Run Continuously in the background of the Server PC to monitor if:
 # - New EHX File has been loaded
@@ -36,66 +38,90 @@ def ehxParse(): # Calls the XML Parse to to Break down Job data into (Jobs, Bund
         xmlparse(file)
 
 def checkQueueRequest(opcConnection : OPC_Connect) -> bool:    
-    nodeID = "ns=2;s=[default]/PythonComTag"
+    nodeID = "ns=2;s=[22DRX001_EC1]/CAD2FAB/Add_Run_Data"
     val = opcConnection.getValue(nodeID= nodeID)
     if val:
         requestRunData = True
     else:
         requestRunData = False
 
-    opcConnection.setValue(nodeID, 32)
+    print('trig val: ' + str(val))
+
     return requestRunData
 
 def buildPanelData(opcConnection : OPC_Connect):
-    nodeID = "ns=2;s=[default]/PythonComTag"
-    panelList = opcConnection.getValue(nodeID= nodeID)
+    nodeID = "ns=2;s=[22DRX001_EC1]/CAD2FAB/PanelGUID"
+    panelID = opcConnection.getValue(nodeID= nodeID)
     # Build EC1 Run Data for:
     # - Stud Picker (SF3)
     # - Framer (FM3)
-    for panelID in panelList:
-        # Build Panel Definition
-        panel = Panel(panelID)
-        # Build Machine Definition
-        machine = Line()
-        # Material Definition (SF3)
-        matData = MtrlData(panel)    
-        sf3Status = matData.mdMain()
-        # Framer Definition (FM3)
-        jobdata = JobData(panelID)
-        fm3Status = jobdata.jdMain()
-        #EC2 and EC3 RunData Definition
-        runData = RunData(panel, machine)
-        rbcStatus : list = runData.rdMain()
+
+    
+    # Build Panel Definition
+    panel = Panel(panelID)
+    # Build Machine Definition
+    machine = Line()
+    # Material Definition (SF3)
+    matData = MtrlData(panel)    
+    sf3Status = matData.mdMain()
+    # Framer Definition (FM3)
+    jobdata = JobData(panelID)
+    fm3Status = jobdata.jdMain()
+    #EC2 and EC3 RunData Definition
+    runData = RunData(panel, machine)
+    rbcStatus : list = runData.rdMain()
+
+    nodeID = "ns=2;s=[22DRX001_EC1]/CAD2FAB/Add_Run_Data"
+    opcConnection.setValue(nodeID, False)
+
+    nodeID = "ns=2;s=[22DRX001_EC1]/CAD2FAB/Data_Status"
+    dataDoc = opcConnection.getValue(nodeID)
+    dataDoc = json.loads(dataDoc)
+
+    dataDoc['EC1']['Status'] = 1
+    dataDoc['EC1']['Description'] = 'Complete'
+    dataDoc['EC2']['Status'] = 1
+    dataDoc['EC2']['Description'] = 'Complete'
+    dataDoc['EC3']['Status'] = 1
+    dataDoc['EC3']['Description'] = 'Complete'
+    dataDoc = json.dumps(dataDoc)
+    opcConnection.setValue(nodeID, dataDoc)
+
         
 
 
    
 # [22DRX001_EC1]/CAD2FAB/Add_Run_Data - BOOL
 # [22DRX001_EC1]/CAD2FAB/PanelGUID - STRING
-# [22DRX001_EC1]/CAD2FAB/Data_Status - ARRAY OF BYTE
+# [22DRX001_EC1]/CAD2FAB/Data_Status - DataSet
 # [22DRX001_EC1]/CAD2FAB/
-
+print(__name__)
 logging.basicConfig(filename='app.log', level=logging.INFO)
 logging.info('Started')
 runContinuos = True
 #Enter Periodic Loop
  
-try:
-    opc = OPC_Connect()
-    opc.open()
-    while runContinuos == True:
-        today = datetime.now()
+opc = OPC_Connect()
+opc.open()
+while runContinuos == True:
+    today = datetime.now()
 
-        # Check to See if New EHX File has been Added to Folder
-        if checkFolder():
-            ehxParse()
-        # If 
-        if checkQueueRequest(opcConnectoin = opc):
-            buildPanelData(opcConnection= opc)
+    # Check to See if New EHX File has been Added to Folder
+    if checkFolder():
+        ehxParse()
+    # Build Run Data if Add to Queue request comes in
+    if checkQueueRequest(opcConnection = opc):
+        buildPanelData(opcConnection= opc)
+    print("wait")
+    time.sleep(3)
 
-except:
+opc.close()
+
+# except:
+#     pass
+# finally:
+#     #opc.close()
+#     logging.info('Program Has Stopped')
+
+if __name__ == 'main':
     pass
-finally:
-    opc.close()
-    logging.info('Program Has Stopped')
-
