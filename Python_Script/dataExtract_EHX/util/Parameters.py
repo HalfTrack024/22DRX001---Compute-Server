@@ -1,4 +1,4 @@
-import dataBaseConnect as dbc
+import util.dataBaseConnect as dbc
 
 
 
@@ -58,10 +58,10 @@ class Parameters(): #This class is designed to fetch all parameters from paramet
                 return None
 
 
-if __name__ == "__main__":
-    tabNames = ["Application"]
+# if __name__ == "__main__":
+#     tabNames = ["Application"]
     
-    parms = Parameters(tabNames, 10, 19)
-    val = parms.getParm("Application", "Run Level 20 missions (True/false)")
-    print(type(val))
-    print(val)
+#     parms = Parameters(tabNames, 10, 19)
+#     val = parms.getParm("Application", "Run Level 20 missions (True/false)")
+#     print(type(val))
+#     print(val)

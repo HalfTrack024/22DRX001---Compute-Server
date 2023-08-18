@@ -10,5 +10,5 @@ def inch2mm(var, precision):
             pass
 
 
-if __name__ == "__main__":
-    inch2mm([10,2,3],2)
+# if __name__ == "__main__":
+#     inch2mm([10,2,3],2)

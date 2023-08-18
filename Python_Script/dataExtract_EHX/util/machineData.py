@@ -1,6 +1,6 @@
 from typing import Any
-import designtree as dt
-from Parameters import Parameters
+import util.designtree as dt
+from util.Parameters import Parameters
 
 
 class EC1:
@@ -22,7 +22,7 @@ class EC2:
 
 class EC3:
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:        
         self.runlvl = {}
         self.parmData = Parameters([], 20, 29)
         self.runlvl = {
@@ -39,6 +39,7 @@ class Line(EC1, EC2, EC3):
         self.ec1 = EC1()
         self.ec2 = EC2()
         self.ec3 = EC3()
+        self.toolIndex = 1
         self.determine = []
         self.determine.extend(self.ec2.runlvl.values())
         self.determine.extend(self.ec3.runlvl.values())
@@ -74,7 +75,7 @@ class Line(EC1, EC2, EC3):
 
 
 
-if __name__ == "__main__":
-    machine = Line()
+# if __name__ == "__main__":
+#     machine = Line()
 
-    print(machine.getPrediction())
+#     print(machine.getPrediction())

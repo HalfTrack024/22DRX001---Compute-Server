@@ -1,5 +1,5 @@
-import dataBaseConnect as dbc
-import framingCheck as fc
+import util.dataBaseConnect as dbc
+import util.framingCheck as fc
 
 class Panel:
     plateInnerBottom = 0
@@ -71,11 +71,11 @@ class Panel:
     def getLayerFastener(self, index):
         return self._LayerFastener[index]
     
-if __name__ == "__main__":
-    #get panel details dimensions
-    sql_var= "4a4909bf-f877-4f2f-8692-84d7c6518a2d"
+# if __name__ == "__main__":
+#     #get panel details dimensions
+#     sql_var= "4a4909bf-f877-4f2f-8692-84d7c6518a2d"
 
-    #initialize Panel
-    itterPanel = Panel(sql_var)
+#     #initialize Panel
+#     itterPanel = Panel(sql_var)
 
     

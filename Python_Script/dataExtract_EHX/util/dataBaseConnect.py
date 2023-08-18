@@ -1,5 +1,7 @@
 import psycopg2 as psy              #Requires Python >=3.6
 import psycopg2.extras as psyE
+import logging
+import sys
 
 def getCred():
     f = open(r'Python_Script/dataExtract_EHX/util/credentials.txt', 'r')
@@ -36,11 +38,13 @@ class DB_Connect:
                 password=self.password,
                 host=self.host,
                 port=self.port,
-                database=self.database
+                database=self.database,
+                connect_timeout=2
             )
             #print(self.connection.status)
         except(Exception, psy.Error) as Error:
             print("Failed to Connect: {}".format(Error))
+            sys.exit("Connection Not Found")
         finally:
              #print("Connection Open")
              pass
@@ -54,12 +58,20 @@ class DB_Connect:
             #print("SQL connection closed")
 
     def query(self, sqlStatement):
-        cursor = self.connection.cursor()
-        #print(sqlStatement)
-        cursor.execute(sqlStatement) 
-        result = cursor.fetchall()
-        cursor.close()
-        return result
+        try:
+            cursor = self.connection.cursor()
+            #print(sqlStatement)
+            cursor.execute(sqlStatement) 
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except:
+            print('Query Did Not Complete')
+            logging.info(sqlStatement)
+            self.connection.close()
+        finally:
+            pass
+
     
     def querymany(self,sqlStatement,records):
         #records should be a list of tuples
@@ -87,25 +99,25 @@ class DB_Connect:
 
 
 
-if __name__ == "__main__":
-    credentials = getCred()
-    pgDB = DB_Connect(credentials)
-    pgDB.open()
+# if __name__ == "__main__":
+#     credentials = getCred()
+#     pgDB = DB_Connect(credentials)
+#     pgDB.open()
 
-    sql_select_query=f"""
-select 
-	json_object_agg(description, jsonOBJ.parms) 
-	from (
-		select	
-		description,
-		json_build_object('value', value, 'max', "max", 'min', "min", 'datatype', "DataType")	as parms
-		from parameters) jsonOBJ;
-                        """
+#     sql_select_query=f"""
+# select 
+# 	json_object_agg(description, jsonOBJ.parms) 
+# 	from (
+# 		select	
+# 		description,
+# 		json_build_object('value', value, 'max', "max", 'min', "min", 'datatype', "DataType")	as parms
+# 		from parameters) jsonOBJ;
+#                         """
 
-    results = pgDB.query(sqlStatement=sql_select_query)
-    for  row in results:
-        print(type(row))
+#     results = pgDB.query(sqlStatement=sql_select_query)
+#     for  row in results:
+#         print(type(row))
 
-    pgDB.close()
-    #printResult(results)
+#     pgDB.close()
+#     #printResult(results)
 

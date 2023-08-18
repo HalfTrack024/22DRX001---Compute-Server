@@ -1,5 +1,5 @@
-import dataBaseConnect as dbc
-from Parameters import Parameters
+import util.dataBaseConnect as dbc
+from util.Parameters import Parameters
 from fractions import Fraction
 import math
 
@@ -20,6 +20,7 @@ class Material:
         "STAPLES" : [120, 402],
         "NAILS" : [130, 403]
     }
+    
     materialTypes : list[str]
     def __init__(self, sheet, parms:Parameters) -> None:
         self.sheet = sheet
@@ -39,7 +40,8 @@ class Material:
         #Material Type
         mat : str = sheet["materialdesc"]
         self.refMatTypes
-        for reftype in self.refMatTypes.keys():        
+        for reftype in self.refMatTypes.keys():  
+            mat = mat.upper()      
             if reftype in mat:
                 self.material = reftype
                 break
