@@ -2,9 +2,9 @@ import time
 import logging
 from  datetime import datetime
 import glob, shutil
-import xmlparse
+import EHXBuild.xmlparse
 import json
-
+import EHXBuild.xmlparse as EHX
 from util import opcuaConnect
 from util.EC1 import MtrlData, JobData
 from util.EC2_3 import RunData

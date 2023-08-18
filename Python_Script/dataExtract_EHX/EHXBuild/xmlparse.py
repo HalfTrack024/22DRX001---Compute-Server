@@ -111,7 +111,7 @@ class xmlParse():
 		sql_insert_query="""
 							INSERT INTO cad2fab.system_bundles(bundleguid,jobid,level_description,label,type)
 							VALUES (%s,%s,%s,%s,%s)
-							ON CONFLICT (bundleguid)
+							ON CONFLICT (bundleguid, jobid)
 							DO UPDATE SET jobid = EXCLUDED.jobid, level_description = EXCLUDED.level_description,
 							label = EXCLUDED.label, type = EXCLUDED.type;
 							"""
@@ -416,10 +416,10 @@ class xmlParse():
 
 
 	def xmlMain(self):
-		self.insertJob(self)
-		self.insertBundle(self)
-		self.insertPanel(self)
-		self.insertElements(self)
+		self.insertJob()
+		self.insertBundle()
+		self.insertPanel()
+		self.insertElements()
 
 
 # if __name__ == "__main__":

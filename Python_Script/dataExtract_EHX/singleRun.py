@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 import glob, shutil
-import xmlparse
+
 from util.opcuaConnect import OPC_Connect
 from util.EC1 import MtrlData, JobData
 from util.EC2_3 import RunData
@@ -12,7 +12,7 @@ from util.machineData import Line
 EC1_Yes = False
 EC23_Yes = True
 
-panelID = "f46fa82b-0bd5-4b6c-9e7a-cce56b3143fb"
+panelID = "ad6b9fa2-42d2-4a36-abf1-010958325561"
 
 if EC1_Yes:
     panel = Panel(panelID)

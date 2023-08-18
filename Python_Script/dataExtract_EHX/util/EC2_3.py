@@ -94,15 +94,19 @@ class RunData:
         match loadbalance.get('oEC2_Place'):
             case 100:
                 #Condition if only one layer is being applied by EC2  
-                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                missionPlace[0] = True
             case 200:
                 #Layer 1 
-                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                missionPlace[0] = True
                 #Layer 2
-                missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 2)
+                #missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 2)
+                missionPlace[1] = True
             case 123:
                 for i in range(self.panel.getLayerCount()):
-                    missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 2)
+                    #missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 2)
+                    missionPlace[i] = True
                    
                    
             case default:
@@ -170,16 +174,20 @@ class RunData:
         missionPlace = [None, None, None, None, None]  
         match loadbalance.get('oEC3_Place'):
             case 100:
-                #Condition if only one layer is being applied by EC3  
-                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
+                #Condition if only one layer is being applied by EC2  
+                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
+                missionPlace[0] = True
             case 200:
                 #Layer 1 
-                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
+                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
+                missionPlace[0] = True
                 #Layer 2
-                missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 3)
+                #missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 3)
+                missionPlace[1] = True
             case 123:
                 for i in range(self.panel.getLayerCount()):
-                    missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 3)
+                    #missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 3)
+                    missionPlace[i] = True
                    
             case default:
                 logging.info('no material is placed with EC3')
@@ -259,7 +267,7 @@ class RunData:
         layerData = rdh.Layer_RBC(layer)
         
         logging.info("results: "+str(results))
-
+        self.storeCWSFound = 0
         for sheet in results:
             #change list to object
             sheet : dict = sheet[0]
@@ -418,8 +426,10 @@ class RunData:
             else:
                 logging.warning('Did not add fastening for member' + self.panel.guid + '__'  + result.get('elementguid'))
             
-            fasten.Info_09 = self.getCWS(result, pgDB)
-
+            fasten.Info_09 = self.getCWS(result, pgDB, self.storeCWSFound)
+            if fasten.Info_09 > 0:
+                self.storeCWSFound = fasten.Info_09
+            
             fastenlst.append(fasten)
         pgDB.close()
         return fastenlst
@@ -592,8 +602,8 @@ class RunData:
                 if result.get('e3y') < p1['y']: p1['y'] = result.get('e3y') 
                 if result.get('e2y') < p1['y']: p1['y'] = result.get('e2y')                     
                 if result.get('e1y') < p1['y']: p1['y'] = result.get('e1y')     
-                p1['x'] =round((p1['x'] + routerDIA/2) * 25.4, 2)
-                p1['y'] =round((p1['y'] + routerDIA/2) * 25.4, 2)  
+                p1['x'] =round((p1['x']) * 25.4, 2)
+                p1['y'] =round((p1['y']) * 25.4, 2)  
 
                 #Find Top Right
                 p2['x'] = result.get('e4x')
@@ -604,8 +614,8 @@ class RunData:
                 if result.get('e3y') > p2['y']: p2['y'] = result.get('e3y')
                 if result.get('e2y') > p2['y']: p2['y'] = result.get('e2y')                    
                 if result.get('e1y') > p2['y']: p2['y'] = result.get('e1y')     
-                p2['x'] =round((p2['x'] - routerDIA/2) * 25.4, 2)
-                p2['y'] =round((p2['y'] - routerDIA/2) * 25.4, 2)                                     
+                p2['x'] =round((p2['x']) * 25.4, 2)
+                p2['y'] =round((p2['y']) * 25.4, 2)                                     
                 #                                     
                 #
                 route = rdh.missionData_RBC(200)
@@ -672,14 +682,13 @@ class RunData:
 
         return routelst
 
-    def getCWS(self, element : dict, ipgDB : dbc):
+    def getCWS(self, element : dict, ipgDB : dbc, maxPrevious):
         cwsPos = 0
         if element.get('description') == 'Stud':
             sql_var1= self.panel.guid #Panel ID    
             sql_var2= element.get('elementguid')
             sql_wStart =  element.get('e1x') - 6  #Leading Edge of Window Next to Element In Question        
             sql_wEnd = element.get('e1x') + 0.25 #Trailing Edge of Window Next to Element In Question   
-            
             sql_select_query1=f"""
                                 select *
                                 from cad2fab.system_elements se 
@@ -700,13 +709,13 @@ class RunData:
                                 """    
 
             results_Pre = ipgDB.query(sqlStatement=sql_select_query1) 
-            results_Post = ipgDB.query(sqlStatement=sql_select_query1) 
-            if len(results_Pre) == 0 and len(results_Post) == 0:
+            results_Post = ipgDB.query(sqlStatement=sql_select_query2) 
+            if len(results_Pre) == 0 and len(results_Post) == 0 and element.get('e1x') > (round(maxPrevious/25.4, 2) + 1):
                 leadEdge = element.get('e1x')
                 trailEdge = element.get('e3x')
                 cwsPos = round((leadEdge + (trailEdge - leadEdge)/2) * 25.4, 2)
 
-
+        print(cwsPos)
         return cwsPos
 
 

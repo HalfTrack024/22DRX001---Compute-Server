@@ -2,7 +2,7 @@ from datetime import datetime
 import time
 import logging
 import glob, shutil
-import xmlparse
+import EHXBuild.xmlparse as EHX
 from util.opcuaConnect import OPC_Connect
 from util.EC1 import MtrlData, JobData
 from util.EC2_3 import RunData
@@ -35,7 +35,7 @@ def ehxParse(): # Calls the XML Parse to to Break down Job data into (Jobs, Bund
     # Print the list of XML files
     for file in xml_files:
         print(file)
-        xmlparse(file)
+        EHX(file)
 
 def checkQueueRequest(opcConnection : OPC_Connect) -> bool:    
     nodeID = "ns=2;s=[22DRX001_EC1]/CAD2FAB/Add_Run_Data"
