@@ -62,11 +62,14 @@ class BoardData_RBC():
 
 
 class Layer_RBC:
-    _layerID : int = 0
-    _board : list[BoardData_RBC] = []
-    _missions : list[missionData_RBC] = []
+
     
     def __init__(self, id):
+        self._layerID : int = 0
+        self._board : list[BoardData_RBC] = []
+        self._missions : list[missionData_RBC] = []        
+        #self._board.clear()
+        #self._missions.clear()
         self._layerID = id
 
     def addBoard(self, board : BoardData_RBC):

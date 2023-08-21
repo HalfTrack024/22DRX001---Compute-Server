@@ -525,6 +525,7 @@ class JobData():
         #elementList [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
         #            [   0     ,      1    ,  2 ,    3      ,  4 , 5 , 6 , 7 , 8 , 9 , 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
         for elem in elementList:
+            print(elem[5])
             #list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing]
             OpFS = [False,False,False,False,False,False,False, False, False]
             OpMS = [False,False,False,False,False,False,False, False, False]
@@ -620,7 +621,7 @@ class JobData():
                     Length_of_Header = elem[17] - elem[13]
                     Number_of_NailSpacings = Length_of_Header/HeaderNailSpacing
                     NailCounter = 0
-                    Zpos = round(abs(elem[8]) + 19,0)
+                    Zpos = round((self.panelThickness * 25.4)- abs(elem[6]) + 19,0)
                     while NailCounter < Number_of_NailSpacings:  
                         OpJob = []
                         #Xpos
@@ -749,6 +750,8 @@ class JobData():
 
             # Sub Assembly Element is Touching Top and Bottom Plate
             if elem[14] == BottomPlate and elem[16] == TopPlate:
+                if elem[5] == 5772.1:
+                    pass
                 # Check if StudStop and Hammer are being used for Bottom Plate side
                 if clear.studStopFS(elem[1]) == True:
                     OpFS[0] = True
@@ -764,11 +767,7 @@ class JobData():
                     OpMS[0] = True
 
                 if clear.hammerMS(elem[1]) == True:
-                    OpMS[1] = True
-                
-                print(OpFS[0],OpFS[1],elem[1])
-                print(OpMS[0],OpMS[1],elem[1])
-                
+                    OpMS[1] = True              
 
                 # Set Nailing Top Plate Side in Opcode
                 OpMS[6] = True
@@ -813,7 +812,7 @@ class JobData():
                 if (elem[17] - elem[13]) > 50.8:
                     if elem[4] == "2X4":
                         NailCounter = 0
-                        XposOffset2X4 = [19,70]
+                        XposOffset2X4 = [0,70]
                         Zpos = round((elem[8] - elem[6])/2,0)
                         while NailCounter < 2:
                             OpJob = []
@@ -890,5 +889,4 @@ class JobData():
         OpElement = [position['x'], 'Drill',tmpFS[1],0, 0, 0,tmpMS[1],0,0, 0, 'ImgName', count]
         # Return OpJob and updated count
         return(OpElement, count+1)
-
 
