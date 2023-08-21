@@ -94,14 +94,14 @@ class RunData:
         match loadbalance.get('oEC2_Place'):
             case 100:
                 #Condition if only one layer is being applied by EC2  
-                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
                 missionPlace[0] = True
             case 200:
                 #Layer 1 
-                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
+                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 2)
                 missionPlace[0] = True
                 #Layer 2
-                #missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 2)
+                missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 2)
                 missionPlace[1] = True
             case 123:
                 for i in range(self.panel.getLayerCount()):
@@ -153,12 +153,22 @@ class RunData:
                logging.info('no material is Routed with EC2')
 
         #Combine Place, Fasten, and Route Data to Layer 
+        
         for i in range(self.panel.getLayerCount()):
+            used = False
             layer = rdh.Layer_RBC(self.panel.getLayerPosition(i))
-            if missionPlace[i] != None: layer = self.getSheets(self.panel.getLayerPosition(i), 2) #Determine if any boards have been placed for that layer
-            if missionFasten[i] != None: layer.addMission(missionFasten[i])  #Determine if any fasteners have been used for that layer
-            if missionRoute[i] != None: layer.addMission(missionRoute[i])   #Determine if any routing have been used for that layer    
-            layers.addLayer(layer)
+            if missionPlace[i] != None: 
+                layer = self.getSheets(self.panel.getLayerPosition(i), 2) #Determine if any boards have been placed for that layer
+                used = True
+            if missionFasten[i] != None: 
+                layer.addMission(missionFasten[i])  #Determine if any fasteners have been used for that layer
+                used = True
+            if missionRoute[i] != None: 
+                layer.addMission(missionRoute[i])   #Determine if any routing have been used for that layer    
+                used = True
+            if used:
+                layers.addLayer(layer)
+                #layers._layers.append(layer)
         
         # Returns a converted layers object to a json string
         #sample = layers.toJSON()
@@ -175,18 +185,18 @@ class RunData:
         match loadbalance.get('oEC3_Place'):
             case 100:
                 #Condition if only one layer is being applied by EC2  
-                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
+                missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
                 missionPlace[0] = True
             case 200:
                 #Layer 1 
-                #missionPlace[0] = self.getSheets(self.panel.getLayerPosition(0), 3)
-                missionPlace[0] = True
+                missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 3)
+                missionPlace[1] = True
                 #Layer 2
                 #missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 3)
                 missionPlace[1] = True
             case 123:
                 for i in range(self.panel.getLayerCount()):
-                    #missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 3)
+                    missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 3)
                     missionPlace[i] = True
                    
             case default:
@@ -199,7 +209,7 @@ class RunData:
             case 100:
                 missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 3)
             case 200:
-                missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 3)
+                #missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 3)
                 missionFasten[1] = self.getFastener(self.panel.getLayerPosition(1), 3)              
             case 123:
                 for i in range(self.panel.getLayerCount()):
@@ -226,15 +236,23 @@ class RunData:
                missionRoute[1] = missionRouting
             case default:
                logging.info('no material is Routed with EC3')
-
-        #Combine Place, Fasten, and Route Data to Layer 
+     
+        #Combine Place, Fasten, and Route Data to Layer         
         for i in range(self.panel.getLayerCount()):
+            used = False
             layer = rdh.Layer_RBC(self.panel.getLayerPosition(i))
-            if missionPlace[i] != None: layer = self.getSheets(self.panel.getLayerPosition(i), 3) #Determine if any boards have been placed for that layer
-            if missionFasten[i] != None: layer.addMission(missionFasten[i])  #Determine if any fasteners have been used for that layer
-            if missionRoute[i] != None: layer.addMission(missionRoute[i])   #Determine if any routing have been used for that layer    
-            layers_ec3.addLayer(layer)
-        
+            if missionPlace[i] != None: 
+                layer = self.getSheets(self.panel.getLayerPosition(i), 3) #Determine if any boards have been placed for that layer
+                used = True
+            if missionFasten[i] != None: 
+                layer.addMission(missionFasten[i])  #Determine if any fasteners have been used for that layer
+                used = True
+            if missionRoute[i] != None: 
+                layer.addMission(missionRoute[i])   #Determine if any routing have been used for that layer    
+                used = True
+            if used:
+                layers_ec3.addLayer(layer)
+
         # Returns a converted layers object to a json string
         sample = layers_ec3.toJSON()
         return layers_ec3.toJSON()
@@ -253,7 +271,7 @@ class RunData:
                         where panelguid = '{sql_var1}' 
                         and "type" = 'Sheet' 
                         and b1y = '{sql_var2}'
-                        and "actual_width" = 48
+                        and "actual_width" > 30
                         order by b1x 
                         """    
         #sql_select_query=f"""
@@ -280,7 +298,10 @@ class RunData:
             pick.Info_01 = round(sheet.get('e1x')*25.4, 2) # e1x
             pick.Info_02 = round(sheet.get('e1y')*25.4, 2) # e1y
             pick.Info_03 = round(sheet.get('actual_width')*25.4, 2)
-            
+            if sheet.get('actual_width') < 48 and sheet.get('actual_width') > 30: 
+                pick.Info_03 = round(48 * 25.4, 2)
+            else:
+                pick.Info_03 = round(sheet.get('actual_width')*25.4, 2)
             if "96" in sheet.get('size'):
                 pick.Info_04 = 2438.4
             
@@ -315,7 +336,7 @@ class RunData:
             place.Info_12 = 0
 
             # Fastening
-            fasteners = self.getboardFastener(pick, material, station)
+            fasteners = self.getboardFastener(pick, layer, material, station)
             # Pick and Place Locations are added to the list
             boardData = rdh.BoardData_RBC(boardpick = pick, boardplace = place, boardfasten = fasteners )
             #Now we have to add the missions for temp fastening that board
@@ -330,7 +351,7 @@ class RunData:
         return layerData     
 
     
-    def getboardFastener(self, board : rdh.missionData_RBC, iMaterial : Material, station) -> list[rdh.missionData_RBC]:       
+    def getboardFastener(self, board : rdh.missionData_RBC, activeLayer, iMaterial : Material, station) -> list[rdh.missionData_RBC]:       
         studSpace = 406
         # Open Database Connection
         credentials = dbc.getCred()
@@ -346,7 +367,7 @@ class RunData:
         elif station == 3: 
             sql_vMin = 0 #machine.ec3.parmData.getParm([], 'ZL Core', 'Y Min Vertical') / 25.4
             sql_vMax = self.machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
-        
+
         sql_select_query=f"""
                             select to_jsonb(se) 
                             from cad2fab.system_elements se 
@@ -360,7 +381,13 @@ class RunData:
                             order by b3x  
                             """    
         results = pgDB.query(sqlStatement=sql_select_query) 
-        
+
+        #Determine Start End Shift
+        shiftSTART = [0.75, 1, 1.25]
+        shiftEND = [0.75, 1.25, 1.25]      
+        offsetStart = shiftSTART[self.panel.getLayerIndex(activeLayer)]
+        offsetEnd = shiftEND[self.panel.getLayerIndex(activeLayer)]
+
         # Process Results
         fastenlst : list [rdh.missionData_RBC]= []
         for result  in results:
@@ -385,11 +412,11 @@ class RunData:
                 if result.get('e1y') < sql_vMin:
                     fasten.Info_02 = round(sql_vMin * 25.4, 2) #Y Start Position
                 else:
-                    fasten.Info_02 = round((result.get('e1y') + 0.75)*25.4, 2) #Y Start Position
+                    fasten.Info_02 = round((result.get('e1y') + offsetStart)*25.4, 2) #Y Start Position
                 if result.get('e2y') > sql_vMax:
-                    fasten.Info_04 = round((sql_vMax - 0.75)*25.4, 2) #Y End Position
+                    fasten.Info_04 = round((sql_vMax - offsetEnd)*25.4, 2) #Y End Position
                 else:
-                    fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
+                    fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2) #Y End Position
                 #fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)  
                 motionlength = fasten.Info_04 - fasten.Info_02
                 fastenCount = round(motionlength / studSpace) + 1
@@ -405,13 +432,13 @@ class RunData:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
                 fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
                 if result.get('e1x') < sql_wStart:
-                    fasten.Info_01 = round((sql_wStart + 0.75) * 25.4, 2)
+                    fasten.Info_01 = round((sql_wStart + offsetStart) * 25.4, 2)
                 else:
-                    fasten.Info_01 = round((result.get('e1x')+ 0.75)*25.4, 2)
+                    fasten.Info_01 = round((result.get('e1x') + offsetStart)*25.4, 2)
                 if result.get('e4x') > sql_wEnd:
-                    fasten.Info_03 = round((sql_wEnd - 0.75) * 25.4, 2)
+                    fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                 else:
-                    fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
+                    fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
                 motionlength = fasten.Info_03 - fasten.Info_01
                 fastenCount = round(motionlength / studSpace) + 1
                 fasten.Info_10 = round(motionlength / fastenCount) 
@@ -422,18 +449,21 @@ class RunData:
                     if self.machine.toolIndex >= 8:
                         self.machine.toolIndex = 1
                     else:
-                        self.machine.toolIndex = self.machine.toolIndex << 1           
+                        self.machine.toolIndex = self.machine.toolIndex << 1    
+
+                fasten = self.crossRefCutOut(self.panel.guid, fasten, pgDB)     
+
             else:
                 logging.warning('Did not add fastening for member' + self.panel.guid + '__'  + result.get('elementguid'))
             
             fasten.Info_09 = self.getCWS(result, pgDB, self.storeCWSFound)
             if fasten.Info_09 > 0:
                 self.storeCWSFound = fasten.Info_09
-            
+
             fastenlst.append(fasten)
         pgDB.close()
         return fastenlst
-
+            
     
     def getFastener(self, layer, station) -> list [rdh.missionData_RBC]:
         studSpace = 406
@@ -461,18 +491,14 @@ class RunData:
                             and e2y < '{sql_vMax}' 
                             and e1x <= '{sql_wEnd}' 
                             and e4x > '{sql_wStart}' 
-                            and "actual_width" = 48  
+                            and "actual_width" > 30  
                             """   
-        #sql_select_query=f"""
-        #                    select to_jsonb(se) 
-        #                    from cad2fab.system_elements se
-        #                   where 
-        #                        panelguid = '{sql_var1}' 
-        #                        and description = 'Sheathing' 
-        #                        and b1y = '{layer}'
-        #                        and e1y < '{sql_vMin}' and e2y < '{sql_vMax}'
-        #                        and e1x <= '{sql_wEnd}' and e4x > '{sql_wStart}'
-        #                    """          
+        
+        #Determine Start End Shift
+        shiftSTART = [0.75, 1, 1.25]
+        shiftEND = [0.75, 1.25, 1.25]      
+        offsetStart = shiftSTART[self.panel.getLayerIndex(layer)]
+        offsetEnd = shiftEND[self.panel.getLayerIndex(layer)]      
         resultSheath = pgDB.query(sqlStatement=sql_select_query) #Look at Sheaths for Edge Conditions
         fastenlst : list [rdh.missionData_RBC]= []
         for sheet in resultSheath:
@@ -486,7 +512,7 @@ class RunData:
                                 from cad2fab.system_elements se
                                 where 
                                     panelguid = '{sql_var1}' 
-                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout') 
+                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout','FillerBtmNailer','HeaderSill','Header') 
                                     and e2y <= '{sql_vMax}' and e2y >= '{sql_vMin}' 
                                     and e1x < '{sql_wEnd}' and e4x > '{sql_wStart}' 
                                     and b2y = 0 
@@ -514,13 +540,13 @@ class RunData:
                         logging.warning('Did not add fastening for member' + self.panel.guid + '__'  + result.get('elementguid'))
                         continue               
                     if result.get('e1y') < sql_vMin:
-                        fasten.Info_02 = round((sql_vMin + 0.75) * 25.4, 2) #Y Start Position
+                        fasten.Info_02 = round((sql_vMin + offsetStart) * 25.4, 2) #Y Start Position
                     else:
-                        fasten.Info_02 = round((result.get('e1y') + 0.75)*25.4, 2) #Y Start Position
+                        fasten.Info_02 = round((result.get('e1y') + offsetStart)*25.4, 2) #Y Start Position
                     if result.get('e2y') > sql_vMax:
-                        fasten.Info_04 = round((sql_vMax - 0.75)*25.4, 2) #Y End Position
+                        fasten.Info_04 = round((sql_vMax - offsetEnd)*25.4, 2) #Y End Position
                     else:
-                        fasten.Info_04 = round((result.get('e2y') - 0.75) * 25.4, 2) #Y End Position
+                        fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2) #Y End Position
                     motionlength = fasten.Info_04 - fasten.Info_02
                     fastenCount = round(motionlength / studSpace) + 1
                     fasten.Info_10 = round(motionlength / fastenCount) 
@@ -530,19 +556,20 @@ class RunData:
                             self.machine.toolIndex = 1
                         else:
                             self.machine.toolIndex = self.machine.toolIndex << 1
+                    vert = 'Vert'
                 # Horizantal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
                     fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2) #Y Start Position
                     if result.get('e1x') < sql_wStart:
-                        fasten.Info_01 = round((sql_wStart + 0.75) * 25.4, 2)
+                        fasten.Info_01 = round((sql_wStart + offsetStart) * 25.4, 2)
                     else:
-                        fasten.Info_01 = round((result.get('e1x')+ 0.75)*25.4, 2)
+                        fasten.Info_01 = round((result.get('e1x')+ offsetStart)*25.4, 2)
                     if result.get('e4x') > sql_wEnd:
-                        fasten.Info_03 = round(sql_wEnd * 25.4, 2)
+                        fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                     else:
-                        fasten.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
-                    
+                        fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
+                    print()
                     motionlength = fasten.Info_03 - fasten.Info_01
                     fastenCount = round(motionlength / studSpace) + 1
                     fasten.Info_10 = round(motionlength / fastenCount) 
@@ -554,13 +581,56 @@ class RunData:
                             self.machine.toolIndex = 1
                         else:
                             self.machine.toolIndex = self.machine.toolIndex << 1
+                    vert = 'Horz'
+                    fasten = self.crossRefCutOut(self.panel.guid, fasten, pgDB)     
                 else:
                     logging.warning('Did not add fastening for member' + self.panel.guid + '__'  + result.get('elementguid'))
-
                 fastenlst.append(fasten)
+                print(vert + '--' + str(len(fastenlst)) + '--' + str(fasten.Info_01) + '--' + str(fasten.Info_03) + '--' + result['description'])
         pgDB.close()
         return fastenlst
 
+    def crossRefCutOut(self, panelID, mission : rdh.missionData_RBC, dbConnection : dbc.DB_Connect):
+        sql_var1 = panelID
+        sql_wStart = round(mission.Info_01 / 25.4, 2)
+        sql_wEnd = round(mission.Info_03 / 25.4, 2)
+        sql_vStart = round(mission.Info_02 / 25.4, 2)
+        sql_vEnd = round(mission.Info_04  / 25.4, 2)
+        
+        sql_select_Prequery=f"""
+            select to_jsonb(se) 
+            from cad2fab.system_elements se
+            where 
+                panelguid = '{sql_var1}' 
+                and description in ('Rough cutout') 
+                and (e1x < {sql_wEnd} and e1x > {sql_wStart} and e4y  <= {sql_vStart} and e1y >= {sql_vStart})
+            """    
+        sql_select_Postquery=f"""
+            select to_jsonb(se) 
+            from cad2fab.system_elements se
+            where 
+                panelguid = '{sql_var1}' 
+                and description in ('Rough cutout') 
+                and (e3x > {sql_wStart} and e3x < {sql_wEnd} and e4y  <= {sql_vStart} and e1y >= {sql_vStart})
+            """   
+        preResult = dbConnection.query(sqlStatement=sql_select_Prequery) 
+        postResult = dbConnection.query(sqlStatement=sql_select_Postquery) 
+        if len(preResult) > 0:
+            result : dict = preResult[0][0]
+            if round(result.get('e4x') * 25.4, 2) <= mission.Info_03:
+                mission.Info_03 = round((result.get('e4x') - 0.75) * 25.4, 2)
+            if round(result.get('e4x') * 25.4, 2) <= mission.Info_01:
+                mission.Info_01 = round((result.get('e4x') - 0.75) * 25.4, 2)
+        elif len(postResult) > 0:
+            result : dict = postResult[0][0]
+            if round(result.get('e3x') * 25.4, 2) >= mission.Info_01:
+                mission.Info_01 = round((result.get('e4x') + 0.75) * 25.4, 2)
+            if round(result.get('e3x') * 25.4, 2) >= mission.Info_03:
+                mission.Info_03 = round((result.get('e4x') + 0.75) * 25.4, 2)
+            
+            mission.Info_01 = round(result.get('e3x') * 25.4, 2)
+
+        return mission
 
     def getRoughOutCut(self, layer, station):
         # Open Database Connection

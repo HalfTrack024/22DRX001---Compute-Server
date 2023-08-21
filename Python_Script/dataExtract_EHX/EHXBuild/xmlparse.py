@@ -1,6 +1,15 @@
 import xmltodict as dc #requires python >= V3.4
 from util import dataBaseConnect as dbc
 
+def roundData(elementLine):
+	start = 5
+	end = 22
+	#elementList [panelguid,elementguid,type,description,size,b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,count]
+	for i in range(start, end+1):
+		elementLine[i] = round(elementLine[i], 2)
+
+	return elementLine
+
 class xmlParse():
 	def __init__(self,filepath):
 		#open the xml file
@@ -391,6 +400,7 @@ class xmlParse():
 					#reset counter after 1 string panel
 					if c2 == 29:
 						c2 = 0
+
 		#insert the list to the database
 		pgDB = dbc.DB_Connect(xmlParse.credentials)
 		pgDB.open()
@@ -413,6 +423,7 @@ class xmlParse():
 							"""
 		pgDB.querymany(sql_insert_query,self.elementIN)
 		pgDB.close()
+
 
 
 	def xmlMain(self):
