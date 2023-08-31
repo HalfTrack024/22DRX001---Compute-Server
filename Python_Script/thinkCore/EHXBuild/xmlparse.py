@@ -1,5 +1,5 @@
 import xmltodict as dc  # requires python >= V3.4
-from util import dataBaseConnect as dBC
+from util import dataBaseConnect as dbc
 from util.globals import Parse_Progress
 
 
@@ -14,14 +14,14 @@ def round_data(element_line):
 
 
 class xmlParse:
-    def __init__(self, filepath):
+    def __init__(self, filepath, app_settings: dict):
         self.parse_progress = Parse_Progress()
         # open the xml file
         with open(filepath, 'r', encoding='utf-8-sig') as f:
             dataset = f.read()
         # variable data is accessible outside of this function
         self.data = dc.parse(dataset)
-        self.credentials = dBC.get_cred()
+        self.credentials = app_settings.get('DB_credentials')
         self.sCadFilepath = str(self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID'])
         # xmlParse.data = self.data
         # xmlParse.credentials = self.credentials
@@ -76,8 +76,7 @@ class xmlParse:
             )
 
     def insert_job(self):
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_serial_query = 'SELECT serial FROM cad2fab.system_jobs ORDER BY serial DESC'
         serial = pgDB.query(sql_serial_query)
@@ -114,7 +113,7 @@ class xmlParse:
                 # Data to import to the database
                 bundleIN.append(
                     (bundle['BundleGuid'], bundle['JobID'], level['Description'], bundle['Label'], bundle['Type']), )
-        pgDB = dBC.DB_Connect(self.credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         # Query used for inserting data to the database
         sql_insert_query = """
@@ -144,6 +143,7 @@ class xmlParse:
             for bundle in level["Bundle"]:
                 # Loop through all the panels in the bundle
                 for panel in bundle['Panel']:
+                    self.parse_progress.panels_total += 1
                     # Check if the panel is a string
                     # The panel is a string if it is the only panel in a bundle
                     if type(panel) == str:
@@ -184,7 +184,7 @@ class xmlParse:
                                        round(float(panel['Thickness']) * 25.4), 1), )
 
         # Insert the panel data to the Database
-        pgDB = dBC.DB_Connect(self.credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         # Query used for writing data to the database
         sql_insert_query = """
@@ -260,10 +260,13 @@ class xmlParse:
                                             xmlParse.append_element(self, holeSet, 'Hole', subassemblyCT)
                         # Add sheets to the list if they exist
                         if 'Sheet' in panel.keys():
+                            self.parse_progress.panels_exterior += 1
                             # loop through all the sheets in the panel
                             for sheet in panel['Sheet']:
                                 # add the sheet data to the list
                                 xmlParse.append_element(self, sheet, 'Sheet', None)
+                        else:
+                            self.parse_progress.panels_interior += 1
                         # Add SubAssemblies to the list if they exist and are in a list format
                         # SubAssemblies will be in list format if there are >1 in the current panel
                         if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == list:
@@ -374,12 +377,12 @@ class xmlParse:
                             # check if the subassembly has a rough opening in the panel
                             subassemblyCT = 1
                             # loop through all the boards in the subassembly
-                            for boardsub in bundle['Panel']['SubAssembly']['Board']:
-                                #TODO Determine double board sub looping
-                                for boardsub in panel['SubAssembly']['Board']:
-                                    # Check if the sub board is the rough opening
-                                    if boardsub['FamilyMemberName'] != 'RoughOpening':
-                                        xmlParse.append_element(self, boardsub, 'Sub-Assembly Board', subassemblyCT)
+                            #for boardsub in bundle['Panel']['SubAssembly']['Board']:
+                            # TODO Determine double board sub looping
+                            for boardsub in panel['SubAssembly']['Board']:
+                                # Check if the sub board is the rough opening
+                                if boardsub['FamilyMemberName'] != 'RoughOpening':
+                                    xmlParse.append_element(self, boardsub, 'Sub-Assembly Board', subassemblyCT)
                                 else:  # add the rough cutout to the list
                                     # (only works when there is 1 rough out per subassembly due to element guid creation)
                                     boardsub['PanelGuid'] = panel['SubAssembly']['PanelGuid']
@@ -406,8 +409,9 @@ class xmlParse:
                         c2 = 0
 
         # insert the list to the database
-        pgDB = dBC.DB_Connect(self.credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
+        print("Insert Elements")
         # Query used for writing data to the database
         sql_insert_query = """
         INSERT INTO cad2fab.system_elements(panelguid,elementguid,type,familymember,description,

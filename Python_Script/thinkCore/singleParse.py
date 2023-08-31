@@ -1,21 +1,25 @@
-import EHXBuild.drawSTLs as dSTL # Draw STL Files
+#import EHXBuild.drawSTLs as dSTL # Draw STL Files
 import EHXBuild.drawThumbnails as dThumb # Draw PNG Images
 import EHXBuild.xmlparse as pEHX # Parse Data to System Tables
-import EHXBuild.findVolume # Not Used
+#import EHXBuild.findVolume # Not Used
+import util.General_Help as gHelp
 
 
-imageBuild = False
+imageBuild = True
 stlBuild = False
-xmlparse = True
+xmlparse = False
+
+app_settings = gHelp.get_app_config()
 
 if imageBuild:
-    img = dThumb.GenPreview()
+    img = dThumb.GenPreview('230559W1', app_settings.get('ImageDropFolder'))
     img.previewMain()
 
 	
 if stlBuild:
-    stl = dSTL.GenSTL()
-    stl.mainSTL()
+    pass
+    #stl = dSTL.GenSTL()
+    #stl.mainSTL()
 
 if xmlparse:
     #get filepath to XML file from user

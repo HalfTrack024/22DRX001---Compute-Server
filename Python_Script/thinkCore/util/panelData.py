@@ -1,4 +1,4 @@
-import util.dataBaseConnect as dBC
+import util.dataBaseConnect as dbc
 
 
 class Panel:
@@ -7,8 +7,7 @@ class Panel:
 
     def __init__(self, panelguid):
         # Open Database Connection
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
 
         sql_var = panelguid

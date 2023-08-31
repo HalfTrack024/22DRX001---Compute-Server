@@ -2,6 +2,8 @@ from typing import Any
 import util.designtree as dt
 from util.Parameters import Parameters
 
+app_config_settings = {}
+
 
 class EC1:
 
@@ -61,7 +63,9 @@ class EC3:
 
 class Line(EC1, EC2, EC3):
 
-    def __init__(self) -> None:
+    def __init__(self, app_settings) -> None:
+        global app_config_settings
+        app_config_settings = app_settings
         super().__init__()
         self.ec1 = EC1()
         self.ec2 = EC2()
@@ -74,7 +78,7 @@ class Line(EC1, EC2, EC3):
         self.predict_layer_count = 1
 
         self.determine.append(self.predict_layer_count)
-        self.predict = dt.process_builder(self.determine)
+        self.predict = dt.process_builder(self.determine, app_config_settings)
 
     def get_prediction(self):
         return self.predict
@@ -83,7 +87,7 @@ class Line(EC1, EC2, EC3):
         self.predict_layer_count = layer_count
         self.determine[6] = layer_count
 
-        self.predict = dt.process_builder(self.determine)
+        self.predict = dt.process_builder(self.determine, app_config_settings)
 
     def get_system_parms(self, system_index):
         """EC1: 1, EC2:2, EC3:3"""

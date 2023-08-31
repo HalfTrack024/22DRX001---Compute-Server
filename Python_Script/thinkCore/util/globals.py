@@ -4,6 +4,7 @@ class Parse_Progress:
         self.panels_total = 0
         self.panels_interior = 0
         self.panels_exterior = 0
+        self.image_count = 0
         self.stud_type_required: list = []
         self.sheathing_type_required: list = []
 

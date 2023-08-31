@@ -8,8 +8,7 @@ class Parameters:  # This class is designed to fetch all parameters from paramet
     def __init__(self, tabs: list, minID, maxID):
         self._tabNames = tabs
         self._parmList: dict = {}
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = minID
         sql_var2 = maxID

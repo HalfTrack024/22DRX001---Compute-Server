@@ -1,11 +1,14 @@
 from opcua import Client
+import util.General_Help as gHelp
 
 
 class OPC_Connect:
 
     def __init__(self) -> None:
+        app_settings = gHelp.get_app_config()
+        server_address = app_settings.get('IgnitionServer')
         # Creates a client object and connect to the OPC UA server
-        self.client = Client("opc.tcp://16131_Server:62541")
+        self.client = Client(server_address)
 
     def open(self):
         self.client.connect()
@@ -47,7 +50,7 @@ class OPC_Connect:
         self.client.set_values(nodes_to_write, values_to_write)
 
         # Disconnect from the OPC UA server
-        #self.client.disconnect()
+        # self.client.disconnect()
 
     def close(self):
         self.client.disconnect()

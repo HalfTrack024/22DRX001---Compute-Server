@@ -1,4 +1,4 @@
-import util.dataBaseConnect as dBC
+import util.dataBaseConnect as dbc
 from util.framingCheck import Clear
 from util.machineData import Line
 from util.panelData import Panel
@@ -21,8 +21,7 @@ class Mtrl_Data:
     def md_main(self):
         # Open Connection to the database
         self.build_progress.sf3_status = "In-Progress"
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var = self.panel.guid
         sql_select_query = f"""SELECT DISTINCT ON ("size") "type", description, "size", actual_thickness, actual_width, species
@@ -67,8 +66,7 @@ class Mtrl_Data:
         return line
 
     def md_insert(self):  # Inserts "material_data" list into table "materialData"
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         # send OpData to JobData table
         sql_JobData_query = '''
@@ -111,8 +109,7 @@ class JobData:
         self.machine = machine
         self.build_progress = Build_EC1_Progress()
         # Getting Panel Information for Nailing calculations in nailSubElements Function
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
 
         sql_select_query = f"""
@@ -123,7 +120,6 @@ class JobData:
         #
         results = pgDB.query(sql_select_query)
         # dbc.#printResult(results)
-        pgDB.close()
         # assign results of query to variables
         self.job = panel.job
         self.panelguid = panel.guid
@@ -134,9 +130,6 @@ class JobData:
         # End of Panel Information
 
         # Getting Stud Stop and Hammer Unit dimensions that framingCheck.py uses
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
-        pgDB.open()
         # get parameters for stud stop and hammer that are universal
         sql_select_query = """
                             SELECT description, value
@@ -164,8 +157,7 @@ class JobData:
 
     def jd_main(self):  # Job Data Main
         self.build_progress.fm3_status = 'In-Progress'
-        credentials = dBC.get_cred()
-        pgDB = dBC.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         panelguid = self.panelguid
         # query relevant data from elements table

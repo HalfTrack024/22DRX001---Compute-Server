@@ -33,8 +33,7 @@ class RunData:
 
         # raise NotImplementedError("Not implemented")
         # Open Database Connection
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
 
         self.layers = [0, 0.437]
         # Insert EC2 Run Data to DataBase
@@ -285,8 +284,7 @@ class RunData:
     # Get Sheet Information       
     def getSheets(self, layer, station) -> rdh.Layer_RBC:  # This fucntion will load the sheets of Material to the
         # Open Database Connection
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
         sql_var2 = layer
@@ -375,12 +373,10 @@ class RunData:
 
         return layerData
 
-    def getboardFastener(self, board: rdh.missionData_RBC, activeLayer, iMaterial: Material, station) -> list[
-        rdh.missionData_RBC]:
+    def getboardFastener(self, board: rdh.missionData_RBC, activeLayer, iMaterial: Material, station) -> list[rdh.missionData_RBC]:
         studSpace = 406
         # Open Database Connection
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid  # Panel ID
         sql_wStart = round(board.Info_01 / 25.4, 2)  # Leading Edge of the Board (Width)
@@ -495,8 +491,7 @@ class RunData:
     def getFastener(self, layer, station) -> list[rdh.missionData_RBC]:
         studSpace = 406
         # Open Database Connection
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid  # Panel ID
         sql_wStart = 0  # Leading Edge of the Board (Width)
@@ -665,8 +660,7 @@ class RunData:
 
     def getRoughOutCut(self, layer, station):
         # Open Database Connection
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
         sql_var2 = layer
@@ -734,8 +728,7 @@ class RunData:
 
     def getEndCut(self, layer):
         # Open Database Connection
-        credentials = dbc.get_cred()
-        pgDB = dbc.DB_Connect(credentials)
+        pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
         sql_var2 = layer

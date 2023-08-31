@@ -2,6 +2,8 @@ import psycopg2 as psy  # Requires Python >=3.6
 from psycopg2.extras import DictCursor
 import logging
 import sys
+import util.General_Help as gHelp
+import os
 import json
 
 
@@ -25,12 +27,14 @@ def print_result(data):
 class DB_Connect:
     connection = psy.connect
 
-    def __init__(self, cred_list):
-        self.user = cred_list[0]
-        self.password = cred_list[1]
-        self.host = cred_list[2]
-        self.port = cred_list[3]
-        self.database = cred_list[4]
+    def __init__(self):
+        app_settings = gHelp.get_app_config()
+        cred_list = app_settings.get('DB_credentials')
+        self.user = cred_list.get('user')
+        self.password = cred_list.get('password')
+        self.host = cred_list.get('host')
+        self.port = cred_list.get('port')
+        self.database = cred_list.get('database')
 
     def open(self):
         # connect to the database

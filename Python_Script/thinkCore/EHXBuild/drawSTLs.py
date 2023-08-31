@@ -4,10 +4,10 @@ from util import dataBaseConnect as dbc
 import os
 
 class GenSTL():
-	def __init__(self) -> None:
+	def __init__(self, app_settings) -> None:
 		#get credentials and open the database
-		self.credentials = dbc.get_cred()
-		pgDB = dbc.DB_Connect(self.credentials)
+		self.credentials = app_settings.get('DB_credentials')
+		pgDB = dbc.DB_Connect()
 		pgDB.open()
 		#select all rows/columns from panel table
 		sql_select_query = "SELECT * FROM panel"
@@ -71,7 +71,7 @@ class GenSTL():
 					shape.vectors[i][j] = points[int(f[j]),]
 			
 			#get the jobID of the current panel
-			pgDB = dbc.DB_Connect(self.credentials)
+			pgDB = dbc.DB_Connect()
 			pgDB.open()
 			sql_jobid_query = f"SELECT jobid FROM bundle WHERE bundleguid = '{panel[1]}'"
 			jobid = pgDB.query(sql_jobid_query)
