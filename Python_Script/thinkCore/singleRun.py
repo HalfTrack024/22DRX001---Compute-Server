@@ -1,17 +1,19 @@
 from datetime import datetime
 import logging
-
+import util.General_Help as gHelp
 from util.EC1 import Mtrl_Data, JobData
 from util.EC2_3 import RunData
 from util.panelData import Panel
 from util.machineData import Line
 
 
-EC1_Yes = True
-EC23_Yes = False
+EC1_Yes = False
+EC23_Yes = True
+
+app_settings = gHelp.get_app_config()
 
 panelID = "521ab575-d43f-4d63-ae8d-043854fc28e4"
-machine = Line()
+machine = Line(app_settings)
 if EC1_Yes:
 
     panel = Panel(panelID)
@@ -28,6 +30,5 @@ if EC23_Yes:
     logging.info('Started')
     panel = Panel(panelID)
 
-    machine = Line()
     run = RunData(panel, machine)
     run.rd_main()

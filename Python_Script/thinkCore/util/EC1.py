@@ -191,8 +191,7 @@ class JobData:
             # if the element isn't a sheet, top plate, bottom plate, very top plate or Nog
             if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate' and elem[2] != 'Nog':
                 # if the element is a normal stud
-                if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly':
-                    if elem[1] != 'Sub-Assembly Cutout' and elem[1] != 'Hole':
+                if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout' and elem[1] != 'Hole':
                         # get opData for placing the element
                         tmp = self.place_element(element, pgDB)
                         # Add to OpDatas and increase the count

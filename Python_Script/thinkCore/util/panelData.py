@@ -36,7 +36,7 @@ class Panel:
         pgDB.open()
         sql_var = panelguid
         sql_select_query = f"""
-                        select distinct b1y "type" , materialdesc 
+                        select distinct b2y "type" , materialdesc 
                         from cad2fab.system_elements
                         where "type" = 'Sheet' and panelguid = '{sql_var}';
                         """
@@ -48,7 +48,7 @@ class Panel:
         self._layerMat = []
         self._LayerFastener = []
         for layer in results:
-            self._layerPos.append(layer[0])
+            self._layerPos.append(float(layer[0]))
             self._layerMat.append(layer[1])
             self._LayerFastener.append(0)
 

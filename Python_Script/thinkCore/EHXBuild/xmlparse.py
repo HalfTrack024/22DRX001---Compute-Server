@@ -26,6 +26,7 @@ class xmlParse:
         # xmlParse.data = self.data
         # xmlParse.credentials = self.credentials
         self.elementIN = []
+        self.fastenerIN = []
 
     def append_element(self, element, elem_type, sub_ctr):
         if sub_ctr is None:
@@ -75,6 +76,8 @@ class xmlParse:
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, str(sub_ctr))
             )
 
+    def append_fastener(self, sheet):
+        self.fastenerIN.append((sheet["BoardGuid"], sheet["TypeOfFastener"], sheet["EdgeSpacing"], sheet["FieldSpacing"], sheet["FastenerEndGap"] ))
     def insert_job(self):
         pgDB = dbc.DB_Connect()
         pgDB.open()
@@ -265,6 +268,8 @@ class xmlParse:
                             for sheet in panel['Sheet']:
                                 # add the sheet data to the list
                                 xmlParse.append_element(self, sheet, 'Sheet', None)
+                                # Add Fastener Data to Fastener Table
+                                xmlParse.append_fastener(self, sheet)
                         else:
                             self.parse_progress.panels_interior += 1
                         # Add SubAssemblies to the list if they exist and are in a list format
@@ -430,6 +435,14 @@ class xmlParse:
         assembly_id = EXCLUDED.assembly_id;
         """
         pgDB.query_many(sql_insert_query, self.elementIN)
+
+        sql_insert_fasteners = """
+        INSERT INTO system_fasteners
+        (elementguid, fastenertype, edge_spacing, feild_spacing, fastener_end_gap)
+        VALUES('', '', 0, 0, 0);
+        
+        INSERT INTO cad2fab.system_fasteners(
+        """
         pgDB.close()
 
     def xml_main(self):

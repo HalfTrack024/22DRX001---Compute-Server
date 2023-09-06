@@ -181,11 +181,11 @@ class RunData:
                 layer.add_mission(missionRoute[i])  # Determine if any routing have been used for that layer
                 used = True
             if used:
+                layer.set_properties(round(self.panel.get_layer_position(i) * 25.4, 1))
                 layers.add_layer(layer)
                 # layers._layers.append(layer)
 
         # Returns a converted layers object to a json string
-        # sample = layers.toJSON()
         return layers.to_json()
 
     def rdEC3_Main(self):  # Main Call to assign what work will be allowed to complete on EC3
@@ -264,17 +264,18 @@ class RunData:
         for i in range(self.panel.get_layer_count()):
             used = False
             layer = rdh.Layer_RBC(self.panel.get_layer_position(i))
-            if missionPlace[i] != None:
-                layer = self.getSheets(self.panel.get_layer_position(i),
-                                       3)  # Determine if any boards have been placed for that layer
+
+            if missionPlace[i] is not None:
+                layer = self.getSheets(self.panel.get_layer_position(i), 3)  # Determine if any boards have been placed for that layer
                 used = True
-            if missionFasten[i] != None:
+            if missionFasten[i] is not None:
                 layer.add_mission(missionFasten[i])  # Determine if any fasteners have been used for that layer
                 used = True
-            if missionRoute[i] != None:
+            if missionRoute[i] is not None:
                 layer.add_mission(missionRoute[i])  # Determine if any routing have been used for that layer
                 used = True
             if used:
+                layer.set_properties(round(self.panel.get_layer_position(i) * 25.4, 1))
                 layers_ec3.add_layer(layer)
 
         # Returns a converted layers object to a json string
@@ -293,8 +294,9 @@ class RunData:
                         from cad2fab.system_elements panel
                         where panelguid = '{sql_var1}' 
                         and "type" = 'Sheet' 
-                        and b1y = '{sql_var2}'
-                        and "actual_width" = 48
+                        and b2y = '{sql_var2}'
+                        and "actual_width" > 30 
+                        and e1x >= 0
                         order by b1x 
                         """
         # sql_select_query=f"""
@@ -373,7 +375,7 @@ class RunData:
 
         return layerData
 
-    def getboardFastener(self, board: rdh.missionData_RBC, activeLayer, iMaterial: Material, station) -> list[rdh.missionData_RBC]:
+    def getboardFastener(self, board: rdh.missionData_RBC, active_layer, iMaterial: Material, station) -> list[rdh.missionData_RBC]:
         studSpace = 406
         # Open Database Connection
         pgDB = dbc.DB_Connect()
@@ -406,8 +408,8 @@ class RunData:
         # Determine Start End Shift
         shiftSTART = [0.75, 1, 1.25]
         shiftEND = [0.75, 1.25, 1.25]
-        offsetStart = shiftSTART[self.panel.get_layer_index(activeLayer)]
-        offsetEnd = shiftEND[self.panel.get_layer_index(activeLayer)]
+        offsetStart = shiftSTART[self.panel.get_layer_index(active_layer)]
+        offsetEnd = shiftEND[self.panel.get_layer_index(active_layer)]
 
         # Process Results
         fastenlst: list[rdh.missionData_RBC] = []
@@ -508,12 +510,13 @@ class RunData:
                             from cad2fab.system_elements se 
                             where panelguid = '{sql_var1}' 
                             and description = 'Sheathing' 
-                            and b1y = '{layer}' 
+                            and b2y = '{layer}' 
                             and e1y < '{sql_vMin}' 
                             and e2y < '{sql_vMax}' 
                             and e1x <= '{sql_wEnd}' 
                             and e4x > '{sql_wStart}' 
-                            and "actual_width" = 48 
+                            and "actual_width" > 30 
+                            and e1x >= 0
                             """
 
         # Determine Start End Shift
@@ -611,6 +614,7 @@ class RunData:
                 else:
                     logging.warning(
                         'Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
+                #  Apply
                 fastenlst.append(fasten)
 
         pgDB.close()
@@ -719,6 +723,10 @@ class RunData:
                 route.Info_03 = round(p2['x'] - p1['x'], 2)
                 route.Info_04 = round(p2['y'] - p1['y'], 2)
                 route.Info_05 = 1
+                if self.panel.get_layer_index(layer) == 0:
+                    route.Info_07 = round(layer * 25.4, 1)
+                else:
+                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
                 routelst.append(route)
             else:
                 logging.warning('Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))

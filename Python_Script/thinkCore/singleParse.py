@@ -12,7 +12,7 @@ xmlparse = False
 app_settings = gHelp.get_app_config()
 
 if imageBuild:
-    img = dThumb.GenPreview('230559W1', app_settings.get('ImageDropFolder'))
+    img = dThumb.GenPreview('RANDEK TEST PANELS', app_settings.get('ImageDropFolder'))
     img.previewMain()
 
 	
