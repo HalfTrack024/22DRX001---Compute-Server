@@ -14,14 +14,15 @@ def round_data(element_line):
 
 
 class xmlParse:
-    def __init__(self, filepath, app_settings: dict):
+    # app_settings: dict
+    def __init__(self, filepath):
         self.parse_progress = Parse_Progress()
         # open the xml file
         with open(filepath, 'r', encoding='utf-8-sig') as f:
             dataset = f.read()
         # variable data is accessible outside of this function
         self.data = dc.parse(dataset)
-        self.credentials = app_settings.get('DB_credentials')
+        #self.credentials = app_settings.get('DB_credentials')
         self.sCadFilepath = str(self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID'])
         # xmlParse.data = self.data
         # xmlParse.credentials = self.credentials
@@ -77,7 +78,7 @@ class xmlParse:
             )
 
     def append_fastener(self, sheet):
-        self.fastenerIN.append((sheet["BoardGuid"], sheet["TypeOfFastener"], sheet["EdgeSpacing"], sheet["FieldSpacing"], sheet["FastenerEndGap"] ))
+        self.fastenerIN.append((sheet["PanelGuid"], sheet["BoardGuid"], sheet["TypeOfFastener"], sheet["EdgeSpacing"], sheet["FieldSpacing"], sheet["FastenerEndGap"]))
     def insert_job(self):
         pgDB = dbc.DB_Connect()
         pgDB.open()
@@ -94,8 +95,8 @@ class xmlParse:
         sql_insert_query = """
         INSERT INTO cad2fab.system_jobs(serial,jobid,loaddate)
         VALUES (%s,%s,NOW())
-        ON CONFLICT (serial,jobid)
-        DO UPDATE SET loaddate = NOW();
+        ON CONFLICT (jobid)
+        DO UPDATE SET loaddate = NOW(), jobid = EXCLUDED.jobid, serial = EXCLUDED.serial;
         """
         pgDB.query_many(sql_insert_query, jobIN)
         pgDB.close()
@@ -122,7 +123,7 @@ class xmlParse:
         sql_insert_query = """
         INSERT INTO cad2fab.system_bundles(bundleguid,jobid,level_description,label,type)
         VALUES (%s,%s,%s,%s,%s)
-        ON CONFLICT (bundleguid, jobid)
+        ON CONFLICT (bundleguid)
         DO UPDATE SET jobid = EXCLUDED.jobid, level_description = EXCLUDED.level_description,
         label = EXCLUDED.label, type = EXCLUDED.type;
         """
@@ -347,6 +348,7 @@ class xmlParse:
                             for sheet in bundle['Panel']['Sheet']:
                                 # add the data for the sheets to the list
                                 xmlParse.append_element(self, sheet, 'Sheet', None)
+                                xmlParse.append_fastener(self, sheet)
                         # Add Sub Assemblies to the list if they exist, are list type
                         if 'SubAssembly' in bundle['Panel'].keys() and type(
                                 bundle['Panel']['SubAssembly']) == list and c2 == 0:
@@ -437,12 +439,14 @@ class xmlParse:
         pgDB.query_many(sql_insert_query, self.elementIN)
 
         sql_insert_fasteners = """
-        INSERT INTO system_fasteners
-        (elementguid, fastenertype, edge_spacing, feild_spacing, fastener_end_gap)
-        VALUES('', '', 0, 0, 0);
-        
-        INSERT INTO cad2fab.system_fasteners(
+        INSERT INTO cad2fab.system_fasteners
+        (panelguid, elementguid, fastener_type, edge_spacing, field_spacing, fastener_end_gap)
+        VALUES(%s,%s,%s,%s,%s,%s)
+        ON CONFLICT (panelguid, elementguid)
+        DO UPDATE SET fastener_type = EXCLUDED.fastener_type, edge_spacing = EXCLUDED.edge_spacing, 
+        field_spacing = EXCLUDED.field_spacing, fastener_end_gap = EXCLUDED.fastener_end_gap;
         """
+        pgDB.query_many(sql_insert_fasteners, self.fastenerIN)
         pgDB.close()
 
     def xml_main(self):

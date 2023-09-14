@@ -5,6 +5,26 @@ from util.Parameters import Parameters
 app_config_settings = {}
 
 
+class Station:
+    station_id = None
+    run_level = {}
+    parmData = None
+    fastenSpace = {}
+    partial_board = None
+    off_cut = None
+
+    # def __init__(self, ec2=None, ec3=None):
+    #     """id """
+    #     if ec2 is None and ec3 is None:
+    #         raise ValueError("At least one argument must be provided.")
+    #     elif ec2 is not None and ec3 is not None:
+    #         raise ValueError("At least one argument must be provided.")
+    #     else:
+    #         if ec2 is not None:
+    #             self.ec = ec2
+    #         elif ec3 is not None:
+    #             self.ec = ec3
+
 class EC1:
 
     def __init__(self) -> None:
@@ -39,26 +59,40 @@ class EC1:
         }
 
 
-class EC2:
+class EC2(Station):
 
     def __init__(self) -> None:
+        self.station_id = 2
         self.run_lvl = {}
         self.parmData = Parameters([], 10, 19)
         self.run_lvl = {
             'ec2_20': self.parmData.getParm("Application", "Run Level 20 missions (True/false)"),
             'ec2_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
             'ec2_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
+        self.fastenSpace = {
+            'edge': self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
+            'field': self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
+        }
+        self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
+        self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
 
-class EC3:
+class EC3(Station):
 
     def __init__(self) -> None:
+        self.station_id = 3
         self.run_lvl = {}
         self.parmData = Parameters([], 20, 29)
         self.run_lvl = {
             'ec3_20': self.parmData.getParm("Application", "Run Level 20 missions (True/false)"),
             'ec3_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
             'ec3_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
+        self.fastenSpace = {
+            'edge': self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
+            'field': self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
+        }
+        self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
+        self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
 
 class Line(EC1, EC2, EC3):
@@ -98,6 +132,10 @@ class Line(EC1, EC2, EC3):
                 return self.ec2.parmData
             case 3:
                 return self.ec3.parmData
+
+
+
+
 
 # if __name__ == "__main__":
 #     machine = Line()

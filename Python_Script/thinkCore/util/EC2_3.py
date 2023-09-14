@@ -2,6 +2,7 @@ import logging
 # Project Dependencies
 from util.panelData import Panel
 from util.machineData import Line
+from util.machineData import Station
 import util.dataBaseConnect as dbc
 import util.runData_Helper as rdh
 from util.material import Material
@@ -21,6 +22,8 @@ class RunData:
     layers: list[float]
 
     def __init__(self, panel: Panel, machine: Line):
+        self.storeCWSFound = 0
+        self.track_sheets = []
         self.panel = panel
         self.machine = machine
         self.build_rbc_progress = Build_RBC_Progress()
@@ -94,6 +97,7 @@ class RunData:
 
     def rd_EC2_Main(self) -> str:  # Main Call to assign what work will be allowed to complete on EC2
         self.build_rbc_progress.ec2_status = 'In-Progress'
+        self.track_sheets.clear()
         # Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
         load_balance = self.machine.get_prediction()
         layers = rdh.Layers_RBC(11)
@@ -127,15 +131,15 @@ class RunData:
         missionFasten = [None, None, None, None, None]
         match load_balance.get('oEC2_Fasten'):
             case 100:
-                missionFasten[0] = self.getFastener(self.panel.get_layer_position(0), 2)
+                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), 2)
                 self.build_rbc_progress.ec2_operations.append('Fasten Layer 1')
             case 200:
-                missionFasten[0] = self.getFastener(self.panel.get_layer_position(0), 2)
-                missionFasten[1] = self.getFastener(self.panel.get_layer_position(1), 2)
+                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), 2)
+                missionFasten[1] = self.get_fastener(self.panel.get_layer_position(1), 2)
                 self.build_rbc_progress.ec2_operations.append('Fasten Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionFasten[i] = self.getFastener(self.panel.get_layer_position(i), 2)
+                    missionFasten[i] = self.get_fastener(self.panel.get_layer_position(i), 2)
                     self.build_rbc_progress.ec2_operations.append('Fasten All Layers')
 
             case default:
@@ -192,7 +196,8 @@ class RunData:
         # Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
         loadbalance = self.machine.get_prediction()
         layers_ec3 = rdh.Layers_RBC(21)
-
+        self.track_sheets.clear()
+        station = Station(self.machine.ec2)
         # Determine how much material is being placed with EC2
         missionPlace = [None, None, None, None, None]
         match loadbalance.get('oEC3_Place'):
@@ -223,15 +228,15 @@ class RunData:
         missionFasten = [None, None, None, None, None]
         match loadbalance.get('oEC3_Fasten'):
             case 100:
-                missionFasten[0] = self.getFastener(self.panel.get_layer_position(0), 3)
+                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), 3)
                 self.build_rbc_progress.ec3_operations.append('Fasten Layer 1')
             case 200:
                 # missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 3)
-                missionFasten[1] = self.getFastener(self.panel.get_layer_position(1), 3)
+                missionFasten[1] = self.get_fastener(self.panel.get_layer_position(1), 3)
                 self.build_rbc_progress.ec3_operations.append('Fasten Layer 2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionPlace[i] = self.getFastener(self.panel.get_layer_position(i), 3)
+                    missionPlace[i] = self.get_fastener(self.panel.get_layer_position(i), 3)
                     self.build_rbc_progress.ec3_operations.append('Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Fastening on EC3')
@@ -289,13 +294,17 @@ class RunData:
         pgDB.open()
         sql_var1 = self.panel.guid
         sql_var2 = layer
+        if station == 2:
+            sql_var3 = round(self.machine.ec2.partial_board / 25.4, 0)
+        else:
+            sql_var3 = round(self.machine.ec3.partial_board / 25.4, 0)
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
                         where panelguid = '{sql_var1}' 
                         and "type" = 'Sheet' 
                         and b2y = '{sql_var2}'
-                        and "actual_width" > 30 
+                        and "actual_width" > {sql_var3} 
                         and e1x >= 0
                         order by b1x 
                         """
@@ -315,7 +324,6 @@ class RunData:
             # change list to object
             sheet: dict = sheet[0]
             material = Material(sheet, self.machine.get_system_parms(station))
-
             # f.writelines('Sheets: '+str(sheet)+ '   Material: '+str(material))
 
             # Board Pick
@@ -344,7 +352,7 @@ class RunData:
             pick.Info_11 = material.getMaterialCode()
             pick.Info_12 = material.getMaterial()
             if pick.Info_12 not in self.build_rbc_progress.materials_required: self.build_rbc_progress.materials_required.append(pick.Info_12)
-            self.build_rbc_progress.material_count +=1
+            self.build_rbc_progress.material_count += 1
             # Board Place
             place = rdh.missionData_RBC(material.getPlaceType())  # self.fastenTypes
             # place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
@@ -367,17 +375,20 @@ class RunData:
             # Now we have to add the missions for temp fastening that board
 
             layerData.add_board(boardData)
-
+            self.track_sheets.append(sheet.get('elementguid'))
         # this information will be used when building fastener requirements for layer
         layIndex = self.panel.get_layer_index(layer)
         fast = material.fastenNum
+
         self.panel.update_layer_fastener(layIndex, fast)
 
         return layerData
 
     def getboardFastener(self, board: rdh.missionData_RBC, active_layer, iMaterial: Material, station) -> list[rdh.missionData_RBC]:
         studSpace = 406
+        shiftspace = round(18 / 25.4, 2)
         # Open Database Connection
+
         pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid  # Panel ID
@@ -406,8 +417,8 @@ class RunData:
         results = pgDB.query(sql_statement=sql_select_query)
 
         # Determine Start End Shift
-        shiftSTART = [0.75, 1, 1.25]
-        shiftEND = [0.75, 1.25, 1.25]
+        shiftSTART = [shiftspace, shiftspace + 0.25, shiftspace + 0.5]
+        shiftEND = [shiftspace, shiftspace + 0.5, shiftspace + 0.5]
         offsetStart = shiftSTART[self.panel.get_layer_index(active_layer)]
         offsetEnd = shiftEND[self.panel.get_layer_index(active_layer)]
 
@@ -464,7 +475,7 @@ class RunData:
                     fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                motionlength = fasten.Info_03 - fasten.Info_01
+                motionlength = abs(fasten.Info_03 - fasten.Info_01)
                 fastenCount = round(motionlength / studSpace) + 1
                 fasten.Info_10 = round(motionlength / fastenCount)
                 if fasten.Info_10 < 75:
@@ -487,24 +498,29 @@ class RunData:
 
             fastenlst.append(fasten)
         pgDB.close()
+
         if iMaterial.fastener not in self.build_rbc_progress.fasteners_required: self.build_rbc_progress.fasteners_required.append(iMaterial.fastener)
         return fastenlst
 
-    def getFastener(self, layer, station) -> list[rdh.missionData_RBC]:
+    def get_fastener(self, layer, station) -> list[rdh.missionData_RBC]:
         studSpace = 406
         # Open Database Connection
         pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid  # Panel ID
+        sql_var2 = tuple(self.track_sheets)
+
         sql_wStart = 0  # Leading Edge of the Board (Width)
         sql_wEnd = self.panel.panelLength  # Trailing Edge of the Board (Width)
         # Get parameters to determine min and max window to temp fasten material
         if station == 2:
             sql_vMin = round(self.machine.ec2.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
             sql_vMax = round(self.machine.ec2.parmData.getParm('ZL Core', 'Y Build Max') / 25.4, 2)
+            sql_var3 = round(self.machine.ec2.partial_board / 25.4, 0)
         elif station == 3:
             sql_vMin = round(self.machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
             sql_vMax = round(self.machine.ec3.parmData.getParm('ZL Core', 'Y Build Max') / 25.4, 2)
+            sql_var3 = round(self.machine.ec3.partial_board / 25.4, 0)
         sql_select_query = f"""
                             select to_jsonb(se) 
                             from cad2fab.system_elements se 
@@ -515,13 +531,14 @@ class RunData:
                             and e2y < '{sql_vMax}' 
                             and e1x <= '{sql_wEnd}' 
                             and e4x > '{sql_wStart}' 
-                            and "actual_width" > 30 
+                            and "actual_width" > 36 
                             and e1x >= 0
                             """
-
+        #   and elementguid in '{sql_var2}'
         # Determine Start End Shift
-        shiftSTART = [0.75, 1, 1.25]
+        shiftSTART = [2.75, 1, 1.25]
         shiftEND = [0.75, 1.25, 1.25]
+
         offsetStart = shiftSTART[self.panel.get_layer_index(layer)]
         offsetEnd = shiftEND[self.panel.get_layer_index(layer)]
         resultSheath = pgDB.query(sql_statement=sql_select_query)  # Look at Sheaths for Edge Conditions
@@ -739,11 +756,14 @@ class RunData:
         pgDB = dbc.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
-        sql_var2 = layer
+        sql_var2 = tuple(self.track_sheets)
+        sql_var3 = self.machine
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
-                        where panelguid = '{sql_var1}' AND "type" = 'Sheet' and actual_width < 48
+                        where panelguid = '{sql_var1}' 
+                        AND elementguid in {sql_var2}
+                        AND "type" = 'Sheet' and actual_width < 48
                         order by b1x;
                         """
 
@@ -819,3 +839,25 @@ class RunData:
                 cwsPos = round((leadEdge + (trailEdge - leadEdge) / 2) * 25.4, 2)
 
         return cwsPos
+
+    def getStudSpacing(self, element, station):
+        default_paremeter = station.ec.get
+
+
+def check_fasten_mission(fasten: rdh.missionData_RBC) -> rdh.missionData_RBC:
+    # Check if mission values are ordered correctly and make sense
+    if fasten.Info_01 > fasten.Info_03:
+        temp_01 = fasten.Info_01
+        temp_03 = fasten.Info_03
+        fasten.Info_01 = temp_03
+        fasten.Info_03 = temp_01
+    if fasten.Info_02 > fasten.Info_04:
+        temp_02 = fasten.Info_02
+        temp_04 = fasten.Info_04
+        fasten.Info_02 = temp_04
+        fasten.Info_04 = temp_02
+
+    if all(getattr(fasten, attr) < 0 for attr in vars(fasten)):
+        fasten = None
+
+    return fasten

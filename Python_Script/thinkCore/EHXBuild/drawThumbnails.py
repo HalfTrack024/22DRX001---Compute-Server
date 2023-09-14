@@ -3,6 +3,9 @@ from PIL import Image, ImageDraw  # Requires Python >=3.7, pip install Pillow
 from util.globals import Parse_Progress
 from util import dataBaseConnect as dbc
 import os
+import base64
+from io import BytesIO
+from util.dataBaseConnect import DB_Connect
 
 
 # import math								#Built in to Python, only needed for safe rounding
@@ -39,33 +42,37 @@ class GenPreview:
 
     def previewMain(self):
         # loop through all panelData rows, ct is counter, row is data
-        path = self.path
         if len(self.panelData) > 0:
-            cunt = 0
+            cnt = 0
+            image_list = []
+            pgDB = dbc.DB_Connect()
+            pgDB.open()
             for row in self.panelData:
-                cunt += 1
-                print(str(cunt) + '---' + row[1])
+                cnt += 1
+                print(str(cnt) + '---' + row[1])
                 # get the jobID of the current panel
-                pgDB = dbc.DB_Connect()
                 jobid = row[11]
 
-                # if output/jobID doesn't exist create the folder then set name = filepath/panelguid.png
-                if not os.path.exists(path + f'\\{jobid}\\'):
-                    os.makedirs(path + f'\\{jobid}\\')
-                if not os.path.exists(path + f'\\{jobid}\\{row[1]}'):
-                    os.makedirs(path + f'\\{jobid}\\{row[1]}')
-                if not os.path.exists(path + f'\\{jobid}\\{row[1]}\\Assemblies'):
-                    os.makedirs(path + f'\\{jobid}\\{row[1]}\\Assemblies')
-
-                name = (path + f'\\{jobid}\\{row[1]}\\{row[1]}' + '.png')
                 panel_data = list(filter(lambda text: row[1] in text, self.elementData))
-                self.build_image(name, row, panel_data)
+                blob = self.build_image(row, panel_data)
+                #blob.decode('')
+                #blob = blob.replace(blob[0], '', 1)
+                sql_query = f"""INSERT INTO cad2fab.system_images
+                            (panelguid, image_name, blob_data, jobid)
+                            VALUES(%s, %s, %s, %s)
+                            ON CONFLICT (panelguid,image_name)
+                            DO UPDATE SET blob_data = EXCLUDED.blob_data"""
+                image_list.append((row[1], row[1], blob, jobid))
+
+
+                #pgDB.query_many(sql_query, panel_line)
                 sqlPanel = row[1]
-                pgDB.open()
+
                 sql_assemblies = f"""SELECT distinct assembly_id 
                 from cad2fab.system_elements se 
                 where panelguid = '{sqlPanel}' and type = 'Sub Assembly' and assembly_id is not null;"""
                 assemblies = pgDB.query(sql_assemblies)
+                assem_lines = []
                 for assembly in assemblies:
                     print("Build Sub")
                     # Get Assembly Data from Elements
@@ -77,19 +84,35 @@ class GenPreview:
                     sql_Name = f"""select description 
                                 from cad2fab.system_elements se
                                 where 
-                                    panelguid = '{sqlPanel}' and 
-                                    assembly_id = '{assembly[0]}' and 
-                                    
-                                    "size" is Null;"""
+                                panelguid = '{sqlPanel}' and 
+                                assembly_id = '{assembly[0]}' and                                     
+                                "size" is Null;"""
                     assName = pgDB.query(sql_Name)
-                    name = (path + f'\\{jobid}\\{row[1]}\\' + 'Assemblies\\' + assName[0][0] + '.png')
                     subs = []
                     # for sub in subElements:
                     #    subs.append([sub[0], sub[1], sub[2], sub[17], sub[18], sub[19], sub[20], sub[21], sub[22], sub[23], sub[24]])
                     subs.extend(subElements)
-                    self.build_image(name, row, subs)
+                    blob = self.build_image(row, subs)
 
-    def build_image(self, name, panel, element_data):
+                    image_list.append((row[1], assName[0][0], blob, jobid))
+                    if len(image_list) > 250:
+                        sql_query = f"""INSERT INTO cad2fab.system_images
+                                    (panelguid, image_name, blob_data, jobid)
+                                    VALUES(%s, %s, %s, %s)
+                                    ON CONFLICT (panelguid,image_name)
+                                    DO UPDATE SET blob_data = EXCLUDED.blob_data"""
+                        pgDB.query_many(sql_query, image_list)
+                        image_list.clear()
+            sql_query = f"""INSERT INTO cad2fab.system_images
+                        (panelguid, image_name, blob_data, jobid)
+                        VALUES(%s, %s, %s, %s)
+                        ON CONFLICT (panelguid,image_name)
+                        DO UPDATE SET blob_data = EXCLUDED.blob_data"""
+            pgDB.query_many(sql_query, image_list)
+
+
+
+    def build_image(self, panel, element_data):
         row = panel
 
         # find the boundaries of each panel
@@ -141,12 +164,12 @@ class GenPreview:
         height = max_height - min_height
         width = max_width - min_width
         # check if the max scale is based on width or height
-        if 1000 / height <= 1840 / width:
-            scale = 1000 / height
+        if 1040 / height <= 1880 / width:
+            scale = 1040 / height
         # code for safe scale rounding
         # scale = int(math.floor(1000/height))
-        elif 1840 / width < 1000 / height:
-            scale = 1840 / width
+        elif 1880 / width < 1040 / height:
+            scale = 1880 / width
         # code for safe scale rounding
         # scale = int(math.floor(1840/width))
 
@@ -204,8 +227,11 @@ class GenPreview:
         # out_image = out_image.transpose(method=Image.FLIP_LEFT_RIGHT)
         # Output PNG image
         self.draw_progress.image_count += 1
-        out_image.save(name)
-
+        #out_image.save(name)
+        buffer = BytesIO()
+        out_image.save(buffer, format="PNG")
+        img_str = buffer.getvalue()
+        return img_str
 # if __name__ == "__main__":
 # 	GenPreview.__init__(GenPreview)
 # 	GenPreview.previewMain(GenPreview)

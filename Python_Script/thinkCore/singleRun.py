@@ -7,12 +7,12 @@ from util.panelData import Panel
 from util.machineData import Line
 
 
-EC1_Yes = False
+EC1_Yes = True
 EC23_Yes = True
 
 app_settings = gHelp.get_app_config()
 
-panelID = "521ab575-d43f-4d63-ae8d-043854fc28e4"
+panelID = "84c55d39-9078-4cf1-b665-b56a5a087b9b"
 machine = Line(app_settings)
 if EC1_Yes:
 

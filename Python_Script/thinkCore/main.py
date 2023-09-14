@@ -45,7 +45,7 @@ def ehx_parse(opc_connection: OPC_Connect):  # Calls the XML Parse to Break down
     # Print the list of XML files
     for file in xml_files:
         print(file)
-        parse = eHX(file, app_config_settings)
+        parse = eHX(file)
         thread = threading.Thread(target=parse.xml_main)
         joiner = " - "
         thread.start()

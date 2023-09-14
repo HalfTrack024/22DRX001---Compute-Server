@@ -373,7 +373,7 @@ class JobData:
                 panel_id = element[0]
                 image_name = str(element[3])
                 dir_path = r"C:\Program Files\Inductive Automation\Ignition\webserver\webapps\main\Files"
-                rel_path = r"%s.png" % image_name
+                rel_path = r"%s" % image_name
                 path = rel_path
             # other element types -> error
             else:
