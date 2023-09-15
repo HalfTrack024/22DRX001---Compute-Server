@@ -840,9 +840,36 @@ class RunData:
 
         return cwsPos
 
-    def getStudSpacing(self, element, station):
-        default_paremeter = station.ec.get
+    def getStudSpacing(self, element : dict, station : Station, connect : dbc.DB_Connect) -> dict:
 
+        #Determine if sheet has defined stud spacing
+        sql_var1 = element.get('elementguid')
+        sql_determine = f"""
+        select edge_spacing, field_spacing
+        from cad2fab.system_fasteners
+        where element_guid = '{sql_var1}'
+        and edge_spacing > 0
+        and field_spacing > 0
+        """
+        results = connect.query(sql_determine)
+        if len(results) > 0:
+            edge = results[0][0]
+            field = results[0][1]
+        else:
+            edge = station.default_fasten_edge
+            field = station.default_fasten_field
+        sql_find = f"""
+                    select * 
+                    from cad
+        """
+
+        results = connect.query(sql_find)
+        if len(results) > 0:
+            stud_space = field
+        else:
+            stud_space = edge
+
+        return stud_space
 
 def check_fasten_mission(fasten: rdh.missionData_RBC) -> rdh.missionData_RBC:
     # Check if mission values are ordered correctly and make sense

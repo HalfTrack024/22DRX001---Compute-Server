@@ -9,7 +9,8 @@ class Station:
     station_id = None
     run_level = {}
     parmData = None
-    fastenSpace = {}
+    default_fasten_edge = None
+    default_fasten_field = None
     partial_board = None
     off_cut = None
 
@@ -63,16 +64,13 @@ class EC2(Station):
 
     def __init__(self) -> None:
         self.station_id = 2
-        self.run_lvl = {}
         self.parmData = Parameters([], 10, 19)
-        self.run_lvl = {
+        self.run_level = {
             'ec2_20': self.parmData.getParm("Application", "Run Level 20 missions (True/false)"),
             'ec2_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
             'ec2_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
-        self.fastenSpace = {
-            'edge': self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
-            'field': self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
-        }
+        self.fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
+        self.fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
         self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
         self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
@@ -81,16 +79,13 @@ class EC3(Station):
 
     def __init__(self) -> None:
         self.station_id = 3
-        self.run_lvl = {}
         self.parmData = Parameters([], 20, 29)
-        self.run_lvl = {
+        self.run_level = {
             'ec3_20': self.parmData.getParm("Application", "Run Level 20 missions (True/false)"),
             'ec3_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
             'ec3_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
-        self.fastenSpace = {
-            'edge': self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
-            'field': self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
-        }
+        self.fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
+        self.fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
         self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
         self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
@@ -106,8 +101,8 @@ class Line(EC1, EC2, EC3):
         self.ec3 = EC3()
         self.toolIndex = 1
         self.determine = []
-        self.determine.extend(self.ec2.run_lvl.values())
-        self.determine.extend(self.ec3.run_lvl.values())
+        self.determine.extend(self.ec2.run_level.values())
+        self.determine.extend(self.ec3.run_level.values())
 
         self.predict_layer_count = 1
 
