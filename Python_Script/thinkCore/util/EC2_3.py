@@ -120,10 +120,8 @@ class RunData:
                 self.build_rbc_progress.ec2_operations.append('Place and Fasten Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    # missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 2)
                     missionPlace[i] = True
                     self.build_rbc_progress.ec2_operations.append('Place and Fasten All Layers')
-
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Place and Fasten on EC2')
                 logging.info('no material is placed with EC2')
@@ -142,30 +140,49 @@ class RunData:
                 for i in range(self.panel.get_layer_count()):
                     missionFasten[i] = self.get_fastener(self.panel.get_layer_position(i), station)
                     self.build_rbc_progress.ec2_operations.append('Fasten All Layers')
-
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Fastening on EC2')
                 logging.info('no material is fastened with EC2')
 
-        # Determine if EC2 is Routing any material
+        # Determine if EC2 is Small Routing any material
+        missionSmallRoute = [None, None, None, None, None]
+        missionSmallRouting = []
+        match load_balance.get('oEC2_SmallRouting'):
+            case 100:
+                missionSmallRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(0), station))
+                missionSmallRoute[0] = missionSmallRouting
+                self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+            case 200:
+                missionSmallRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(1), station))
+                missionSmallRoute[1] = missionSmallRouting
+                self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
+            case 123:
+                for i in range(self.panel.get_layer_count()):
+                    missionSmallRoute[i] = self.getRoughOutCut(self.panel.get_layer_position(i), station)
+                missionSmallRoute[1] = missionSmallRouting
+                self.build_rbc_progress.ec2_operations.append('Route All Layers')
+            case default:
+                self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
+                logging.info('no material is Routed with EC2')
+        # Determine if EC2 is Door/Window Routing any material
         missionRoute = [None, None, None, None, None]
         missionRouting = []
         match load_balance.get('oEC2_Routing'):
             case 100:
                 missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(0), station))
                 missionRoute[0] = missionRouting
-                self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+                self.build_rbc_progress.ec2_operations.append('Route Door/Window Layer 1')
             case 200:
                 missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(1), station))
                 missionRoute[1] = missionRouting
-                self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
+                self.build_rbc_progress.ec2_operations.append('Route Door/Window Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
                     missionRoute[i] = self.getRoughOutCut(self.panel.get_layer_position(i), station)
                 missionRoute[1] = missionRouting
-                self.build_rbc_progress.ec2_operations.append('Route All Layers')
+                self.build_rbc_progress.ec2_operations.append('Door/Window Route All Layers')
             case default:
-                self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
+                self.build_rbc_progress.ec2_operations.append('No Door/Window Routing on EC2')
                 logging.info('no material is Routed with EC2')
 
         # Combine Place, Fasten, and Route Data to Layer
@@ -179,13 +196,15 @@ class RunData:
             if missionFasten[i] is not None:
                 layer.add_mission(missionFasten[i])  # Determine if any fasteners have been used for that layer
                 used = True
+            if missionSmallRoute[i] is not None:
+                layer.add_mission(missionSmallRoute[i])  # Determine if any routing have been used for that layer
+                used = True
             if missionRoute[i] is not None:
                 layer.add_mission(missionRoute[i])  # Determine if any routing have been used for that layer
                 used = True
             if used:
                 layer.set_properties(round(self.panel.get_layer_position(i) * 25.4, 1))
                 layers.add_layer(layer)
-                # layers._layers.append(layer)
 
         # Returns a converted layers object to a json string
         return layers.to_json()
@@ -239,6 +258,23 @@ class RunData:
                 self.build_rbc_progress.ec3_operations.append('No Fastening on EC3')
                 logging.info('no material is fastened with EC3')
 
+        # Determine if EC3 is Small Routing any material
+        missionSmallRoute = [None, None, None, None, None]
+        match load_balance.get('oEC3_SmallRouting'):
+            case 100:
+                missionSmallRoute[0] = self.get_end_cut(station)
+                self.build_rbc_progress.ec3_operations.append('Route Layer 1')
+            case 200:
+                missionSmallRoute[1] = self.get_end_cut(station)
+                self.build_rbc_progress.ec3_operations.append('Route Layer 1/2')
+            case 123:
+                for i in range(self.panel.get_layer_count()):
+                    missionSmallRoute[i] = self.get_end_cut(station)
+                self.build_rbc_progress.ec3_operations.append('Route All Layers')
+            case default:
+                self.build_rbc_progress.ec3_operations.append('No Routing on EC3')
+                logging.info('no material is Routed with EC3')
+
         # Determine if EC3 is Routing any material
         missionRoute = [None, None, None, None, None]
         missionRouting = []
@@ -269,6 +305,9 @@ class RunData:
                 used = True
             if missionFasten[i] is not None:
                 layer.add_mission(missionFasten[i])  # Determine if any fasteners have been used for that layer
+                used = True
+            if missionSmallRoute[i] is not None:
+                layer.add_mission(missionSmallRoute[i])  # Determine if any routing have been used for that layer
                 used = True
             if missionRoute[i] is not None:
                 layer.add_mission(missionRoute[i])  # Determine if any routing have been used for that layer
@@ -423,8 +462,7 @@ class RunData:
         for result in results:
             result: dict = result[0]
             fasten = rDH.missionData_RBC(i_material.getFastenType())
-            # fasten.missionID = iMaterial.getFastenType()
-            # Vertical vs Horizantal Vertial dimension is less than 6inch
+            # Vertical vs Horizontal Vertical dimension is less than 6inch
             # Vertical
             if result.get('e2y') - result.get('e1y') > 3:
                 if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
@@ -459,7 +497,7 @@ class RunData:
                         self.machine.toolIndex = 1
                     else:
                         self.machine.toolIndex = self.machine.toolIndex << 1
-            # Horizantal
+            # Horizontal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
                 fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -558,8 +596,7 @@ class RunData:
             for result in results:
                 result: dict = result[0]
                 fasten = rDH.missionData_RBC(self.panel.get_layer_fastener(self.panel.get_layer_index(layer)))
-                # fasten.missionID = iMaterial.getFastenType()
-                # Vertical vs Horizantal Vertial dimension is less than 6inch
+                # Vertical vs Horizontal Vertical dimension is less than 6inch
                 # Vertical
                 if result.get('e2y') - result.get('e1y') > 3:
                     if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
@@ -635,7 +672,7 @@ class RunData:
         sql_vStart = round(mission.Info_02 / 25.4, 2)
         sql_vEnd = round(mission.Info_04 / 25.4, 2)
 
-        sql_select_prequery = f"""
+        sql_pre_query = f"""
             select to_jsonb(se) 
             from cad2fab.system_elements se
             where 
@@ -643,7 +680,7 @@ class RunData:
                 and description in ('Rough cutout') 
                 and (e1x < {sql_wEnd} and e1x > {sql_wStart} and e4y  <= {sql_vStart} and e1y >= {sql_vStart})
             """
-        sql_select_Postquery = f"""
+        sql_post_query = f"""
             select to_jsonb(se) 
             from cad2fab.system_elements se
             where 
@@ -651,8 +688,8 @@ class RunData:
                 and description in ('Rough cutout') 
                 and (e3x > {sql_wStart} and e3x < {sql_wEnd} and e4y  <= {sql_vStart} and e1y >= {sql_vStart})
             """
-        preResult = dbConnection.query(sql_statement=sql_select_prequery)
-        postResult = dbConnection.query(sql_statement=sql_select_Postquery)
+        preResult = dbConnection.query(sql_statement=sql_pre_query)
+        postResult = dbConnection.query(sql_statement=sql_post_query)
         if len(preResult) > 0:
             result: dict = preResult[0][0]
             if round(result.get('e4x') * 25.4, 2) <= mission.Info_03:
@@ -684,7 +721,7 @@ class RunData:
 
         results = pgDB.query(sql_statement=sql_select_query)
         pgDB.close()
-        routelst: list[rDH.missionData_RBC] = []
+        route_list: list[rDH.missionData_RBC] = []
 
         for result in results:
             result: dict = result[0]
@@ -731,14 +768,14 @@ class RunData:
                     route.Info_07 = round(layer * 25.4, 1)
                 else:
                     route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
-                routelst.append(route)
+                route_list.append(route)
             else:
                 logging.warning('Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
                 break
 
-        return routelst
+        return route_list
 
-    def get_end_cut(self, working_station: Station):
+    def get_end_cut(self, working_station: Station) -> list:
         # Open Database Connection
         pgDB = dBC.DB_Connect()
         pgDB.open()
@@ -784,7 +821,7 @@ class RunData:
 
         return route_list
 
-    def get_cws(self, element: dict, ipgDB: dBC, maxPrevious):
+    def get_cws(self, element: dict, ipgDB: dBC, max_previous):
         cwsPos = 0
         if element.get('description') == 'Stud':
             sql_var1 = self.panel.guid  # Panel ID
@@ -813,7 +850,7 @@ class RunData:
             results_Pre = ipgDB.query(sql_statement=sql_select_query1)
             results_Post = ipgDB.query(sql_statement=sql_select_query2)
             if len(results_Pre) == 0 and len(results_Post) == 0 and element.get('e1x') > (
-                    round(maxPrevious / 25.4, 2) + 1):
+                    round(max_previous / 25.4, 2) + 1):
                 leadEdge = element.get('e1x')
                 trailEdge = element.get('e3x')
                 cwsPos = round((leadEdge + (trailEdge - leadEdge) / 2) * 25.4, 2)
