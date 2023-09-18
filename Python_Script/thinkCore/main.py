@@ -1,17 +1,18 @@
-import time
-import logging
 import glob
-import threading
-import os
 import json
+import logging
+import os
 import shutil
-from EHXBuild.xmlparse import xmlParse as eHX
+import threading
+import time
+
 import EHXBuild.drawThumbnails as dThumb  # Draw PNG Images
-from util.opcuaConnect import OPC_Connect
+from EHXBuild.xmlparse import xmlParse as eHX
 from util.EC1 import Mtrl_Data, JobData
 from util.EC2_3 import RunData
-from util.panelData import Panel
 from util.machineData import Line
+from util.opcuaConnect import OPC_Connect
+from util.panelData import Panel
 
 # This Program will Run Continuously in the background of the Server PC to monitor if:
 # - New EHX File has been loaded

@@ -1,10 +1,10 @@
-import psycopg2 as psy  # Requires Python >=3.6
-from psycopg2.extras import DictCursor
 import logging
 import sys
+
+import psycopg2 as psy  # Requires Python >=3.6
+from psycopg2.extras import DictCursor
+
 import util.General_Help as gHelp
-import os
-import json
 
 
 def get_cred():

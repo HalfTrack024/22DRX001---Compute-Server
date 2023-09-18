@@ -1,7 +1,7 @@
 #tmp = 'panelguid, XPos, OpText, OpCode_FS, ZPos_FS, YPos_FS, SsUpPos_FS, OpCode_MS, ZPos_MS, YPos_MS, SsUpPos_MS, ImgName, OBJ_ID, loadDate'
 #print(tmp.lower())
-from fractions import Fraction
 import math
+from fractions import Fraction
 
 val = 1.437
 intval = int(1.737)

@@ -1,7 +1,7 @@
-import util.dataBaseConnect as dbc
-from util.Parameters import Parameters
-from fractions import Fraction
 import math
+from fractions import Fraction
+
+from util.Parameters import Parameters
 
 
 class Material:

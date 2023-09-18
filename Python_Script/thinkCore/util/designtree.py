@@ -1,9 +1,9 @@
 import sys
 
+import matplotlib.pyplot as plt
 import pandas
 from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
-import matplotlib.pyplot as plt
 
 
 def process_builder(predict: list, app_settings):

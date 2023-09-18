@@ -2,8 +2,8 @@
   "DB_credentials": {
     "user": "postgres",
     "password": 1,
-    "host": "192.168.180.200",
-    "port": 5433,
+    "host": "localhost",
+    "port": 5432,
     "database": "Drexel"
   },
   "IgnitionServer": "opc.tcp://16131_Server:62541",
