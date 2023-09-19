@@ -7,7 +7,7 @@
     "database": "Drexel"
   },
   "IgnitionServer": "opc.tcp://16131_Server:62541",
-  "TruthTable": "C:\\Users\\Andrew Murray\\Desktop\\thinkCore\\truthtable.csv",
+  "TruthTable": "C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\util\\truthtable.csv",
   "applog": "C:\\Users\\Andrew Murray\\PycharmProjects\\pythonProject1\\util\\app.log",
   "Monitor_Folder": "C:\\Users\\Andrew Murray\\Desktop\\SampleProject\\ProjectLocal",
   "Archive_Folder": "C:\\Users\\Andrew Murray\\Desktop\\SampleProject\\ProjectLocal\\Archive",
