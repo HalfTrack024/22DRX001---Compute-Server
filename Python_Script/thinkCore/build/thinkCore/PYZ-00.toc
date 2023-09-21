@@ -341,14 +341,6 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_compression.py',
    'PYMODULE'),
-  ('_distutils_hack',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\_distutils_hack\\__init__.py',
-   'PYMODULE'),
-  ('_distutils_hack.override',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\_distutils_hack\\override.py',
-   'PYMODULE'),
   ('_osx_support',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_osx_support.py',
@@ -368,10 +360,6 @@
   ('_pyi_rth_utils._win32',
    'C:\\Users\\Andrew '
    'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\_win32.py',
-   'PYMODULE'),
-  ('_sitebuiltins',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_sitebuiltins.py',
    'PYMODULE'),
   ('_strptime',
    'C:\\Users\\Andrew '
@@ -537,62 +525,6 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\calendar.py',
    'PYMODULE'),
-  ('cffi',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\__init__.py',
-   'PYMODULE'),
-  ('cffi.api',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\api.py',
-   'PYMODULE'),
-  ('cffi.cffi_opcode',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\cffi_opcode.py',
-   'PYMODULE'),
-  ('cffi.commontypes',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\commontypes.py',
-   'PYMODULE'),
-  ('cffi.cparser',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\cparser.py',
-   'PYMODULE'),
-  ('cffi.error',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\error.py',
-   'PYMODULE'),
-  ('cffi.ffiplatform',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\ffiplatform.py',
-   'PYMODULE'),
-  ('cffi.lock',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\lock.py',
-   'PYMODULE'),
-  ('cffi.model',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\model.py',
-   'PYMODULE'),
-  ('cffi.pkgconfig',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\pkgconfig.py',
-   'PYMODULE'),
-  ('cffi.recompiler',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\recompiler.py',
-   'PYMODULE'),
-  ('cffi.vengine_cpy',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\vengine_cpy.py',
-   'PYMODULE'),
-  ('cffi.vengine_gen',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\vengine_gen.py',
-   'PYMODULE'),
-  ('cffi.verifier',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cffi\\verifier.py',
-   'PYMODULE'),
   ('cgi',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\cgi.py',
@@ -633,10 +565,6 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\concurrent\\futures\\thread.py',
    'PYMODULE'),
-  ('configparser',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\configparser.py',
-   'PYMODULE'),
   ('contextlib',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\contextlib.py',
@@ -664,226 +592,6 @@
   ('copy',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\copy.py',
-   'PYMODULE'),
-  ('cryptography',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.__about__',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\__about__.py',
-   'PYMODULE'),
-  ('cryptography.exceptions',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\exceptions.py',
-   'PYMODULE'),
-  ('cryptography.hazmat',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat._oid',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\_oid.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.aead',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\aead.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.backend',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\backend.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.ciphers',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ciphers.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.cmac',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\cmac.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.decode_asn1',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\decode_asn1.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.ec',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\ec.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.rsa',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\rsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.backends.openssl.utils',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\backends\\openssl\\utils.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings.openssl',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings.openssl._conditional',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\_conditional.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.bindings.openssl.binding',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\openssl\\binding.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives._asymmetric',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_asymmetric.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives._cipheralgorithm',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_cipheralgorithm.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives._serialization',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\_serialization.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.dh',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dh.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.dsa',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\dsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.ec',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ec.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.ed25519',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed25519.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.ed448',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\ed448.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.padding',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\padding.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.rsa',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\rsa.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.types',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\types.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.utils',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\utils.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.x25519',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x25519.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.asymmetric.x448',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\asymmetric\\x448.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.aead',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\aead.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.algorithms',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\algorithms.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.base',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\base.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.ciphers.modes',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\ciphers\\modes.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.constant_time',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\constant_time.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.hashes',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\hashes.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.hmac',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\hmac.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization.base',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\base.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization.pkcs12',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\pkcs12.py',
-   'PYMODULE'),
-  ('cryptography.hazmat.primitives.serialization.ssh',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\hazmat\\primitives\\serialization\\ssh.py',
-   'PYMODULE'),
-  ('cryptography.utils',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\utils.py',
-   'PYMODULE'),
-  ('cryptography.x509',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\__init__.py',
-   'PYMODULE'),
-  ('cryptography.x509.base',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\base.py',
-   'PYMODULE'),
-  ('cryptography.x509.certificate_transparency',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\certificate_transparency.py',
-   'PYMODULE'),
-  ('cryptography.x509.extensions',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\extensions.py',
-   'PYMODULE'),
-  ('cryptography.x509.general_name',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\general_name.py',
-   'PYMODULE'),
-  ('cryptography.x509.name',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\name.py',
-   'PYMODULE'),
-  ('cryptography.x509.oid',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\cryptography\\x509\\oid.py',
    'PYMODULE'),
   ('csv',
    'C:\\Users\\Andrew '
@@ -1029,46 +737,6 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\__init__.py',
    'PYMODULE'),
-  ('distutils._msvccompiler',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\_msvccompiler.py',
-   'PYMODULE'),
-  ('distutils.archive_util',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\archive_util.py',
-   'PYMODULE'),
-  ('distutils.ccompiler',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\ccompiler.py',
-   'PYMODULE'),
-  ('distutils.cmd',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\cmd.py',
-   'PYMODULE'),
-  ('distutils.command',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\command\\__init__.py',
-   'PYMODULE'),
-  ('distutils.command.bdist',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\command\\bdist.py',
-   'PYMODULE'),
-  ('distutils.command.build_ext',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\command\\build_ext.py',
-   'PYMODULE'),
-  ('distutils.command.sdist',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\command\\sdist.py',
-   'PYMODULE'),
-  ('distutils.config',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\config.py',
-   'PYMODULE'),
-  ('distutils.core',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\core.py',
-   'PYMODULE'),
   ('distutils.debug',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\debug.py',
@@ -1081,21 +749,9 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\dir_util.py',
    'PYMODULE'),
-  ('distutils.dist',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\dist.py',
-   'PYMODULE'),
   ('distutils.errors',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\errors.py',
-   'PYMODULE'),
-  ('distutils.extension',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\extension.py',
-   'PYMODULE'),
-  ('distutils.fancy_getopt',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\fancy_getopt.py',
    'PYMODULE'),
   ('distutils.file_util',
    'C:\\Users\\Andrew '
@@ -1108,10 +764,6 @@
   ('distutils.log',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\log.py',
-   'PYMODULE'),
-  ('distutils.msvc9compiler',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\msvc9compiler.py',
    'PYMODULE'),
   ('distutils.spawn',
    'C:\\Users\\Andrew '
@@ -1128,14 +780,6 @@
   ('distutils.util',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\util.py',
-   'PYMODULE'),
-  ('distutils.version',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\version.py',
-   'PYMODULE'),
-  ('distutils.versionpredicate',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\distutils\\versionpredicate.py',
    'PYMODULE'),
   ('doctest',
    'C:\\Users\\Andrew '
@@ -4241,50 +3885,6 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\py_compile.py',
    'PYMODULE'),
-  ('pycparser',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\__init__.py',
-   'PYMODULE'),
-  ('pycparser.ast_transforms',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\ast_transforms.py',
-   'PYMODULE'),
-  ('pycparser.c_ast',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\c_ast.py',
-   'PYMODULE'),
-  ('pycparser.c_lexer',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\c_lexer.py',
-   'PYMODULE'),
-  ('pycparser.c_parser',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\c_parser.py',
-   'PYMODULE'),
-  ('pycparser.lextab',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\lextab.py',
-   'PYMODULE'),
-  ('pycparser.ply',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\ply\\__init__.py',
-   'PYMODULE'),
-  ('pycparser.ply.lex',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\ply\\lex.py',
-   'PYMODULE'),
-  ('pycparser.ply.yacc',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\ply\\yacc.py',
-   'PYMODULE'),
-  ('pycparser.plyparser',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\plyparser.py',
-   'PYMODULE'),
-  ('pycparser.yacctab',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\pycparser\\yacctab.py',
-   'PYMODULE'),
   ('pydoc',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\pydoc.py',
@@ -4372,10 +3972,6 @@
   ('random',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\random.py',
-   'PYMODULE'),
-  ('rlcompleter',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\rlcompleter.py',
    'PYMODULE'),
   ('runpy',
    'C:\\Users\\Andrew '
@@ -5782,166 +5378,6 @@
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\selectors.py',
    'PYMODULE'),
-  ('setuptools',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\__init__.py',
-   'PYMODULE'),
-  ('setuptools._deprecation_warning',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_deprecation_warning.py',
-   'PYMODULE'),
-  ('setuptools._imp',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_imp.py',
-   'PYMODULE'),
-  ('setuptools._vendor',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\__init__.py',
-   'PYMODULE'),
-  ('setuptools._vendor.more_itertools',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\more_itertools\\__init__.py',
-   'PYMODULE'),
-  ('setuptools._vendor.more_itertools.more',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\more_itertools\\more.py',
-   'PYMODULE'),
-  ('setuptools._vendor.more_itertools.recipes',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\more_itertools\\recipes.py',
-   'PYMODULE'),
-  ('setuptools._vendor.ordered_set',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\ordered_set.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\__init__.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.__about__',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\__about__.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging._compat',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_compat.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging._structures',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_structures.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging._typing',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\_typing.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.markers',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\markers.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.requirements',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\requirements.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.specifiers',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\specifiers.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.tags',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\tags.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.utils',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\utils.py',
-   'PYMODULE'),
-  ('setuptools._vendor.packaging.version',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\packaging\\version.py',
-   'PYMODULE'),
-  ('setuptools._vendor.pyparsing',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\_vendor\\pyparsing.py',
-   'PYMODULE'),
-  ('setuptools.command',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\command\\__init__.py',
-   'PYMODULE'),
-  ('setuptools.command.bdist_egg',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\command\\bdist_egg.py',
-   'PYMODULE'),
-  ('setuptools.command.egg_info',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\command\\egg_info.py',
-   'PYMODULE'),
-  ('setuptools.command.py36compat',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\command\\py36compat.py',
-   'PYMODULE'),
-  ('setuptools.command.sdist',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\command\\sdist.py',
-   'PYMODULE'),
-  ('setuptools.command.setopt',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\command\\setopt.py',
-   'PYMODULE'),
-  ('setuptools.config',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\config.py',
-   'PYMODULE'),
-  ('setuptools.depends',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\depends.py',
-   'PYMODULE'),
-  ('setuptools.dist',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\dist.py',
-   'PYMODULE'),
-  ('setuptools.extension',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\extension.py',
-   'PYMODULE'),
-  ('setuptools.extern',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\extern\\__init__.py',
-   'PYMODULE'),
-  ('setuptools.glob',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\glob.py',
-   'PYMODULE'),
-  ('setuptools.installer',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\installer.py',
-   'PYMODULE'),
-  ('setuptools.monkey',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\monkey.py',
-   'PYMODULE'),
-  ('setuptools.msvc',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\msvc.py',
-   'PYMODULE'),
-  ('setuptools.py34compat',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\py34compat.py',
-   'PYMODULE'),
-  ('setuptools.unicode_utils',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\unicode_utils.py',
-   'PYMODULE'),
-  ('setuptools.version',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\version.py',
-   'PYMODULE'),
-  ('setuptools.wheel',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\wheel.py',
-   'PYMODULE'),
-  ('setuptools.windows_support',
-   'C:\\Users\\Andrew '
-   'Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\venv\\Lib\\site-packages\\setuptools\\windows_support.py',
-   'PYMODULE'),
   ('shelve',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\shelve.py',
@@ -5957,10 +5393,6 @@
   ('signal',
    'C:\\Users\\Andrew '
    'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\signal.py',
-   'PYMODULE'),
-  ('site',
-   'C:\\Users\\Andrew '
-   'Murray\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site.py',
    'PYMODULE'),
   ('six',
    'C:\\Users\\Andrew '

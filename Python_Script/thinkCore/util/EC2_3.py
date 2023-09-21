@@ -119,6 +119,7 @@ class RunData:
                 self.build_rbc_progress.ec2_operations.append('Place and Fasten Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
+                    missionPlace[i] = self.get_sheets(self.panel.get_layer_position(i), station)
                     missionPlace[i] = True
                     self.build_rbc_progress.ec2_operations.append('Place and Fasten All Layers')
             case default:
@@ -147,15 +148,17 @@ class RunData:
         missionSmallRoute = [None, None, None, None, None]
         match load_balance.get('oEC2_SmallRouting'):
             case 100:
-                missionSmallRoute[0] = self.get_end_cut(station)
-                self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+                pass
+                #missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                #self.build_rbc_progress.ec2_operations.append('Route Layer 1')
             case 200:
-                missionSmallRoute[1] = self.get_end_cut(station)
+                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
             case 123:
-                for i in range(self.panel.get_layer_count()):
-                    missionSmallRoute[i] = self.get_end_cut(station)
-                self.build_rbc_progress.ec2_operations.append('Route All Layers')
+                pass
+                #for i in range(self.panel.get_layer_count()):
+                #    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                #self.build_rbc_progress.ec2_operations.append('Route All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
                 logging.info('no material is Routed with EC2')
@@ -256,14 +259,14 @@ class RunData:
         missionSmallRoute = [None, None, None, None, None]
         match load_balance.get('oEC3_SmallRouting'):
             case 100:
-                missionSmallRoute[0] = self.get_end_cut(station)
+                missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec3_operations.append('Route Layer 1')
             case 200:
-                missionSmallRoute[1] = self.get_end_cut(station)
+                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec3_operations.append('Route Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionSmallRoute[i] = self.get_end_cut(station)
+                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec3_operations.append('Route All Layers')
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Routing on EC3')
@@ -527,8 +530,8 @@ class RunData:
             fastenlst.append(fasten)
         pgDB.close()
 
-        if i_material.fastener not in self.build_rbc_progress.fasteners_required: self.build_rbc_progress.fasteners_required.append(
-            i_material.fastener)
+        if i_material.fastener not in self.build_rbc_progress.fasteners_required:
+            self.build_rbc_progress.fasteners_required.append(i_material.fastener)
         return fastenlst
 
     def get_fastener(self, layer, working_station: Station) -> list[rDH.missionData_RBC]:
@@ -561,7 +564,7 @@ class RunData:
                             """
         #   and elementguid in '{sql_var2}'
         # Determine Start End Shift
-        shiftSTART = [2.75, 1, 1.25]
+        shiftSTART = [4, 1, 1.25]
         shiftEND = [0.75, 1.25, 1.25]
 
         offsetStart = shiftSTART[self.panel.get_layer_index(layer)]
@@ -769,7 +772,7 @@ class RunData:
 
         return route_list
 
-    def get_end_cut(self, working_station: Station) -> list:
+    def get_end_cut(self, layer, working_station: Station) -> list:
         # Open Database Connection
         pgDB = dBC.DB_Connect()
         pgDB.open()
@@ -793,7 +796,7 @@ class RunData:
         for result in results:
             result: dict = result[0]
 
-            route = rDH.missionData_RBC(160)
+            route = rDH.missionData_RBC(210)
             # R1 Cut
             if result.get('e1x') == 0:
                 # Cut Material off that is in negative panel space
@@ -801,12 +804,23 @@ class RunData:
                 route.Info_02 = 0
                 route.Info_03 = round((result.get('actual_width') - 48) * 25.4, 2)
                 route.Info_04 = round((result.get('e3y')) * 25.4, 2)
+                route.Info_05 = 1
+                if self.panel.get_layer_index(layer) == 0:
+                    route.Info_07 = round(layer * 25.4, 1)
+                else:
+                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
+
             elif result.get('e4x') == self.panel.panelLength:
                 # Cut Material off that is in positive panel space
                 route.Info_01 = round((result.get('e4x')) * 25.4, 2)
                 route.Info_02 = 0
                 route.Info_03 = round((result.get('e1x') + 48) * 25.4, 2)
                 route.Info_04 = round((result.get('e3y')) * 25.4, 2)
+                route.Info_05 = 1
+                if self.panel.get_layer_index(layer) == 0:
+                    route.Info_07 = round(layer * 25.4, 1)
+                else:
+                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
             else:
                 logging.warning(
                     'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))

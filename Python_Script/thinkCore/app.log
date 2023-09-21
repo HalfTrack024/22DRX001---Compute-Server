@@ -38073,3 +38073,745 @@ WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__2
 WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__d6181d3e-4107-4b4b-b156-29151a3335c3
 WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__313715bd-cdd4-4319-8753-7394cb0ecc8d
 WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__01c380fb-82e8-4968-9590-6931e569bbe0
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is Routed with EC2
+INFO:root:no material is Routed with EC2
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__2e75bee6-ac25-4c5d-ac3a-05ff3708c818
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__d6181d3e-4107-4b4b-b156-29151a3335c3
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__313715bd-cdd4-4319-8753-7394cb0ecc8d
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__01c380fb-82e8-4968-9590-6931e569bbe0
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is Routed with EC2
+INFO:root:no material is Routed with EC2
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__2e75bee6-ac25-4c5d-ac3a-05ff3708c818
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__d6181d3e-4107-4b4b-b156-29151a3335c3
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__313715bd-cdd4-4319-8753-7394cb0ecc8d
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__01c380fb-82e8-4968-9590-6931e569bbe0
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:Started
+INFO:root:no material is placed with EC2
+INFO:root:no material is fastened with EC2
+INFO:root:no material is Routed with EC2
+INFO:root:no material is Routed with EC2
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__2e75bee6-ac25-4c5d-ac3a-05ff3708c818
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__d6181d3e-4107-4b4b-b156-29151a3335c3
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__313715bd-cdd4-4319-8753-7394cb0ecc8d
+WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__01c380fb-82e8-4968-9590-6931e569bbe0
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:Started
+INFO:opcua.client.ua_client.Socket:opening connection
+INFO:opcua.client.ua_client.Socket:Thread started
+INFO:opcua.uaprotocol:received header: Header(type:b'ACK', chunk_type:b'F', body_size:20, channel:0)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:3)
+INFO:opcua.client.ua_client:create_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:2101, channel:3)
+WARNING:opcua.client.client:Requested session timeout to be 3600000ms, got 120000ms instead
+INFO:opcua.client.ua_client:activate_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:84, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:98, channel:3)
+INFO:opcua.client.ua_client.Socket:opening connection
+INFO:opcua.client.ua_client.Socket:Thread started
+INFO:opcua.uaprotocol:received header: Header(type:b'ACK', chunk_type:b'F', body_size:20, channel:0)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:4)
+INFO:opcua.client.ua_client:create_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:2101, channel:4)
+INFO:opcua.client.ua_client:activate_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:84, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:root:
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '26200fc1-01a2-4c2d-9cbd-5e376bae7a05' 
+                        AND elementguid in ()
+                        AND "type" = 'Sheet' 
+                        AND actual_width between 11.81 and 48
+                        order by b1x;
+                        
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:4)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:4)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:62, channel:4)
+INFO:root:Started
+INFO:opcua.client.ua_client.Socket:opening connection
+INFO:opcua.client.ua_client.Socket:Thread started
+INFO:opcua.uaprotocol:received header: Header(type:b'ACK', chunk_type:b'F', body_size:20, channel:0)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:5)
+INFO:opcua.client.ua_client:create_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:2101, channel:5)
+WARNING:opcua.client.client:Requested session timeout to be 3600000ms, got 120000ms instead
+INFO:opcua.client.ua_client:activate_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:84, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:5)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:98, channel:5)
+INFO:opcua.client.ua_client.Socket:opening connection
+INFO:opcua.client.ua_client.Socket:Thread started
+INFO:opcua.uaprotocol:received header: Header(type:b'ACK', chunk_type:b'F', body_size:20, channel:0)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:6)
+INFO:opcua.client.ua_client:create_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:2101, channel:6)
+INFO:opcua.client.ua_client:activate_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:84, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:root:results: [({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:set_attributes of several nodes
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:108, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:52, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:6)
+INFO:opcua.client.ua_client:close_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:40, channel:6)
+INFO:opcua.client.ua_client.Socket:close_secure_channel
+INFO:opcua.client.ua_client.Socket:Request to close socket received
+INFO:opcua.client.ua_client.Socket:Socket closed, waiting for receiver thread to terminate...
+INFO:opcua.client.ua_client.Socket:Socket has closed connection
+INFO:opcua.client.ua_client.Socket:Cancelling request 65
+INFO:opcua.client.ua_client.Socket:Thread ended
+INFO:opcua.client.ua_client.Socket:Done closing socket: Receiving thread terminated, socket disconnected
+INFO:root:Started
+INFO:root:results: [({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:Started
+INFO:root:Started
+INFO:root:Started
+INFO:root:Started
+INFO:root:results: [({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:results: [({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:opcua.client.ua_client.Socket:opening connection
+INFO:opcua.client.ua_client.Socket:Thread started
+INFO:opcua.uaprotocol:received header: Header(type:b'ACK', chunk_type:b'F', body_size:20, channel:0)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:3)
+INFO:opcua.client.ua_client:create_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:2101, channel:3)
+WARNING:opcua.client.client:Requested session timeout to be 3600000ms, got 120000ms instead
+INFO:opcua.client.ua_client:activate_session
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:84, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client.Socket:open_secure_channel
+INFO:opcua.uaprotocol:received header: Header(type:b'OPN', chunk_type:b'F', body_size:123, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:62, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client:read
+INFO:opcua.uaprotocol:received header: Header(type:b'MSG', chunk_type:b'F', body_size:59, channel:3)
+INFO:opcua.client.ua_client.Socket:Socket has closed connection
+INFO:opcua.client.ua_client.Socket:Thread ended
+INFO:opcua.client.ua_client:read
+INFO:opcua.client.ua_client:close_session
+INFO:opcua.client.ua_client.Socket:close_secure_channel
+INFO:opcua.client.ua_client.Socket:Request to close socket received
+INFO:opcua.client.ua_client.Socket:Socket closed, waiting for receiver thread to terminate...
+INFO:opcua.client.ua_client.Socket:Cancelling request 135
+INFO:opcua.client.ua_client.Socket:Cancelling request 136
+INFO:opcua.client.ua_client.Socket:Done closing socket: Receiving thread terminated, socket disconnected
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'e4aab568-48ef-44e6-9b88-e18d9089d46f', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2e75bee6-ac25-4c5d-ac3a-05ff3708c818', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd6181d3e-4107-4b4b-b156-29151a3335c3', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '313715bd-cdd4-4319-8753-7394cb0ecc8d', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '01c380fb-82e8-4968-9590-6931e569bbe0', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__8d29d789-8a6f-4b92-b716-191efae33898
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__3b53e528-438b-4fcb-8652-27a7d67c5d76
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.625, 'b3x': 36.0, 'b3y': 0.625, 'b4x': 36.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 36.0, 'e3y': 96.5, 'e4x': 36.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'ed2257eb-d3b1-4055-b05b-68ddb39e2567', 'actual_width': 36.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 36.0, 'b1y': 0.0, 'b2x': 36.0, 'b2y': 0.625, 'b3x': 84.0, 'b3y': 0.625, 'b4x': 84.0, 'b4y': 0.0, 'e1x': 36.0, 'e1y': 0.5, 'e2x': 36.0, 'e2y': 96.5, 'e3x': 84.0, 'e3y': 96.5, 'e4x': 84.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '1b224299-c594-4e1d-adfd-b019f11b92fb', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 84.0, 'b1y': 0.0, 'b2x': 84.0, 'b2y': 0.625, 'b3x': 132.0, 'b3y': 0.625, 'b4x': 132.0, 'b4y': 0.0, 'e1x': 84.0, 'e1y': 0.5, 'e2x': 84.0, 'e2y': 96.5, 'e3x': 132.0, 'e3y': 96.5, 'e4x': 132.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '25eb413a-0c3e-4f7d-b458-80e113764ec6', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 132.0, 'b1y': 0.0, 'b2x': 132.0, 'b2y': 0.625, 'b3x': 180.0, 'b3y': 0.625, 'b4x': 180.0, 'b4y': 0.0, 'e1x': 132.0, 'e1y': 0.5, 'e2x': 132.0, 'e2y': 96.5, 'e3x': 180.0, 'e3y': 96.5, 'e4x': 180.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '8a8bc93b-a4f8-4fce-a189-a9aea7b15946', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},), ({'b1x': 180.0, 'b1y': 0.0, 'b2x': 180.0, 'b2y': 0.625, 'b3x': 228.0, 'b3y': 0.625, 'b4x': 228.0, 'b4y': 0.0, 'e1x': 180.0, 'e1y': 0.5, 'e2x': 180.0, 'e2y': 96.5, 'e3x': 228.0, 'e3y': 96.5, 'e4x': 228.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '26200fc1-01a2-4c2d-9cbd-5e376bae7a05', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '47d611e5-1370-4d6e-a417-37378509cfd2', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '5/8" DensGlas', 'actual_thickness': 0.625},)]
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__5f5ce1a1-4b23-4c0d-a3e5-aafa47cc11f4
+WARNING:root:Did not add fastening for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__623ca5bf-de00-48dd-9d27-676f0f77942f
+INFO:root:no material is placed with EC3
+INFO:root:no material is fastened with EC3
+INFO:root:no material is Routed with EC3
+INFO:root:no material is Routed with EC3
