@@ -12,15 +12,22 @@ class OPC_Connect:
         self.client = Client(server_address)
 
     def open(self):
-        self.client.connect()
-        root = self.client.get_root_node()
+        try:
+            self.client.connect()
+            root = self.client.get_root_node()
+            return True
+        except:
+            return False
 
     def get_value(self, node_id):
-        # Example "ns=2;s=[default]/PythonComTag"
-        node = self.client.get_node(nodeid=node_id)
-        value = node.get_value()
+        try:
+            # Example "ns=2;s=[default]/PythonComTag"
+            node = self.client.get_node(nodeid=node_id)
+            value = node.get_value()
 
-        return value
+            return value
+        except:
+            return None
 
     def set_value(self, nodeID, new_value):
         status = 0
@@ -40,18 +47,23 @@ class OPC_Connect:
         #     {"node_id": "ns=2;s=Tag2", "value": "Hello OPC UA"},
         #     # Add more tags as needed
         # ]
+        try:
+            # Create a list of nodes to write to
+            nodes_to_write = [self.client.get_node(tag["node_id"]) for tag in tags]
 
-        # Create a list of nodes to write to
-        nodes_to_write = [self.client.get_node(tag["node_id"]) for tag in tags]
+            # Create a list of values to write
+            values_to_write = [tag["value"] for tag in tags]
 
-        # Create a list of values to write
-        values_to_write = [tag["value"] for tag in tags]
-
-        # Write the values to the tags
-        self.client.set_values(nodes_to_write, values_to_write)
-
-        # Disconnect from the OPC UA server
-        # self.client.disconnect()
+            # Write the values to the tags
+            self.client.set_values(nodes_to_write, values_to_write)
+            return True
+            # Disconnect from the OPC UA server
+            # self.client.disconnect()
+        except:
+            return False
 
     def close(self):
-        self.client.disconnect()
+        try:
+            self.client.disconnect()
+        except:
+            return False

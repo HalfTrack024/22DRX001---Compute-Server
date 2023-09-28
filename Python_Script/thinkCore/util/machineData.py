@@ -72,8 +72,8 @@ class EC2(Station):
             'ec2_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
             'ec2_35': self.parmData.getParm("Application", "Run Level 35 missions (True/false)"),
             'ec2_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
-        self.fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
-        self.fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
+        self.default_fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer")
+        self.default_fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
         self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
         self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
@@ -89,8 +89,8 @@ class EC3(Station):
             'ec3_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
             'ec3_35': self.parmData.getParm("Application", "Run Level 35 missions (True/false)"),
             'ec3_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
-        self.fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
-        self.fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
+        self.default_fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer")
+        self.default_fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
         self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
         self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 

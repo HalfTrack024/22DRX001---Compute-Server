@@ -72,7 +72,7 @@ def ehx_parse(opc_connection: OPC_Connect):  # Calls the XML Parse to Break down
         folder = app_config_settings.get('ImageDropFolder')
         img = dThumb.GenPreview(parse.sCadFilepath, folder)
 
-        #img.previewMain(app_config_settings.get('ImageDropFolder'))
+        # img.previewMain(app_config_settings.get('ImageDropFolder'))
         thread = threading.Thread(target=img.previewMain)
         thread.start()
         delay_count = 0
@@ -88,6 +88,7 @@ def ehx_parse(opc_connection: OPC_Connect):  # Calls the XML Parse to Break down
         thread.join()
         nodeID = "ns=2;s=[think_core]/CAD2FAB/Parse_Info/Parse_Complete"
         opc_connection.set_value(nodeID, True)
+
 
 def check_queue_request(opc_connection: OPC_Connect) -> bool:
     nodeID = "ns=2;s=[think_core]/CAD2FAB/Add_Run_Data"
@@ -186,7 +187,9 @@ def run():
         global app_config_settings
         app_config_settings = json.load(json_file)
     try:
-        logging.basicConfig(filename='app.log', level=logging.INFO)
+
+        logging.basicConfig(format='%(levelname)s : %(asctime)s - %(message)s', datefmt = '%Y-%m-%d %H:%M:%S', filename='app.log', level=logging.INFO)
+        #logging.basicConfig(filename='app.log', level=logging.INFO)
         logging.info('Started')
         runContinuous = True
         opc.open()
@@ -207,3 +210,4 @@ def run():
 
     finally:
         opc.close()
+        run()

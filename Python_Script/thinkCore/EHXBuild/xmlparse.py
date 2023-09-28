@@ -258,7 +258,7 @@ class xmlParse:
                                                 'BoardGuid': board['BoardGuid'] + '-' + str(holeCnt),
                                                 'FamilyMember': board['FamilyMember'],
                                                 'FamilyMemberName': 'Hole',
-                                                'XLocation': str(float(hole['XLocation']) + offset),
+                                                'XLocation': str(float(hole['XLocation']) + float(board['BottomView']['Point'][0]['X']) + offset),
                                                 'YLocation': hole['YLocation']
                                             }
                                             holeCnt += 1

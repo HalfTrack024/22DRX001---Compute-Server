@@ -12,7 +12,7 @@ EC23_Yes = True
 
 app_settings = gHelp.get_app_config()
 
-panelID = "26200fc1-01a2-4c2d-9cbd-5e376bae7a05"
+panelID = "8b8d862f-337e-4a00-8d4c-3aaa43d3fd61"
 machine = Line(app_settings)
 if EC1_Yes:
 

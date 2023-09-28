@@ -1,4 +1,5 @@
 import logging
+import math
 
 import util.dataBaseConnect as dBC
 import util.runData_Helper as rDH
@@ -149,16 +150,16 @@ class RunData:
         match load_balance.get('oEC2_SmallRouting'):
             case 100:
                 pass
-                #missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
-                #self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+                # missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                # self.build_rbc_progress.ec2_operations.append('Route Layer 1')
             case 200:
                 missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
             case 123:
                 pass
-                #for i in range(self.panel.get_layer_count()):
+                # for i in range(self.panel.get_layer_count()):
                 #    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
-                #self.build_rbc_progress.ec2_operations.append('Route All Layers')
+                # self.build_rbc_progress.ec2_operations.append('Route All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
                 logging.info('no material is Routed with EC2')
@@ -404,7 +405,7 @@ class RunData:
             place.Info_12 = 0
 
             # Fastening
-            fasteners = self.get_board_fasten(pick, layer, material, working_station)
+            fasteners = self.get_board_fasten(pick, layer, material, sheet, working_station)
             # Pick and Place Locations are added to the list
             boardData = rDH.BoardData_RBC(board_pick=pick, board_place=place, board_fasten=fasteners)
             # Now we have to add the missions for temp fastening that board
@@ -420,9 +421,9 @@ class RunData:
 
         return layerData
 
-    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, working_station: Station) -> list[rDH.missionData_RBC]:
+    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, sheet, working_station: Station) -> list[rDH.missionData_RBC]:
         studSpace = 406
-        shiftspace = round(18 / 25.4, 2)
+        shiftspace = round(28 / 25.4, 2)
         # Open Database Connection
 
         pgDB = dBC.DB_Connect()
@@ -484,10 +485,8 @@ class RunData:
                     fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                 else:
                     fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                # fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)
-                motion_length = fasten.Info_04 - fasten.Info_02
-                fastenCount = round(motion_length / studSpace) + 1
-                fasten.Info_10 = round(motion_length / fastenCount)
+                studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB)
+                fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                 if fasten.missionID == 110:
                     fasten.Info_11 = self.machine.toolIndex
                     if self.machine.toolIndex >= 8:
@@ -506,11 +505,8 @@ class RunData:
                     fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                motion_length = abs(fasten.Info_03 - fasten.Info_01)
-                fastenCount = round(motion_length / studSpace) + 1
-                fasten.Info_10 = round(motion_length / fastenCount)
-                if fasten.Info_10 < 75:
-                    fasten.Info_10 = studSpace
+                studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB)
+                fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                 if fasten.missionID == 110:
                     fasten.Info_11 = self.machine.toolIndex
                     if self.machine.toolIndex >= 8:
@@ -564,7 +560,7 @@ class RunData:
                             """
         #   and elementguid in '{sql_var2}'
         # Determine Start End Shift
-        shiftSTART = [4, 1, 1.25]
+        shiftSTART = [4, 3.5, 1.25]
         shiftEND = [0.75, 1.25, 1.25]
 
         offsetStart = shiftSTART[self.panel.get_layer_index(layer)]
@@ -573,6 +569,7 @@ class RunData:
         fastenlst: list[rDH.missionData_RBC] = []
         for sheet in resultSheath:
             sheet: dict = sheet[0]
+
             sql_wStart = sheet.get('e1x')
             sql_wEnd = sheet.get('e4x')
             sql_vMax = sheet.get('e2y')
@@ -619,9 +616,8 @@ class RunData:
                         fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                     else:
                         fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                    motion_length = fasten.Info_04 - fasten.Info_02
-                    fastenCount = round(motion_length / studSpace) + 1
-                    fasten.Info_10 = round(motion_length / fastenCount)
+                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB)
+                    fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                     if fasten.missionID == 110:
                         fasten.Info_11 = self.machine.toolIndex
                         if self.machine.toolIndex >= 8:
@@ -640,12 +636,8 @@ class RunData:
                         fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                     else:
                         fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-
-                    motion_length = fasten.Info_03 - fasten.Info_01
-                    fastenCount = round(motion_length / studSpace) + 1
-                    fasten.Info_10 = round(motion_length / fastenCount)
-                    if fasten.Info_10 < 75:
-                        fasten.Info_10 = studSpace
+                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB)
+                    fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                     if fasten.missionID == 110:
                         fasten.Info_11 = self.machine.toolIndex
                         if self.machine.toolIndex >= 8:
@@ -866,45 +858,69 @@ class RunData:
         return cwsPos
 
 
-def get_shot_spacing(element: dict, station: Station, connect: dBC.DB_Connect) -> dict:
+def get_shot_designed_spacing(element: dict, pos, direction, station: Station, connect: dBC.DB_Connect) -> float:
     # Determine if sheet has defined stud spacing
+    stud_space = 304
     sql_var1 = element.get('elementguid')
     sql_determine = f"""
     select edge_spacing, field_spacing
     from cad2fab.system_fasteners
-    where element_guid = '{sql_var1}'
+    where elementguid = '{sql_var1}'
     and edge_spacing > 0
     and field_spacing > 0
     """
     results = connect.query(sql_determine)
     if len(results) > 0:
-        edge = results[0][0]
-        field = results[0][1]
+        edge = round(float(results[0][0]) * 25.4, 2)
+        field = round(float(results[0][1]) * 25.4, 2)
     else:
         edge = station.default_fasten_edge
         field = station.default_fasten_field
-    sql_find = f"""
-                select * 
-                from cad2fab.system_elements
-                where panelguid = ''
-                and (e1x = 0 
-                or e1y = 0
-                or e2x = 0
-                or e2y = 0
-                or e3x = 0
-                or e3y = 0
-                or e4x = 0
-                or e4y = 0)
-    """
+    sql_var2 = 0.75
+    sql_var3 = round(pos / 25.4, 2)
+    if direction == 'Vertical':
+        sql_find = f"""
+                    select * 
+                    from cad2fab.system_elements
+                    where panelguid = '{element.get('panelguid')}'
+                    and (description = 'Rough cutout' or description = 'Sheathing') 
+                    and (ABS(e1x - {sql_var3}) <= {sql_var2}
+                    or ABS(e2x - {sql_var3}) <= {sql_var2}
+                    or ABS(e3x - {sql_var3}) <= {sql_var2}
+                    or ABS(e4x - {sql_var3}) <= {sql_var2})
+        """
+    else:
+        sql_find = f"""
+                    select * 
+                    from cad2fab.system_elements
+                    where panelguid = '{element.get('panelguid')}' 
+                    and (description = 'Rough cutout' or description = 'Sheathing') 
+                    and (ABS(e1y - {sql_var3}) <= {sql_var2}
+                    or ABS(e2y - {sql_var3}) <= {sql_var2}
+                    or ABS(e3y - {sql_var3}) <= {sql_var2}
+                    or ABS(e4y - {sql_var3}) <= {sql_var2})
+        """
 
     results = connect.query(sql_find)
     if len(results) > 0:
-        stud_space = field
-    else:
         stud_space = edge
+    elif results is None:
+        errr = True
+    else:
+        stud_space = field
 
     return stud_space
 
+
+def get_shot_spacing(start, end, design_spacing):
+    motion_length = end - start
+    fastenCount = round(motion_length / design_spacing)
+    if fastenCount == 0:
+        fastenCount = 1
+    result_spacing = math.floor(motion_length / fastenCount) - 1
+    if result_spacing < 75:
+        result_spacing = design_spacing
+    return result_spacing
 
 def check_fasten_mission(fasten: rDH.missionData_RBC) -> rDH.missionData_RBC:
     # Check if mission values are ordered correctly and make sense

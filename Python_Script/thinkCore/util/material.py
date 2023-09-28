@@ -1,6 +1,6 @@
 import math
 from fractions import Fraction
-
+import util.dataBaseConnect as dBC
 from util.Parameters import Parameters
 
 
@@ -17,14 +17,17 @@ class Material:
     }
     # refMatTypes = ["OSB", "DOW", "ZIP", "DENSGLAS","NEOPOR","SOUNDBOARD"]
     refFastener = {
-        "SCREWS": [110, 401],
-        "STAPLES": [120, 402],
-        "NAILS": [130, 403]
+        "SCREW": [110, 401],
+        "STAPLE": [120, 402],
+        "NAIL": [130, 403]
     }
 
     materialTypes: list[str]
 
     def __init__(self, sheet, parms: Parameters) -> None:
+        self.fastener = None
+        self.placeNum = None
+        self.fastenNum = None
         self.sheet = sheet
         # Width
         if "48" in sheet["size"]:
@@ -47,6 +50,36 @@ class Material:
             if reftype in mat:
                 self.material = reftype
                 break
+
+        if self.get_sheet_fastener(sheet):
+            pass
+        else:
+            self.get_default_fastener(parms)
+
+    def get_sheet_fastener(self, sheet: dict) -> bool:
+        found_fastener = False
+        pgDB = dBC.DB_Connect()
+        pgDB.open()
+        sql_var1 = sheet.get('elementguid')
+        sql_determine = f"""
+        select fastener_type
+        from cad2fab.system_fasteners
+        where elementguid = '{sql_var1}'
+        """
+        result = pgDB.query(sql_determine)
+        result = str(result[0][0]).upper()
+        for key in self.refFastener.keys():
+            if key in result:
+                self.fastener = key.title().upper()
+                self.placeNum = self.refFastener[self.fastener][1]
+                self.fastenNum = self.refFastener[self.fastener][0]
+                found_fastener = True
+                break
+            else:
+                found_fastener = False
+        return found_fastener
+
+    def get_default_fastener(self, parms):
         # Searches the parameters to determine what fastener should be used with the specified material
         matParms = parms._parmList.get("Material")
         for matType in matParms:
