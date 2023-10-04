@@ -5,6 +5,9 @@ import os
 import shutil
 import threading
 import time
+from datetime import date
+import schedule
+
 
 import EHXBuild.drawThumbnails as dThumb  # Draw PNG Images
 from EHXBuild.xmlparse import xmlParse as eHX
@@ -177,6 +180,29 @@ def move_file(source_file, destination_path):
     shutil.move(source_file, destination_path)
 
 
+def manage_log_files():
+
+    # Get the current date
+    current_date = date.today().strftime("%Y-%m-%d")
+
+    # Define the paths for the original file and the sub-folder
+    original_file_path = "app.log"
+    subfolder_path = "subfolder"
+
+    # Create the sub-folder if it doesn't exist
+    if not os.path.exists(subfolder_path):
+        os.makedirs(subfolder_path)
+
+    # Construct the new file name with the current date
+    new_file_name = f"{current_date} - app.log"
+
+    # Copy the original file to the sub-folder with the new name
+    shutil.copy(original_file_path, os.path.join(subfolder_path, new_file_name))
+
+    # Clear the contents of the original file
+    open(original_file_path, 'w').close()
+
+
 def run():
     opc = OPC_Connect()
     active_directory = os.getcwd()
@@ -193,6 +219,11 @@ def run():
         logging.info('Started')
         runContinuous = True
         opc.open()
+        ualogger = logging.getLogger("asyncua")
+        ualogger.setLevel(logging.CRITICAL)
+        current_dir = os.getcwd()
+        logging.info(msg=("Current directory:", current_dir))
+        schedule.every().day.at("00:00").do(manage_log_files)
         # Enter Periodic Loop
         while runContinuous:
 
@@ -202,12 +233,13 @@ def run():
             # Build Run Data if Add to Queue request comes in
             if check_queue_request(opc_connection=opc):
                 build_panel_data(opc_connection=opc)
+            schedule.run_pending()
             print("IDLE")
             time.sleep(1)
 
-            current_dir = os.getcwd()
-            print("Current directory:", current_dir)
+
 
     finally:
+        logging.info('Failed')
         opc.close()
         run()

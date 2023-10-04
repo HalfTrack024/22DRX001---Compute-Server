@@ -232,7 +232,7 @@ class RunData:
                 for i in range(self.panel.get_layer_count()):
                     missionPlace[i] = self.get_sheets(self.panel.get_layer_position(i), station)
                     missionPlace[i] = True
-                    self.build_rbc_progress.ec3_operations.append('Place and Fasten All Layers')
+                self.build_rbc_progress.ec3_operations.append('Place and Fasten All Layers')
 
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Place and Fasten on EC3')
@@ -383,9 +383,9 @@ class RunData:
             pick.Info_11 = material.getMaterialCode()
             pick.Info_12 = material.getMaterial()
             layer_index = self.panel.get_layer_index(layer)
-            if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[layer_index]:
-                self.build_rbc_progress.materials_required[layer_index].append(pick.Info_12)
-            self.build_rbc_progress.material_count[layer_index] += 1
+            if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[working_station.station_id-2]:
+                self.build_rbc_progress.materials_required[working_station.station_id-2].append(pick.Info_12)
+            self.build_rbc_progress.material_count[working_station.station_id-2] += 1
             # Board Place
             place = rDH.missionData_RBC(material.getPlaceType())  # self.fastenTypes
             # place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
@@ -527,8 +527,8 @@ class RunData:
             fastenlst.append(fasten)
         pgDB.close()
         layer_index = self.panel.get_layer_index(active_layer)
-        if len(self.build_rbc_progress.fasteners_required) == 0 or i_material.fastener not in self.build_rbc_progress.fasteners_required[layer_index]:
-            self.build_rbc_progress.fasteners_required[layer_index].append(i_material.fastener)
+        if len(self.build_rbc_progress.fasteners_required) == 0 or i_material.fastener not in self.build_rbc_progress.fasteners_required[working_station.station_id-2]:
+            self.build_rbc_progress.fasteners_required[working_station.station_id-2].append(i_material.fastener)
         return fastenlst
 
     def get_fastener(self, layer, working_station: Station) -> list[rDH.missionData_RBC]:
