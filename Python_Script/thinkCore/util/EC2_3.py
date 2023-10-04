@@ -122,7 +122,7 @@ class RunData:
                 for i in range(self.panel.get_layer_count()):
                     missionPlace[i] = self.get_sheets(self.panel.get_layer_position(i), station)
                     missionPlace[i] = True
-                    self.build_rbc_progress.ec2_operations.append('Place and Fasten All Layers')
+                self.build_rbc_progress.ec2_operations.append('Place and Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Place and Fasten on EC2')
                 logging.info('no material is placed with EC2')
@@ -140,7 +140,7 @@ class RunData:
             case 123:
                 for i in range(self.panel.get_layer_count()):
                     missionFasten[i] = self.get_fastener(self.panel.get_layer_position(i), station)
-                    self.build_rbc_progress.ec2_operations.append('Fasten All Layers')
+                self.build_rbc_progress.ec2_operations.append('Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Fastening on EC2')
                 logging.info('no material is fastened with EC2')
@@ -251,7 +251,7 @@ class RunData:
             case 123:
                 for i in range(self.panel.get_layer_count()):
                     missionPlace[i] = self.get_fastener(self.panel.get_layer_position(i), station)
-                    self.build_rbc_progress.ec3_operations.append('Fasten All Layers')
+                self.build_rbc_progress.ec3_operations.append('Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Fastening on EC3')
                 logging.info('no material is fastened with EC3')
