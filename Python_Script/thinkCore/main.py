@@ -146,12 +146,12 @@ def build_panel_data(opc_connection: OPC_Connect):
             # EC2 Operation List
             {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Operations", "value": joiner.join(run_data.build_rbc_progress.ec3_operations)},
             # EC3 Operations List
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Count", "value": run_data.build_rbc_progress.material_count},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required)},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required)},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Count", "value": run_data.build_rbc_progress.material_count},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required)},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required)},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Count", "value": run_data.build_rbc_progress.material_count[0]},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required[0])},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required[0])},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Count", "value": run_data.build_rbc_progress.material_count[1]},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required[1])},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required[1])},
             # EC3 Operations List
         ]
         if not thread2.is_alive():

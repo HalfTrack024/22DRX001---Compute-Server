@@ -382,9 +382,10 @@ class RunData:
             pick.Info_06 = round(self.panel.panelThickness * 25.4 + pick.Info_05, 2)
             pick.Info_11 = material.getMaterialCode()
             pick.Info_12 = material.getMaterial()
-            if pick.Info_12 not in self.build_rbc_progress.materials_required:
-                self.build_rbc_progress.materials_required.append(pick.Info_12)
-            self.build_rbc_progress.material_count += 1
+            layer_index = self.panel.get_layer_index(layer)
+            if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[layer_index]:
+                self.build_rbc_progress.materials_required[layer_index].append(pick.Info_12)
+            self.build_rbc_progress.material_count[layer_index] += 1
             # Board Place
             place = rDH.missionData_RBC(material.getPlaceType())  # self.fastenTypes
             # place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
@@ -525,9 +526,9 @@ class RunData:
 
             fastenlst.append(fasten)
         pgDB.close()
-
-        if i_material.fastener not in self.build_rbc_progress.fasteners_required:
-            self.build_rbc_progress.fasteners_required.append(i_material.fastener)
+        layer_index = self.panel.get_layer_index(active_layer)
+        if len(self.build_rbc_progress.fasteners_required) == 0 or i_material.fastener not in self.build_rbc_progress.fasteners_required[layer_index]:
+            self.build_rbc_progress.fasteners_required[layer_index].append(i_material.fastener)
         return fastenlst
 
     def get_fastener(self, layer, working_station: Station) -> list[rDH.missionData_RBC]:

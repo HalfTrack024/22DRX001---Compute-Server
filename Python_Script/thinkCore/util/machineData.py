@@ -119,7 +119,7 @@ class Line(EC1, EC2, EC3):
 
     def change_prediction(self, layer_count):
         self.predict_layer_count = layer_count
-        self.determine[6] = layer_count
+        self.determine[8] = layer_count
 
         self.predict = dt.process_builder(self.determine, app_config_settings)
 
