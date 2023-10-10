@@ -1,5 +1,6 @@
-from util.opcuaConnect import OPC_Connect
 import time
+
+from util.opcuaConnect import OPC_Connect
 
 connect = OPC_Connect()
 

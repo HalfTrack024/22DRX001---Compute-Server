@@ -1,4 +1,3 @@
-from typing import Any
 import util.designtree as dt
 from util.Parameters import Parameters
 
@@ -7,6 +6,7 @@ app_config_settings = {}
 
 class Station:
     station_id = None
+    station_Name = None
     run_level = {}
     parmData = None
     default_fasten_edge = None
@@ -25,6 +25,7 @@ class Station:
     #             self.ec = ec2
     #         elif ec3 is not None:
     #             self.ec = ec3
+
 
 class EC1:
 
@@ -64,13 +65,15 @@ class EC2(Station):
 
     def __init__(self) -> None:
         self.station_id = 2
+        self.station_Name = 'EC2'
         self.parmData = Parameters([], 10, 19)
         self.run_level = {
             'ec2_20': self.parmData.getParm("Application", "Run Level 20 missions (True/false)"),
             'ec2_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
+            'ec2_35': self.parmData.getParm("Application", "Run Level 35 missions (True/false)"),
             'ec2_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
-        self.fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
-        self.fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
+        self.default_fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer")
+        self.default_fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
         self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
         self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
@@ -79,13 +82,15 @@ class EC3(Station):
 
     def __init__(self) -> None:
         self.station_id = 3
+        self.station_Name = 'EC3'
         self.parmData = Parameters([], 20, 29)
         self.run_level = {
             'ec3_20': self.parmData.getParm("Application", "Run Level 20 missions (True/false)"),
             'ec3_30': self.parmData.getParm("Application", "Run Level 30 missions (True/false)"),
+            'ec3_35': self.parmData.getParm("Application", "Run Level 35 missions (True/false)"),
             'ec3_40': self.parmData.getParm("Application", "Run Level 40 missions (True/false)")}
-        self.fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer"),
-        self.fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
+        self.default_fasten_edge = self.parmData.getParm("ZL Core", "Default Edge Fasten Spacer")
+        self.default_fasten_field = self.parmData.getParm("ZL Core", "Default Field Fasten Spacer")
         self.partial_board = self.parmData.getParm("ZL Core", "Partial Board Min")
         self.off_cut = self.parmData.getParm("ZL Core", "Offcut Board Min")
 
@@ -114,7 +119,7 @@ class Line(EC1, EC2, EC3):
 
     def change_prediction(self, layer_count):
         self.predict_layer_count = layer_count
-        self.determine[6] = layer_count
+        self.determine[8] = layer_count
 
         self.predict = dt.process_builder(self.determine, app_config_settings)
 
@@ -127,9 +132,6 @@ class Line(EC1, EC2, EC3):
                 return self.ec2.parmData
             case 3:
                 return self.ec3.parmData
-
-
-
 
 
 # if __name__ == "__main__":

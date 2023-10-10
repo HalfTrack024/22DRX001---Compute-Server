@@ -1,4 +1,5 @@
 import xmltodict as dc  # requires python >= V3.4
+
 from util import dataBaseConnect as dbc
 from util.globals import Parse_Progress
 
@@ -257,7 +258,7 @@ class xmlParse:
                                                 'BoardGuid': board['BoardGuid'] + '-' + str(holeCnt),
                                                 'FamilyMember': board['FamilyMember'],
                                                 'FamilyMemberName': 'Hole',
-                                                'XLocation': str(float(hole['XLocation']) + offset),
+                                                'XLocation': str(float(hole['XLocation']) + float(board['BottomView']['Point'][0]['X']) + offset),
                                                 'YLocation': hole['YLocation']
                                             }
                                             holeCnt += 1

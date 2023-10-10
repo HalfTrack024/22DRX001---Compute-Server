@@ -1,17 +1,17 @@
 import sys
 
+import matplotlib.pyplot as plt
 import pandas
 from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
-import matplotlib.pyplot as plt
 
 
 def process_builder(predict: list, app_settings):
-    """"Prediction List to Compute 'iec2lvl20', 'iec2lvl30',	'iec2lvl40',	'iec3lvl20',	'iec3lvl30',	'iec3lvl40',	'ilayer count'"""
+    """"Prediction List to Compute 'iec2lvl20', 'iec2lvl30', 'iec2lvl35', 'iec2lvl40',	'iec3lvl20',	'iec3lvl30', 'iec3lvl35', 'iec3lvl40',	'ilayer count'"""
     df = pandas.read_csv(app_settings.get('TruthTable'))
 
-    features = ['iec2lvl20', 'iec2lvl30', 'iec2lvl40', 'iec3lvl20', 'iec3lvl30', 'iec3lvl40', 'ilayer count']
-    results = ['oEC2_Place', 'oEC3_Place', 'oEC2_Fasten', 'oEC3_Fasten', 'oEC2_Routing', 'oEC3_Routing']
+    features = ['iec2lvl20', 'iec2lvl30', 'iec2lvl35', 'iec2lvl40', 'iec3lvl20', 'iec3lvl30', 'iec3lvl35', 'iec3lvl40', 'ilayer count']
+    results = ['oEC2_Place', 'oEC3_Place', 'oEC2_Fasten', 'oEC3_Fasten', 'oEC2_SmallRouting', 'oEC3_SmallRouting',  'oEC2_Routing', 'oEC3_Routing']
     X = df[features]
     Y = df[results]
 

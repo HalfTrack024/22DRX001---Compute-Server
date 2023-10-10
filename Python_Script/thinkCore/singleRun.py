@@ -1,18 +1,18 @@
-from datetime import datetime
 import logging
+from datetime import datetime
+
 import util.General_Help as gHelp
 from util.EC1 import Mtrl_Data, JobData
 from util.EC2_3 import RunData
-from util.panelData import Panel
 from util.machineData import Line
-
+from util.panelData import Panel
 
 EC1_Yes = True
 EC23_Yes = True
 
 app_settings = gHelp.get_app_config()
 
-panelID = "84c55d39-9078-4cf1-b665-b56a5a087b9b"
+panelID = "191d1810-869f-4cdd-85b8-a6d20fe0289e"
 machine = Line(app_settings)
 if EC1_Yes:
 

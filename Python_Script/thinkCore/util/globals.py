@@ -24,8 +24,8 @@ class Build_EC1_Progress:
         self.auto_stud_type = 'Unknown'
         self.auto_stud_count = 0
         self.sub_assembly_count = 0
-        self.fasteners_required: list = []
-        self.materials_required: list = []
+        self.fasteners_required: list = [[], []]
+        self.materials_required: list = [[], []]
 
 
 class Build_RBC_Progress:
@@ -35,6 +35,6 @@ class Build_RBC_Progress:
         self.ec3_status = 'Not-Started'
         self.ec2_operations: list = []
         self.ec3_operations: list = []
-        self.fasteners_required: list = []
-        self.materials_required: list = []
-        self.material_count = 0
+        self.fasteners_required: list = [[], []]
+        self.materials_required: list = [[], []]
+        self.material_count = [0, 0]

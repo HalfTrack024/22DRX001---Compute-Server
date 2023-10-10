@@ -5,9 +5,9 @@ import EHXBuild.xmlparse as pEHX # Parse Data to System Tables
 import util.General_Help as gHelp
 
 
-imageBuild = True
+imageBuild = False
 stlBuild = False
-xmlparse = False
+xmlparse = True
 
 app_settings = gHelp.get_app_config()
 
@@ -24,7 +24,7 @@ if stlBuild:
 if xmlparse:
     #get filepath to XML file from user
     #filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
-    filepath = r"C:\Users\Andrew Murray\Desktop\SampleProject\ProjectLocal\RANDEK TEST PANELS.EHX"
+    filepath = r"C:\Users\Andrew Murray\Brave Control Solutions\Drexel (Ops) - 22DRX001 - Randek Upgrade\22DRX001 - Project Shared Documents\Team Working Folder\003_Software_Design\CADData\Recieved Sept 25\231769W2 (3).EHX"
     fileParse = pEHX.xmlParse(filepath)
     #init the class
     fileParse = pEHX.xmlParse(filepath)

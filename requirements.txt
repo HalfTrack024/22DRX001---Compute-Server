@@ -1,0 +1,11 @@
+pandas
+scikit-learn
+opcua
+psycopg2
+numpy
+xmltodict
+setuptools
+matplotlib
+stl
+Pillow
+schedule

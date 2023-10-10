@@ -1,12 +1,14 @@
 import logging
-# Project Dependencies
-from util.panelData import Panel
+import math
+
+import util.dataBaseConnect as dBC
+import util.runData_Helper as rDH
+from util.globals import Build_RBC_Progress
 from util.machineData import Line
 from util.machineData import Station
-import util.dataBaseConnect as dbc
-import util.runData_Helper as rdh
 from util.material import Material
-from util.globals import Build_RBC_Progress
+# Project Dependencies
+from util.panelData import Panel
 
 
 class RunData:
@@ -36,7 +38,7 @@ class RunData:
 
         # raise NotImplementedError("Not implemented")
         # Open Database Connection
-        pgDB = dbc.DB_Connect()
+        pgDB = dBC.DB_Connect()
 
         self.layers = [0, 0.437]
         # Insert EC2 Run Data to DataBase
@@ -44,12 +46,12 @@ class RunData:
         sql_var2 = 12
         if len(self.panel.layer_pos) > 0:
             self.build_rbc_progress.ec2_status = "In-Progress"
-            sRunData_EC2 = self.rd_EC2_Main()
+            sRunData_EC2 = self.rd_ec2_main(self.machine.ec2)
             sql_var3 = sRunData_EC2
             self.build_rbc_progress.ec2_status = "Complete"
         else:
             self.build_rbc_progress.ec2_status = "No Work To Do"
-            layerEmpty = rdh.Layers_RBC(sql_var2)
+            layerEmpty = rDH.Layers_RBC(sql_var2)
             sLayerEmpty = layerEmpty.to_json()
             sql_var3 = sLayerEmpty
         pgDB.open()
@@ -71,12 +73,12 @@ class RunData:
         sql_var2 = 22
         if len(self.panel.layer_pos) > 0:
             self.build_rbc_progress.ec3_status = "In-Progress"
-            sRunData_EC3 = self.rdEC3_Main()
+            sRunData_EC3 = self.rd_ec3_main(self.machine.ec3)
             sql_var3 = sRunData_EC3
             self.build_rbc_progress.ec3_status = "Complete"
         else:
             self.build_rbc_progress.ec3_status = "No Work To Do"
-            layerEmpty = rdh.Layers_RBC(sql_var2)
+            layerEmpty = rDH.Layers_RBC(sql_var2)
             sLayerEmpty = layerEmpty.to_json()
             sql_var3 = sLayerEmpty
 
@@ -95,34 +97,32 @@ class RunData:
         # Close Connection
         pgDB.close()
 
-    def rd_EC2_Main(self) -> str:  # Main Call to assign what work will be allowed to complete on EC2
+    def rd_ec2_main(self, station: Station) -> str:  # Main Call to assign what work will be allowed to complete on EC2
         self.build_rbc_progress.ec2_status = 'In-Progress'
-        self.track_sheets.clear()
         # Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
         load_balance = self.machine.get_prediction()
-        layers = rdh.Layers_RBC(11)
+        layers = rDH.Layers_RBC(11)
         # Determine how much material is being placed with EC2
         missionPlace = [None, None, None, None, None]
         match load_balance.get('oEC2_Place'):
             case 100:
                 # Condition if only one layer is being applied by EC2
-                missionPlace[0] = self.getSheets(self.panel.get_layer_position(0), 2)
+                missionPlace[0] = self.get_sheets(self.panel.get_layer_position(0), station)
                 missionPlace[0] = True
                 self.build_rbc_progress.ec2_operations.append('Place and Fasten Layer 1')
             case 200:
                 # Layer 1
-                missionPlace[0] = self.getSheets(self.panel.get_layer_position(0), 2)
+                missionPlace[0] = self.get_sheets(self.panel.get_layer_position(0), station)
                 missionPlace[0] = True
                 # Layer 2
-                missionPlace[1] = self.getSheets(self.panel.get_layer_position(1), 2)
+                missionPlace[1] = self.get_sheets(self.panel.get_layer_position(1), station)
                 missionPlace[1] = True
                 self.build_rbc_progress.ec2_operations.append('Place and Fasten Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    # missionPlace[i] = self.getSheets(self.panel.getLayerPosition(i), 2)
+                    missionPlace[i] = self.get_sheets(self.panel.get_layer_position(i), station)
                     missionPlace[i] = True
-                    self.build_rbc_progress.ec2_operations.append('Place and Fasten All Layers')
-
+                self.build_rbc_progress.ec2_operations.append('Place and Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Place and Fasten on EC2')
                 logging.info('no material is placed with EC2')
@@ -131,55 +131,72 @@ class RunData:
         missionFasten = [None, None, None, None, None]
         match load_balance.get('oEC2_Fasten'):
             case 100:
-                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), 2)
+                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec2_operations.append('Fasten Layer 1')
             case 200:
-                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), 2)
-                missionFasten[1] = self.get_fastener(self.panel.get_layer_position(1), 2)
+                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), station)
+                missionFasten[1] = self.get_fastener(self.panel.get_layer_position(1), station)
                 self.build_rbc_progress.ec2_operations.append('Fasten Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionFasten[i] = self.get_fastener(self.panel.get_layer_position(i), 2)
-                    self.build_rbc_progress.ec2_operations.append('Fasten All Layers')
-
+                    missionFasten[i] = self.get_fastener(self.panel.get_layer_position(i), station)
+                self.build_rbc_progress.ec2_operations.append('Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Fastening on EC2')
                 logging.info('no material is fastened with EC2')
 
-        # Determine if EC2 is Routing any material
+        # Determine if EC2 is Small Routing any material
+        missionSmallRoute = [None, None, None, None, None]
+        match load_balance.get('oEC2_SmallRouting'):
+            case 100:
+                pass
+                # missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                # self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+            case 200:
+                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
+            case 123:
+                pass
+                # for i in range(self.panel.get_layer_count()):
+                #    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                # self.build_rbc_progress.ec2_operations.append('Route All Layers')
+            case default:
+                self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
+                logging.info('no material is Routed with EC2')
+        # Determine if EC2 is Door/Window Routing any material
         missionRoute = [None, None, None, None, None]
         missionRouting = []
         match load_balance.get('oEC2_Routing'):
             case 100:
-                missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(0), 2))
-                # missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+                missionRouting.extend(self.get_rough_out_cut(self.panel.get_layer_position(0), station))
                 missionRoute[0] = missionRouting
-                self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+                self.build_rbc_progress.ec2_operations.append('Route Door/Window Layer 1')
             case 200:
-                missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(1), 2))
-                # missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.get_rough_out_cut(self.panel.get_layer_position(1), station))
                 missionRoute[1] = missionRouting
-                self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
+                self.build_rbc_progress.ec2_operations.append('Route Door/Window Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionRoute[i] = self.getRoughOutCut(self.panel.get_layer_position(i), 2)
-                # missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                    missionRoute[i] = self.get_rough_out_cut(self.panel.get_layer_position(i), station)
                 missionRoute[1] = missionRouting
-                self.build_rbc_progress.ec2_operations.append('Route All Layers')
+                self.build_rbc_progress.ec2_operations.append('Door/Window Route All Layers')
             case default:
-                self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
+                self.build_rbc_progress.ec2_operations.append('No Door/Window Routing on EC2')
                 logging.info('no material is Routed with EC2')
 
         # Combine Place, Fasten, and Route Data to Layer
 
         for i in range(self.panel.get_layer_count()):
             used = False
-            layer = rdh.Layer_RBC(self.panel.get_layer_position(i))
+            layer = rDH.Layer_RBC(self.panel.get_layer_position(i))
             if missionPlace[i] is not None:
-                layer = self.getSheets(self.panel.get_layer_position(i), 2)  # Determine if any boards have been placed for that layer
+                layer = self.get_sheets(self.panel.get_layer_position(i), station)  # Determine if any boards have been placed for that layer
                 used = True
             if missionFasten[i] is not None:
                 layer.add_mission(missionFasten[i])  # Determine if any fasteners have been used for that layer
+                used = True
+            if missionSmallRoute[i] is not None:
+                layer.add_mission(missionSmallRoute[i])  # Determine if any routing have been used for that layer
                 used = True
             if missionRoute[i] is not None:
                 layer.add_mission(missionRoute[i])  # Determine if any routing have been used for that layer
@@ -187,38 +204,35 @@ class RunData:
             if used:
                 layer.set_properties(round(self.panel.get_layer_position(i) * 25.4, 1))
                 layers.add_layer(layer)
-                # layers._layers.append(layer)
 
         # Returns a converted layers object to a json string
         return layers.to_json()
 
-    def rdEC3_Main(self):  # Main Call to assign what work will be allowed to complete on EC3
+    def rd_ec3_main(self, station: Station):  # Main Call to assign what work will be allowed to complete on EC3
         # Prediction Keys ['oEC2_Place',	'oEC3_Place',	'oEC2_Fasten',	'oEC3_Fasten',	'oEC2_Routing',	'oEC3_Routing']
-        loadbalance = self.machine.get_prediction()
-        layers_ec3 = rdh.Layers_RBC(21)
-        self.track_sheets.clear()
-        station = Station(self.machine.ec2)
+        load_balance = self.machine.get_prediction()
+        layers_ec3 = rDH.Layers_RBC(station.station_id)
         # Determine how much material is being placed with EC2
         missionPlace = [None, None, None, None, None]
-        match loadbalance.get('oEC3_Place'):
+        match load_balance.get('oEC3_Place'):
             case 100:
                 # Condition if only one layer is being applied by EC2
-                missionPlace[0] = self.getSheets(self.panel.get_layer_position(0), 3)
+                missionPlace[0] = self.get_sheets(self.panel.get_layer_position(0), station)
                 missionPlace[0] = True
                 self.build_rbc_progress.ec3_operations.append('Place and Fasten Layer 1')
             case 200:
                 # Layer 1
-                missionPlace[1] = self.getSheets(self.panel.get_layer_position(1), 3)
+                missionPlace[1] = self.get_sheets(self.panel.get_layer_position(1), station)
                 missionPlace[1] = True
                 # Layer 2
-                # missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), 3)
+                # missionPlace[1] = self.getSheets(self.panel.getLayerPosition(1), station)
                 missionPlace[1] = True
                 self.build_rbc_progress.ec3_operations.append('Place and Fasten Layer 2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionPlace[i] = self.getSheets(self.panel.get_layer_position(i), 3)
+                    missionPlace[i] = self.get_sheets(self.panel.get_layer_position(i), station)
                     missionPlace[i] = True
-                    self.build_rbc_progress.ec3_operations.append('Place and Fasten All Layers')
+                self.build_rbc_progress.ec3_operations.append('Place and Fasten All Layers')
 
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Place and Fasten on EC3')
@@ -226,39 +240,53 @@ class RunData:
 
         # Determine if EC3 is fastening material that was loaded
         missionFasten = [None, None, None, None, None]
-        match loadbalance.get('oEC3_Fasten'):
+        match load_balance.get('oEC3_Fasten'):
             case 100:
-                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), 3)
+                missionFasten[0] = self.get_fastener(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec3_operations.append('Fasten Layer 1')
             case 200:
                 # missionFasten[0] = self.getFastener(self.panel.getLayerPosition(0), 3)
-                missionFasten[1] = self.get_fastener(self.panel.get_layer_position(1), 3)
+                missionFasten[1] = self.get_fastener(self.panel.get_layer_position(1), station)
                 self.build_rbc_progress.ec3_operations.append('Fasten Layer 2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionPlace[i] = self.get_fastener(self.panel.get_layer_position(i), 3)
-                    self.build_rbc_progress.ec3_operations.append('Fasten All Layers')
+                    missionPlace[i] = self.get_fastener(self.panel.get_layer_position(i), station)
+                self.build_rbc_progress.ec3_operations.append('Fasten All Layers')
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Fastening on EC3')
                 logging.info('no material is fastened with EC3')
 
+        # Determine if EC3 is Small Routing any material
+        missionSmallRoute = [None, None, None, None, None]
+        match load_balance.get('oEC3_SmallRouting'):
+            case 100:
+                missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                self.build_rbc_progress.ec3_operations.append('Route Layer 1')
+            case 200:
+                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                self.build_rbc_progress.ec3_operations.append('Route Layer 1/2')
+            case 123:
+                for i in range(self.panel.get_layer_count()):
+                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                self.build_rbc_progress.ec3_operations.append('Route All Layers')
+            case default:
+                self.build_rbc_progress.ec3_operations.append('No Routing on EC3')
+                logging.info('no material is Routed with EC3')
+
         # Determine if EC3 is Routing any material
         missionRoute = [None, None, None, None, None]
         missionRouting = []
-        match loadbalance.get('oEC3_Routing'):
+        match load_balance.get('oEC3_Routing'):
             case 100:
-                missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(0), 2))
-                # missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(0), 2))
+                missionRouting.extend(self.get_rough_out_cut(self.panel.get_layer_position(0), station))
                 missionRoute[0] = missionRouting
                 self.build_rbc_progress.ec3_operations.append('Route Layer 1')
             case 200:
-                missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(1), 2))
-                # missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.get_rough_out_cut(self.panel.get_layer_position(1), station))
                 missionRoute[1] = missionRouting
                 self.build_rbc_progress.ec3_operations.append('Route Layer 2')
             case 123:
-                missionRouting.extend(self.getRoughOutCut(self.panel.get_layer_position(1), 2))
-                # missionRouting.extend(self.getEndCut(self.panel.getLayerPosition(1), 2))
+                missionRouting.extend(self.get_rough_out_cut(self.panel.get_layer_position(1), station))
                 missionRoute[1] = missionRouting
                 self.build_rbc_progress.ec3_operations.append('Route All Layers')
             case default:
@@ -268,13 +296,16 @@ class RunData:
         # Combine Place, Fasten, and Route Data to Layer
         for i in range(self.panel.get_layer_count()):
             used = False
-            layer = rdh.Layer_RBC(self.panel.get_layer_position(i))
+            layer = rDH.Layer_RBC(self.panel.get_layer_position(i))
 
             if missionPlace[i] is not None:
-                layer = self.getSheets(self.panel.get_layer_position(i), 3)  # Determine if any boards have been placed for that layer
+                layer = self.get_sheets(self.panel.get_layer_position(i), station)  # Determine if any boards have been placed for that layer
                 used = True
             if missionFasten[i] is not None:
                 layer.add_mission(missionFasten[i])  # Determine if any fasteners have been used for that layer
+                used = True
+            if missionSmallRoute[i] is not None:
+                layer.add_mission(missionSmallRoute[i])  # Determine if any routing have been used for that layer
                 used = True
             if missionRoute[i] is not None:
                 layer.add_mission(missionRoute[i])  # Determine if any routing have been used for that layer
@@ -284,20 +315,17 @@ class RunData:
                 layers_ec3.add_layer(layer)
 
         # Returns a converted layers object to a json string
-        sample = layers_ec3.to_json()
         return layers_ec3.to_json()
 
     # Get Sheet Information       
-    def getSheets(self, layer, station) -> rdh.Layer_RBC:  # This fucntion will load the sheets of Material to the
+    def get_sheets(self, layer, working_station: Station) -> rDH.Layer_RBC:  # This function will load the sheets of Material to the
         # Open Database Connection
-        pgDB = dbc.DB_Connect()
+        pgDB = dBC.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
         sql_var2 = layer
-        if station == 2:
-            sql_var3 = round(self.machine.ec2.partial_board / 25.4, 0)
-        else:
-            sql_var3 = round(self.machine.ec3.partial_board / 25.4, 0)
+        sql_var3 = round(working_station.partial_board / 25.4, 0)
+
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
@@ -316,19 +344,22 @@ class RunData:
         #                """    
         results = pgDB.query(sql_select_query)
         pgDB.close()
-        layerData = rdh.Layer_RBC(layer)
+        layerData = rDH.Layer_RBC(layer)
 
         logging.info("results: " + str(results))
         self.storeCWSFound = 0
         for sheet in results:
             # change list to object
             sheet: dict = sheet[0]
-            material = Material(sheet, self.machine.get_system_parms(station))
+            material = Material(sheet, self.machine.get_system_parms(working_station.station_id))
             # f.writelines('Sheets: '+str(sheet)+ '   Material: '+str(material))
 
             # Board Pick
-            pick = rdh.missionData_RBC(400)
-            pick.Info_01 = round(sheet.get('e1x') * 25.4, 2)  # e1x
+            pick = rDH.missionData_RBC(400)
+            if sheet.get('e1x') == 0 and sheet.get('actual_width') < 48:
+                pick.Info_01 = round((sheet.get('e4x') - 48) * 25.4, 2)
+            else:
+                pick.Info_01 = round(sheet.get('e1x') * 25.4, 2)  # e1x
             pick.Info_02 = round(sheet.get('e1y') * 25.4, 2)  # e1y
             pick.Info_03 = round(sheet.get('actual_width') * 25.4, 2)
             if 48 > sheet.get('actual_width') > 30:
@@ -351,12 +382,18 @@ class RunData:
             pick.Info_06 = round(self.panel.panelThickness * 25.4 + pick.Info_05, 2)
             pick.Info_11 = material.getMaterialCode()
             pick.Info_12 = material.getMaterial()
-            if pick.Info_12 not in self.build_rbc_progress.materials_required: self.build_rbc_progress.materials_required.append(pick.Info_12)
-            self.build_rbc_progress.material_count += 1
+            layer_index = self.panel.get_layer_index(layer)
+            if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[working_station.station_id-2]:
+                self.build_rbc_progress.materials_required[working_station.station_id-2].append(pick.Info_12)
+            self.build_rbc_progress.material_count[working_station.station_id-2] += 1
             # Board Place
-            place = rdh.missionData_RBC(material.getPlaceType())  # self.fastenTypes
+            place = rDH.missionData_RBC(material.getPlaceType())  # self.fastenTypes
             # place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
-            place.Info_01 = round(sheet.get('e1x') * 25.4, 2)  # e1x
+
+            if sheet.get('e1x') == 0 and sheet.get('actual_width') < 48:
+                place.Info_01 = round((sheet.get('e4x') - 48) * 25.4, 2)  # Condition if
+            else:
+                place.Info_01 = round(sheet.get('e1x') * 25.4, 2)  # e1x
             place.Info_02 = round(sheet.get('e1y') * 25.4, 2)  # e1y
             place.Info_03 = 0
             place.Info_04 = 0
@@ -369,13 +406,14 @@ class RunData:
             place.Info_12 = 0
 
             # Fastening
-            fasteners = self.getboardFastener(pick, layer, material, station)
+            fasteners = self.get_board_fasten(pick, layer, material, sheet, working_station)
             # Pick and Place Locations are added to the list
-            boardData = rdh.BoardData_RBC(board_pick=pick, board_place=place, board_fasten=fasteners)
+            boardData = rDH.BoardData_RBC(board_pick=pick, board_place=place, board_fasten=fasteners)
             # Now we have to add the missions for temp fastening that board
 
             layerData.add_board(boardData)
-            self.track_sheets.append(sheet.get('elementguid'))
+            if sheet.get('elementguid') not in self.track_sheets:
+                self.track_sheets.append(sheet.get('elementguid'))
         # this information will be used when building fastener requirements for layer
         layIndex = self.panel.get_layer_index(layer)
         fast = material.fastenNum
@@ -384,23 +422,19 @@ class RunData:
 
         return layerData
 
-    def getboardFastener(self, board: rdh.missionData_RBC, active_layer, iMaterial: Material, station) -> list[rdh.missionData_RBC]:
+    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, sheet, working_station: Station) -> list[rDH.missionData_RBC]:
         studSpace = 406
-        shiftspace = round(18 / 25.4, 2)
+        shiftspace = round(28 / 25.4, 2)
         # Open Database Connection
 
-        pgDB = dbc.DB_Connect()
+        pgDB = dBC.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid  # Panel ID
         sql_wStart = round(board.Info_01 / 25.4, 2)  # Leading Edge of the Board (Width)
         sql_wEnd = round((board.Info_01 + board.Info_03) / 25.4, 2)  # Trailing Edge of the Board (Width)
         # Get parameters to determine min and max window to temp fasten material
-        if station == 2:
-            sql_vMin = 0  # machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') /25.4
-            sql_vMax = self.machine.ec2.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
-        elif station == 3:
-            sql_vMin = 0  # machine.ec3.parmData.getParm([], 'ZL Core', 'Y Min Vertical') / 25.4
-            sql_vMax = self.machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
+        sql_vMin = 0  # machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') /25.4
+        sql_vMax = working_station.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
 
         sql_select_query = f"""
                             select to_jsonb(se) 
@@ -423,12 +457,11 @@ class RunData:
         offsetEnd = shiftEND[self.panel.get_layer_index(active_layer)]
 
         # Process Results
-        fastenlst: list[rdh.missionData_RBC] = []
+        fastenlst: list[rDH.missionData_RBC] = []
         for result in results:
             result: dict = result[0]
-            fasten = rdh.missionData_RBC(iMaterial.getFastenType())
-            # fasten.missionID = iMaterial.getFastenType()
-            # Vertical vs Horizantal Vertial dimension is less than 6inch
+            fasten = rDH.missionData_RBC(i_material.getFastenType())
+            # Vertical vs Horizontal Vertical dimension is less than 6inch
             # Vertical
             if result.get('e2y') - result.get('e1y') > 3:
                 if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
@@ -453,17 +486,15 @@ class RunData:
                     fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                 else:
                     fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                # fasten.Info_10 = round(fasten.Info_04 - fasten.Info_02, 2)
-                motionlength = fasten.Info_04 - fasten.Info_02
-                fastenCount = round(motionlength / studSpace) + 1
-                fasten.Info_10 = round(motionlength / fastenCount)
+                studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB)
+                fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                 if fasten.missionID == 110:
                     fasten.Info_11 = self.machine.toolIndex
                     if self.machine.toolIndex >= 8:
                         self.machine.toolIndex = 1
                     else:
                         self.machine.toolIndex = self.machine.toolIndex << 1
-            # Horizantal
+            # Horizontal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
                 fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -475,11 +506,8 @@ class RunData:
                     fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                motionlength = abs(fasten.Info_03 - fasten.Info_01)
-                fastenCount = round(motionlength / studSpace) + 1
-                fasten.Info_10 = round(motionlength / fastenCount)
-                if fasten.Info_10 < 75:
-                    fasten.Info_10 = studSpace
+                studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB)
+                fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                 if fasten.missionID == 110:
                     fasten.Info_11 = self.machine.toolIndex
                     if self.machine.toolIndex >= 8:
@@ -487,25 +515,26 @@ class RunData:
                     else:
                         self.machine.toolIndex = self.machine.toolIndex << 1
 
-                fasten = self.crossRefCutOut(self.panel.guid, fasten, pgDB)
+                fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
 
             else:
                 logging.warning('Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
 
-            fasten.Info_09 = self.getCWS(result, pgDB, self.storeCWSFound)
+            fasten.Info_09 = self.get_cws(result, pgDB, self.storeCWSFound)
             if fasten.Info_09 > 0:
                 self.storeCWSFound = fasten.Info_09
 
             fastenlst.append(fasten)
         pgDB.close()
-
-        if iMaterial.fastener not in self.build_rbc_progress.fasteners_required: self.build_rbc_progress.fasteners_required.append(iMaterial.fastener)
+        layer_index = self.panel.get_layer_index(active_layer)
+        if len(self.build_rbc_progress.fasteners_required) == 0 or i_material.fastener not in self.build_rbc_progress.fasteners_required[working_station.station_id-2]:
+            self.build_rbc_progress.fasteners_required[working_station.station_id-2].append(i_material.fastener)
         return fastenlst
 
-    def get_fastener(self, layer, station) -> list[rdh.missionData_RBC]:
+    def get_fastener(self, layer, working_station: Station) -> list[rDH.missionData_RBC]:
         studSpace = 406
         # Open Database Connection
-        pgDB = dbc.DB_Connect()
+        pgDB = dBC.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid  # Panel ID
         sql_var2 = tuple(self.track_sheets)
@@ -513,14 +542,10 @@ class RunData:
         sql_wStart = 0  # Leading Edge of the Board (Width)
         sql_wEnd = self.panel.panelLength  # Trailing Edge of the Board (Width)
         # Get parameters to determine min and max window to temp fasten material
-        if station == 2:
-            sql_vMin = round(self.machine.ec2.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
-            sql_vMax = round(self.machine.ec2.parmData.getParm('ZL Core', 'Y Build Max') / 25.4, 2)
-            sql_var3 = round(self.machine.ec2.partial_board / 25.4, 0)
-        elif station == 3:
-            sql_vMin = round(self.machine.ec3.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
-            sql_vMax = round(self.machine.ec3.parmData.getParm('ZL Core', 'Y Build Max') / 25.4, 2)
-            sql_var3 = round(self.machine.ec3.partial_board / 25.4, 0)
+        sql_vMin = round(working_station.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
+        sql_vMax = round(working_station.parmData.getParm('ZL Core', 'Y Build Max') / 25.4, 2)
+        sql_var3 = round(working_station.partial_board / 25.4, 0)
+
         sql_select_query = f"""
                             select to_jsonb(se) 
                             from cad2fab.system_elements se 
@@ -531,20 +556,21 @@ class RunData:
                             and e2y < '{sql_vMax}' 
                             and e1x <= '{sql_wEnd}' 
                             and e4x > '{sql_wStart}' 
-                            and "actual_width" > 36 
+                            and "actual_width" > '{sql_var3}'
                             and e1x >= 0
                             """
         #   and elementguid in '{sql_var2}'
         # Determine Start End Shift
-        shiftSTART = [2.75, 1, 1.25]
+        shiftSTART = [4, 3.5, 1.25]
         shiftEND = [0.75, 1.25, 1.25]
 
         offsetStart = shiftSTART[self.panel.get_layer_index(layer)]
         offsetEnd = shiftEND[self.panel.get_layer_index(layer)]
         resultSheath = pgDB.query(sql_statement=sql_select_query)  # Look at Sheaths for Edge Conditions
-        fastenlst: list[rdh.missionData_RBC] = []
+        fastenlst: list[rDH.missionData_RBC] = []
         for sheet in resultSheath:
             sheet: dict = sheet[0]
+
             sql_wStart = sheet.get('e1x')
             sql_wEnd = sheet.get('e4x')
             sql_vMax = sheet.get('e2y')
@@ -564,9 +590,8 @@ class RunData:
             # Process Results
             for result in results:
                 result: dict = result[0]
-                fasten = rdh.missionData_RBC(self.panel.get_layer_fastener(self.panel.get_layer_index(layer)))
-                # fasten.missionID = iMaterial.getFastenType()
-                # Vertical vs Horizantal Vertial dimension is less than 6inch
+                fasten = rDH.missionData_RBC(self.panel.get_layer_fastener(self.panel.get_layer_index(layer)))
+                # Vertical vs Horizontal Vertical dimension is less than 6inch
                 # Vertical
                 if result.get('e2y') - result.get('e1y') > 3:
                     if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
@@ -592,17 +617,15 @@ class RunData:
                         fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                     else:
                         fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                    motionlength = fasten.Info_04 - fasten.Info_02
-                    fastenCount = round(motionlength / studSpace) + 1
-                    fasten.Info_10 = round(motionlength / fastenCount)
+                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB)
+                    fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                     if fasten.missionID == 110:
                         fasten.Info_11 = self.machine.toolIndex
                         if self.machine.toolIndex >= 8:
                             self.machine.toolIndex = 1
                         else:
                             self.machine.toolIndex = self.machine.toolIndex << 1
-                    vert = 'Vert'
-                # Horizantal
+                # Horizontal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
                     fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -614,20 +637,15 @@ class RunData:
                         fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                     else:
                         fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-
-                    motionlength = fasten.Info_03 - fasten.Info_01
-                    fastenCount = round(motionlength / studSpace) + 1
-                    fasten.Info_10 = round(motionlength / fastenCount)
-                    if fasten.Info_10 < 75:
-                        fasten.Info_10 = studSpace
+                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB)
+                    fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                     if fasten.missionID == 110:
                         fasten.Info_11 = self.machine.toolIndex
                         if self.machine.toolIndex >= 8:
                             self.machine.toolIndex = 1
                         else:
                             self.machine.toolIndex = self.machine.toolIndex << 1
-                    vert = 'Horz'
-                    fasten = self.crossRefCutOut(self.panel.guid, fasten, pgDB)
+                    fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
                 else:
                     logging.warning(
                         'Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
@@ -637,14 +655,14 @@ class RunData:
         pgDB.close()
         return fastenlst
 
-    def crossRefCutOut(self, panelID, mission: rdh.missionData_RBC, dbConnection: dbc.DB_Connect):
+    def cross_ref_cut_out(self, panelID, mission: rDH.missionData_RBC, dbConnection: dBC.DB_Connect):
         sql_var1 = panelID
         sql_wStart = round(mission.Info_01 / 25.4, 2)
         sql_wEnd = round(mission.Info_03 / 25.4, 2)
         sql_vStart = round(mission.Info_02 / 25.4, 2)
         sql_vEnd = round(mission.Info_04 / 25.4, 2)
 
-        sql_select_Prequery = f"""
+        sql_pre_query = f"""
             select to_jsonb(se) 
             from cad2fab.system_elements se
             where 
@@ -652,7 +670,7 @@ class RunData:
                 and description in ('Rough cutout') 
                 and (e1x < {sql_wEnd} and e1x > {sql_wStart} and e4y  <= {sql_vStart} and e1y >= {sql_vStart})
             """
-        sql_select_Postquery = f"""
+        sql_post_query = f"""
             select to_jsonb(se) 
             from cad2fab.system_elements se
             where 
@@ -660,8 +678,8 @@ class RunData:
                 and description in ('Rough cutout') 
                 and (e3x > {sql_wStart} and e3x < {sql_wEnd} and e4y  <= {sql_vStart} and e1y >= {sql_vStart})
             """
-        preResult = dbConnection.query(sql_statement=sql_select_Prequery)
-        postResult = dbConnection.query(sql_statement=sql_select_Postquery)
+        preResult = dbConnection.query(sql_statement=sql_pre_query)
+        postResult = dbConnection.query(sql_statement=sql_post_query)
         if len(preResult) > 0:
             result: dict = preResult[0][0]
             if round(result.get('e4x') * 25.4, 2) <= mission.Info_03:
@@ -679,12 +697,11 @@ class RunData:
 
         return mission
 
-    def getRoughOutCut(self, layer, station):
+    def get_rough_out_cut(self, layer, working_station: Station):
         # Open Database Connection
-        pgDB = dbc.DB_Connect()
+        pgDB = dBC.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
-        sql_var2 = layer
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
@@ -694,14 +711,11 @@ class RunData:
 
         results = pgDB.query(sql_statement=sql_select_query)
         pgDB.close()
-        routelst: list[rdh.missionData_RBC] = []
-        routerDIA = 0.5
-        scrapToolHalfLen = 822
-        scrapToolShift = 200
+        route_list: list[rDH.missionData_RBC] = []
+
         for result in results:
             result: dict = result[0]
             cutBottomTop = False
-            count = 0
             # R1 Cut
             if not cutBottomTop:
                 # Bottom Left Corner [x,y]
@@ -734,7 +748,7 @@ class RunData:
                 p2['y'] = round((p2['y']) * 25.4, 2)
                 #                                     
                 #
-                route = rdh.missionData_RBC(200)
+                route = rDH.missionData_RBC(200)
                 route.Info_01 = p1['x']
                 route.Info_02 = p1['y']
                 route.Info_03 = round(p2['x'] - p1['x'], 2)
@@ -744,67 +758,71 @@ class RunData:
                     route.Info_07 = round(layer * 25.4, 1)
                 else:
                     route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
-                routelst.append(route)
+                route_list.append(route)
             else:
                 logging.warning('Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
                 break
 
-        return routelst
+        return route_list
 
-    def getEndCut(self, layer):
+    def get_end_cut(self, layer, working_station: Station) -> list:
         # Open Database Connection
-        pgDB = dbc.DB_Connect()
+        pgDB = dBC.DB_Connect()
         pgDB.open()
         sql_var1 = self.panel.guid
         sql_var2 = tuple(self.track_sheets)
-        sql_var3 = self.machine
+        sql_var3 = round(working_station.off_cut / 25.4, 2)
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
                         where panelguid = '{sql_var1}' 
                         AND elementguid in {sql_var2}
-                        AND "type" = 'Sheet' and actual_width < 48
+                        AND "type" = 'Sheet' 
+                        AND actual_width between {sql_var3} and 48
                         order by b1x;
                         """
 
         results = pgDB.query(sql_statement=sql_select_query)
         pgDB.close()
-        routelst: list[rdh.missionData_RBC] = []
-        routerDIA = 12
+        route_list: list[rDH.missionData_RBC] = []
 
         for result in results:
             result: dict = result[0]
 
-            cutBottomTop = False
-            while cutBottomTop == False:
-                route = rdh.missionData_RBC(160)
-                # R1 Cut
-                if not cutBottomTop:
-                    if result.get('e1x') > 0 and result.get('e3x') > 0:
-                        route.Info_01 = round((result.get('e3x') + routerDIA / 2) * 25.4, 2)
-                        route.Info_02 = 0
-                        route.Info_03 = round((result.get('e3x') + routerDIA / 2) * 25.4, 2)
-                        route.Info_04 = 1500
-                    else:
-                        logging.warning(
-                            'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
-                        break
-                if not cutBottomTop:
-                    if result.get('e1x') > 0 and result.get('e3x') > 0:
-                        route.Info_01 = round((result.get('e3x') + routerDIA / 2) * 25.4, 2)
-                        route.Info_02 = 1500
-                        route.Info_03 = round((result.get('e3x') + routerDIA / 2) * 25.4, 2)
-                        route.Info_04 = round((result.get('e2y') + routerDIA) * 25.4, 2)
-                    else:
-                        logging.warning(
-                            'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
-                        break
+            route = rDH.missionData_RBC(210)
+            # R1 Cut
+            if result.get('e1x') == 0:
+                # Cut Material off that is in negative panel space
+                route.Info_01 = round((result.get('e1x')) * 25.4, 2)
+                route.Info_02 = 0
+                route.Info_03 = round((result.get('actual_width') - 48) * 25.4, 2)
+                route.Info_04 = round((result.get('e3y')) * 25.4, 2)
+                route.Info_05 = 1
+                if self.panel.get_layer_index(layer) == 0:
+                    route.Info_07 = round(layer * 25.4, 1)
+                else:
+                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
 
-                routelst.append(route)
+            elif result.get('e4x') == self.panel.panelLength:
+                # Cut Material off that is in positive panel space
+                route.Info_01 = round((result.get('e4x')) * 25.4, 2)
+                route.Info_02 = 0
+                route.Info_03 = round((result.get('e1x') + 48) * 25.4, 2)
+                route.Info_04 = round((result.get('e3y')) * 25.4, 2)
+                route.Info_05 = 1
+                if self.panel.get_layer_index(layer) == 0:
+                    route.Info_07 = round(layer * 25.4, 1)
+                else:
+                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
+            else:
+                logging.warning(
+                    'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
+            if hasattr(route, 'Info_01'):
+                route_list.append(route)
 
-        return routelst
+        return route_list
 
-    def getCWS(self, element: dict, ipgDB: dbc, maxPrevious):
+    def get_cws(self, element: dict, ipg_db: dBC, max_previous):
         cwsPos = 0
         if element.get('description') == 'Stud':
             sql_var1 = self.panel.guid  # Panel ID
@@ -830,48 +848,82 @@ class RunData:
                                 and elementguid != '{sql_var2}';
                                 """
 
-            results_Pre = ipgDB.query(sql_statement=sql_select_query1)
-            results_Post = ipgDB.query(sql_statement=sql_select_query2)
+            results_Pre = ipg_db.query(sql_statement=sql_select_query1)
+            results_Post = ipg_db.query(sql_statement=sql_select_query2)
             if len(results_Pre) == 0 and len(results_Post) == 0 and element.get('e1x') > (
-                    round(maxPrevious / 25.4, 2) + 1):
+                    round(max_previous / 25.4, 2) + 1):
                 leadEdge = element.get('e1x')
                 trailEdge = element.get('e3x')
                 cwsPos = round((leadEdge + (trailEdge - leadEdge) / 2) * 25.4, 2)
 
         return cwsPos
 
-    def getStudSpacing(self, element : dict, station : Station, connect : dbc.DB_Connect) -> dict:
 
-        #Determine if sheet has defined stud spacing
-        sql_var1 = element.get('elementguid')
-        sql_determine = f"""
-        select edge_spacing, field_spacing
-        from cad2fab.system_fasteners
-        where element_guid = '{sql_var1}'
-        and edge_spacing > 0
-        and field_spacing > 0
-        """
-        results = connect.query(sql_determine)
-        if len(results) > 0:
-            edge = results[0][0]
-            field = results[0][1]
-        else:
-            edge = station.default_fasten_edge
-            field = station.default_fasten_field
+def get_shot_designed_spacing(element: dict, pos, direction, station: Station, connect: dBC.DB_Connect) -> float:
+    # Determine if sheet has defined stud spacing
+    stud_space = 304
+    sql_var1 = element.get('elementguid')
+    sql_determine = f"""
+    select edge_spacing, field_spacing
+    from cad2fab.system_fasteners
+    where elementguid = '{sql_var1}'
+    and edge_spacing > 0
+    and field_spacing > 0
+    """
+    results = connect.query(sql_determine)
+    if len(results) > 0:
+        edge = round(float(results[0][0]) * 25.4, 2)
+        field = round(float(results[0][1]) * 25.4, 2)
+    else:
+        edge = station.default_fasten_edge
+        field = station.default_fasten_field
+    sql_var2 = 0.75
+    sql_var3 = round(pos / 25.4, 2)
+    if direction == 'Vertical':
         sql_find = f"""
                     select * 
-                    from cad
+                    from cad2fab.system_elements
+                    where panelguid = '{element.get('panelguid')}'
+                    and (description = 'Rough cutout' or description = 'Sheathing') 
+                    and (ABS(e1x - {sql_var3}) <= {sql_var2}
+                    or ABS(e2x - {sql_var3}) <= {sql_var2}
+                    or ABS(e3x - {sql_var3}) <= {sql_var2}
+                    or ABS(e4x - {sql_var3}) <= {sql_var2})
+        """
+    else:
+        sql_find = f"""
+                    select * 
+                    from cad2fab.system_elements
+                    where panelguid = '{element.get('panelguid')}' 
+                    and (description = 'Rough cutout' or description = 'Sheathing') 
+                    and (ABS(e1y - {sql_var3}) <= {sql_var2}
+                    or ABS(e2y - {sql_var3}) <= {sql_var2}
+                    or ABS(e3y - {sql_var3}) <= {sql_var2}
+                    or ABS(e4y - {sql_var3}) <= {sql_var2})
         """
 
-        results = connect.query(sql_find)
-        if len(results) > 0:
-            stud_space = field
-        else:
-            stud_space = edge
+    results = connect.query(sql_find)
+    if len(results) > 0:
+        stud_space = edge
+    elif results is None:
+        errr = True
+    else:
+        stud_space = field
 
-        return stud_space
+    return stud_space
 
-def check_fasten_mission(fasten: rdh.missionData_RBC) -> rdh.missionData_RBC:
+
+def get_shot_spacing(start, end, design_spacing):
+    motion_length = end - start
+    fastenCount = round(motion_length / design_spacing)
+    if fastenCount == 0:
+        fastenCount = 1
+    result_spacing = math.floor(motion_length / fastenCount) - 1
+    if result_spacing < 75:
+        result_spacing = design_spacing
+    return result_spacing
+
+def check_fasten_mission(fasten: rDH.missionData_RBC) -> rDH.missionData_RBC:
     # Check if mission values are ordered correctly and make sense
     if fasten.Info_01 > fasten.Info_03:
         temp_01 = fasten.Info_01

@@ -1,8 +1,8 @@
 import util.dataBaseConnect as dbc
 from util.framingCheck import Clear
+from util.globals import Build_EC1_Progress
 from util.machineData import Line
 from util.panelData import Panel
-from util.globals import Build_EC1_Progress
 
 
 class Mtrl_Data:

@@ -1,17 +1,21 @@
-import time
-import logging
 import glob
-import threading
-import os
 import json
+import logging
+import os
 import shutil
-from EHXBuild.xmlparse import xmlParse as eHX
+import threading
+import time
+from datetime import date
+import schedule
+
+
 import EHXBuild.drawThumbnails as dThumb  # Draw PNG Images
-from util.opcuaConnect import OPC_Connect
+from EHXBuild.xmlparse import xmlParse as eHX
 from util.EC1 import Mtrl_Data, JobData
 from util.EC2_3 import RunData
-from util.panelData import Panel
 from util.machineData import Line
+from util.opcuaConnect import OPC_Connect
+from util.panelData import Panel
 
 # This Program will Run Continuously in the background of the Server PC to monitor if:
 # - New EHX File has been loaded
@@ -71,7 +75,7 @@ def ehx_parse(opc_connection: OPC_Connect):  # Calls the XML Parse to Break down
         folder = app_config_settings.get('ImageDropFolder')
         img = dThumb.GenPreview(parse.sCadFilepath, folder)
 
-        #img.previewMain(app_config_settings.get('ImageDropFolder'))
+        # img.previewMain(app_config_settings.get('ImageDropFolder'))
         thread = threading.Thread(target=img.previewMain)
         thread.start()
         delay_count = 0
@@ -88,8 +92,10 @@ def ehx_parse(opc_connection: OPC_Connect):  # Calls the XML Parse to Break down
         nodeID = "ns=2;s=[think_core]/CAD2FAB/Parse_Info/Parse_Complete"
         opc_connection.set_value(nodeID, True)
 
+
 def check_queue_request(opc_connection: OPC_Connect) -> bool:
     nodeID = "ns=2;s=[think_core]/CAD2FAB/Add_Run_Data"
+    val = False
     val = opc_connection.get_value(node_id=nodeID)
     if val:
         requestRunData = True
@@ -144,12 +150,12 @@ def build_panel_data(opc_connection: OPC_Connect):
             # EC2 Operation List
             {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Operations", "value": joiner.join(run_data.build_rbc_progress.ec3_operations)},
             # EC3 Operations List
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Count", "value": run_data.build_rbc_progress.material_count},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required)},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required)},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Count", "value": run_data.build_rbc_progress.material_count},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required)},
-            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required)},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Count", "value": run_data.build_rbc_progress.material_count[0]},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required[0])},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC2/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required[0])},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Count", "value": run_data.build_rbc_progress.material_count[1]},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Material Required", "value": joiner.join(run_data.build_rbc_progress.materials_required[1])},
+            {"node_id": "ns=2;s=[think_core]/CAD2FAB/EC3/Fasteners Required", "value": joiner.join(run_data.build_rbc_progress.fasteners_required[1])},
             # EC3 Operations List
         ]
         if not thread2.is_alive():
@@ -175,6 +181,29 @@ def move_file(source_file, destination_path):
     shutil.move(source_file, destination_path)
 
 
+def manage_log_files():
+
+    # Get the current date
+    current_date = date.today().strftime("%Y-%m-%d")
+
+    # Define the paths for the original file and the sub-folder
+    original_file_path = "app.log"
+    subfolder_path = "subfolder"
+
+    # Create the sub-folder if it doesn't exist
+    if not os.path.exists(subfolder_path):
+        os.makedirs(subfolder_path)
+
+    # Construct the new file name with the current date
+    new_file_name = f"{current_date} - app.log"
+
+    # Copy the original file to the sub-folder with the new name
+    shutil.copy(original_file_path, os.path.join(subfolder_path, new_file_name))
+
+    # Clear the contents of the original file
+    open(original_file_path, 'w').close()
+
+
 def run():
     opc = OPC_Connect()
     active_directory = os.getcwd()
@@ -185,10 +214,20 @@ def run():
         global app_config_settings
         app_config_settings = json.load(json_file)
     try:
-        logging.basicConfig(filename='app.log', level=logging.INFO)
+
+        logging.basicConfig(encoding='utf-8', format='%(levelname)s : %(asctime)s - %(message)s', datefmt = '%Y-%m-%d %H:%M:%S', filename='app.log', level=logging.INFO)
+        #logging.basicConfig(filename='app.log', level=logging.INFO)
         logging.info('Started')
         runContinuous = True
         opc.open()
+        ualogger = logging.getLogger('opcua.client.ua_client')
+        ualogger.setLevel(logging.ERROR)
+        opc.client.uaclient.logger.disabled = True
+        ualogger.parent.propagate = False
+        #ualogger.propagate = False
+        current_dir = os.getcwd()
+        logging.info(msg=("Current directory:", current_dir))
+        schedule.every().day.at("00:00").do(manage_log_files)
         # Enter Periodic Loop
         while runContinuous:
 
@@ -198,11 +237,13 @@ def run():
             # Build Run Data if Add to Queue request comes in
             if check_queue_request(opc_connection=opc):
                 build_panel_data(opc_connection=opc)
+            schedule.run_pending()
             print("IDLE")
             time.sleep(1)
 
-            current_dir = os.getcwd()
-            print("Current directory:", current_dir)
+
 
     finally:
+        logging.error('Failed')
         opc.close()
+        run()

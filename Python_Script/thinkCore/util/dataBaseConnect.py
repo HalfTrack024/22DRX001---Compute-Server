@@ -1,10 +1,10 @@
-import psycopg2 as psy  # Requires Python >=3.6
-from psycopg2.extras import DictCursor
 import logging
 import sys
+
+import psycopg2 as psy  # Requires Python >=3.6
+from psycopg2.extras import DictCursor
+
 import util.General_Help as gHelp
-import os
-import json
 
 
 def get_cred():
@@ -50,6 +50,8 @@ class DB_Connect:
             # print(self.connection.status)
         except(Exception, psy.Error) as Error:
             print("Failed to Connect: {}".format(Error))
+
+            logging.error('Open Connection Failed')
             sys.exit("Connection Not Found")
         finally:
             # print("Connection Open")

@@ -1,11 +1,10 @@
+from io import BytesIO
+
 from PIL import Image, ImageDraw  # Requires Python >=3.7, pip install Pillow
+
+from util import dataBaseConnect as dbc
 # from PIL.ImageDraw import ImageDraw
 from util.globals import Parse_Progress
-from util import dataBaseConnect as dbc
-import os
-import base64
-from io import BytesIO
-from util.dataBaseConnect import DB_Connect
 
 
 # import math								#Built in to Python, only needed for safe rounding
