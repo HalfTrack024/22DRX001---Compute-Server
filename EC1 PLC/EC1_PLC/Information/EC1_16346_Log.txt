@@ -1,0 +1,49 @@
+ID	STATUS		UNIT			DATE			SIGN			DESCRIPTION/FIX
+
+1	Resolved	01FM3			2018-12-18		ArCh			Absolute encoder for WAN unit (framing station) goes "out of bounds" (the pulse value starts from "0" again).
+																	* Added calibration mode 4 for WAN unit, using the built in preset function of the SICK ATM 60 sensor (Over CoE)
+
+																	Note: Good idea might be to control all axis in program with Beckhoff motion instead (since it supports motion-profiles with contactors).
+																		  This would reduce start-up time and would make all axis more precise.
+
+2	Resolved	01FM3			2019-01			ArCh			GUM continues to move after mode is changed to "MAN", GUF does not, results in element being "twisted" sideways on conveyor
+																	* Changed so that GUM works in the same manor as GUF
+
+3	Resolved	05SF3			2019-01			ArCh			SPR wanted to leave new studs at OFU, old studs was still lying on OFU.
+																	* Changed OFU_FB, se local comments or change log
+
+4	Eval.		05SF3			2019-01			ArCh			On start-up WSP started to move to stack "0", when looking at the prod. sequence, however the designated stack was "2", this resulted in
+																the HSP unit going down while the WSP was moving (this due to the HSP being at the right stack, while the WSP was moving over it, no interlocks exists to prevent this).
+																	* Added several interlocks to both HSP and WSP unit (to make sure that either unit can't move whilst the other is working).
+																	* Still unclear why the unit was going to stack "0" (Maybe old position data sent to servo-unit?)
+
+5	Eval.		03NOS			2019-01			ArCh			Noted that no "sanity check" (except for outer bounds) existed for nail positions on the nogging station.
+																	* Changed the distribution of the nail-positions
+																	* No nail can have the same positions (with 5 mm extra as safety)
+																	* Nails can not have a position larger then the Stud height (-5mm)
+																	* Nails with invalid positions are skiped
+
+6	Resolved	05SF3			2019-01			ArCh			The "Vacuum" of delay timer (before the HSP can go back up after delivering studs) on the SPR unit does not work
+																	* The timer was not reset properly before exiting the state, as a result the timer
+																	was always "Done" when entering the state on the next run. The timer is now re-initiating as intended.
+
+7	Resolved	05SF3			2019-01			ArCh			The calibration speed of the HSP-unit is very high
+																	* Changed FB's to allow seperate calibration speed, also changed the speed control.
+																	The set point speed for the FQ of the HSP unit is now spliced via the control FB.
+																	
+
+8	Resolved	01FM3/05SF3		2019-01			ArCh			When changing the framing station to manual mode during stud transport (SFC > SIF) the stud data some times "disappears".
+																The SIF unit does not try to recieve the stud either.
+																The SFC unit does not stop running when the SIF unit is "MAN" (resulting in conveyor "wear and tear")
+																	* Added cross communication between the SFC and SIF unit to prevent unintentional data loss and to sync. conveyor movement.
+
+9				TWINSAFE		2019-01			ArCh			Remove "standalone mode".
+
+10				01FM3.Prod		2019-02			ArCh			The servo FB cant handle new positions on the fly, resulting in moment 22 when using lowspeed for GUF and GUM (when they have a long time to travel)
+																	* Added conditions in the code to prevent the sequence from sending new positions when GUF/GUM are busy (change in the transition into step 140)
+
+N/A				Tasks > Safety	2019-02			ArCh			Prio changed to 14 (according to information from Beckhoff support)
+
+N/A				Safety			2019-02			ArCh	OK		New safety based on the 14599 autowall line added				
+
+N/A				FB_WAN			2019-02			ArCh	OK		Changed comparator for "Min-alarm" to "less then", min. alarm was not working.			
