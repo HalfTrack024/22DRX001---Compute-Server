@@ -1,0 +1,47 @@
+REF.	LOCATION						SIGN				COMMENT/FIX
+
+1		stWAN_In						ArCh				Added "sMasterNetID" & "iSickSlaveAddr", for new calibration mode "4"
+1		WAN								ArCh				Changed "FB_WAN", Added calibration inputs for SICK ATM60 sensor, and additional calibration mode 4 (for CoE with SICK)
+1		FM3_Main.Input					ArCh				Added wan settings for SICK ATM60, for new calibration mode "4" (Over CoE)
+	
+2		FM3_Main.Input					ArCh				"GUM.In.Command.Stop:=FM3Status.bShortStop ;" , Removed "AND Automode"
+
+3		sOFU_Out						ArCh				Added variable "bOKtoLeaveStuds"
+3		STD_3.OFU						ArCh				Changed "FB_OFU", added output and added additional conveyor off timer on first run after new material from "SPR".
+3		SF_MAIN_3.Inputs_Studs			ArCh				Added additional conditions to "ExecuteSTD" input of "fbGetPile"
+
+4		SF_MAIN_3.Par					ArCh				Added interlocks to "bWSPokToRun_Hight"
+4		SF_MAIN_3.Input					ArCh				Added interlocks to "SPR_3.HSP_In.bGoDown"
+4		SF_MAIN_3.Input					ArCh				Added interlocks to "SPR_3.WSP_In.Command.LimitSwitchMax", possible that this also interlocks manual motion further testing req.
+4		SF_MAIN_3.Input					ArCh				Added interlocks to "SPR_3.WSP_In.Command.LimitSwitchMin", possible that this also interlocks manual motion further testing req.
+4		FM3_Main.Input					ArCh				Added interlocks to "bWSPPosDone"
+
+5		NoggingFeederAndSaw				HaLa/ArCh			Changed how the nail-positions are distributed in the sequence.
+
+6		SF_MAIN_3.Prod					ArCh				Implemented new code to properly reset timer when leaving state "110"
+
+7		SPR_3.HSP						ArCh				Changed "FB_HSP" to allow different speed when calibrating etc.
+7		sHSP_Out						ArCh				Added speed setpoint variable to data-type (in/out)
+7		sHSP_Out						ArCh				Added "calibration in progress" variable (not used anymore)
+
+8		SF_MAIN_3.Input					ArCh				Added "bNextInAuto"
+8		FM3_Main.Input					ArCh				Added "SIF.In.PrevInAuto"
+8		sSFC_In							ArCh				Added bool "bNextInAuto"
+8		stSIF_in						ArCh				Added bool "PrevInAuto"
+8		SIF								ArCh				Changed "FB_SIF", Added "bPrevInAuto" input		
+8		STD_3.SFC						ArCh				Added Input "bNextInAuto" to "FB_SFC_3"
+
+10		01FM3.Prod						ArCh				Added new transition conditions for step 130 > 140 
+
+
+N/A		StudInfeed						ArCh				Changed state "13", both "IN.bStudInChannel1 AND IN.bStudInChannel2" needs to be OK before transition.
+N/A		01FM3: CCN						ArCh				Added soft signal for "FQ-Ready"
+N/A		01FM3: SIF						ArCh				Added soft signal for "FQ-Ready"
+N/A		01FM3_MAIN.CheckMachine			ArCh				Changed "Inverter OK" conditions to soft signals instead of hard-wired (If hardwire is needed for STO EDM/Feedback later)
+N/A		02SEB3: CCN						ArCh				Added soft signal for "FQ-Ready"	
+N/A		SEB3_MAIN.CheckMachine			ArCh				Changed "Inverter OK" conditions to soft signals instead of hard-wired (If hardwire is needed for STO EDM/Feedback later)	
+N/A		Tasks							ArCh				Added new task for safety, moved all sync-units related to safety to this task (in accordance with AutoWall 14599)	
+N/A		NoggingFeederAndSaw.Nail		ArCh				Changed evaluation of nail position validity
+N/A		FB_GetPile						ArCh				Added reset of "RetrieveStuds" And "GetStuds" Output to prevent "Pick loop"
+
+
