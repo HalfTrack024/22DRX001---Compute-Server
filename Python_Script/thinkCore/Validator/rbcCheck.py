@@ -127,5 +127,6 @@ def check_board_place(place_data) -> bool:
     else:
         return True
 
+
 def check_fastening(fasten_data) -> bool:
     pass
