@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "0": {
+      "type": "object",
+      "properties": {
+        "Board": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "BoardPick": {
+                "type": "object",
+                "properties": {
+                  "Info_01": {
+                    "type": "number"
+                  },
+                  "Info_02": {
+                    "type": "number"
+                  },
+                  "Info_03": {
+                    "type": "number"
+                  },
+                  "Info_04": {
+                    "type": "number"
+                  },
+                  "Info_05": {
+                    "type": "number"
+                  },
+                  "Info_06": {
+                    "type": "number"
+                  },
+                  "Info_07": {
+                    "type": "number"
+                  },
+                  "Info_08": {
+                    "type": "number"
+                  },
+                  "Info_09": {
+                    "type": "number"
+                  },
+                  "Info_10": {
+                    "type": "number"
+                  },
+                  "Info_11": {
+                    "type": "integer"
+                  },
+                  "Info_12": {
+                    "type": "string"
+                  },
+                  "missionID": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "missionID"
+                ]
+              },
+              "Fastening": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "Info_01": {
+                      "type": "number"
+                    },
+                    "Info_02": {
+                      "type": "number"
+                    },
+                    "Info_03": {
+                      "type": "number"
+                    },
+                    "Info_04": {
+                      "type": "number"
+                    },
+                    "Info_05": {
+                      "type": "number"
+                    },
+                    "Info_06": {
+                      "type": "number"
+                    },
+                    "Info_07": {
+                      "type": "number"
+                    },
+                    "Info_08": {
+                      "type": "number"
+                    },
+                    "Info_09": {
+                      "type": "number"
+                    },
+                    "Info_10": {
+                      "type": "number"
+                    },
+                    "Info_11": {
+                      "type": "integer"
+                    },
+                    "Info_12": {
+                      "type": "integer"
+                    },
+                    "missionID": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "missionID"
+                  ]
+                }
+              },
+              "BoardPlace": {
+                "type": "object",
+                "properties": {
+                  "Info_01": {
+                    "type": "number"
+                  },
+                  "Info_02": {
+                    "type": "number"
+                  },
+                  "Info_03": {
+                    "type": "number"
+                  },
+                  "Info_04": {
+                    "type": "number"
+                  },
+                  "Info_05": {
+                    "type": "number"
+                  },
+                  "Info_06": {
+                    "type": "number"
+                  },
+                  "Info_07": {
+                    "type": "number"
+                  },
+                  "Info_08": {
+                    "type": "number"
+                  },
+                  "Info_09": {
+                    "type": "number"
+                  },
+                  "Info_10": {
+                    "type": "number"
+                  },
+                  "Info_11": {
+                    "type": "integer"
+                  },
+                  "Info_12": {
+                    "type": "integer"
+                  },
+                  "missionID": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "Info_01",
+                  "Info_02",
+                  "Info_03",
+                  "Info_04",
+                  "Info_05",
+                  "Info_06",
+                  "Info_11",
+                  "Info_12",
+                  "missionID"
+                ]
+              }
+            },
+            "required": [
+              "BoardPick",
+              "Fastening",
+              "BoardPlace"
+            ]
+          }
+        },
+        "Mission": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Info_01": {
+                "type": "number"
+              },
+              "Info_02": {
+                "type": "number"
+              },
+              "Info_03": {
+                "type": "number"
+              },
+              "Info_04": {
+                "type": "number"
+              },
+              "Info_05": {
+                "type": "number"
+              },
+              "Info_06": {
+                "type": "number"
+              },
+              "Info_07": {
+                "type": "number"
+              },
+              "Info_08": {
+                "type": "number"
+              },
+              "Info_09": {
+                "type": "number"
+              },
+              "Info_10": {
+                "type": "number"
+              },
+              "Info_11": {
+                "type": "integer"
+              },
+              "Info_12": {
+                "type": "integer"
+              },
+              "missionID": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "missionID"
+            ]
+          }
+        },
+        "Material": {
+          "type": "object",
+          "properties": {
+            "Item_Thickness": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "Item_Thickness"
+          ]
+        }
+      },
+      "required": [
+        "Board",
+        "Mission",
+        "Material"
+      ]
+    }
+  },
+  "required": [
+    "0"
+  ]
+}
