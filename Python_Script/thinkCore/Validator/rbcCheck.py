@@ -1,13 +1,7 @@
-from ..util import runData_Helper as rdh
 import json
 from jsonschema import validate
 import logging
 
-
-# This file is used to check the viability of the recipe that has been generated before allowing it to be added to the Database
-
-# TODO Board Placement
-# TODO Place and fasten (Fasten not interferance with tool)
 
 def check_json_schema(run_data: dict) -> bool:
     # Load the schema
@@ -30,12 +24,12 @@ def check_layers(run_data: dict):
 def check_boards(board_list) -> bool:
     # Loop through all boards in Data
     status = 0
-    #Return if no object was found
+    # Return if no object was found
     if isinstance(board_list, dict):
         board_list: dict = board_list
     else:
         return False
-    #Loop through each board in data
+    # Loop through each board in data
     for index_a, board in enumerate(board_list):
         if not check_board_pick(board.get("BoardPick", False)):
             logging.debug(f"Failed - BoardPicked:: Index: {index_a}")
