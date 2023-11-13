@@ -1,12 +1,12 @@
 {
   "DB_credentials": {
     "user": "postgres",
-    "password": 1,
-    "host": "192.168.180.200",
+    "password": "Brav39955",
+    "host": "192.168.150.209",
     "port": 5433,
     "database": "Drexel"
   },
-  "IgnitionServer": "opc.tcp://16131_Server:62541",
+  "IgnitionServer": "opc.tcp://DESKTOP-FQFG97N:62541",
   "TruthTable": "C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore\\util\\truthtable.csv",
   "applog": "C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\app.log",
   "Monitor_Folder": "C:\\Users\\Andrew Murray\\Desktop\\SampleProject\\ProjectLocal",

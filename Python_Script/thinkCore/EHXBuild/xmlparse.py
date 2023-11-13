@@ -24,7 +24,8 @@ class xmlParse:
         # variable data is accessible outside of this function
         self.data = dc.parse(dataset)
         #self.credentials = app_settings.get('DB_credentials')
-        self.sCadFilepath = str(self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID'])
+        file_provider = list(self.data.keys())[0]
+        self.sCadFilepath = str(self.data[file_provider]['Job']['JobID'])
         # xmlParse.data = self.data
         # xmlParse.credentials = self.credentials
         self.elementIN = []
@@ -90,7 +91,8 @@ class xmlParse:
         else:
             serial = 1
         # how to generate the serial number?
-        jobIN = [(serial, self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']), ]
+        file_provider = list(self.data.keys())[0]
+        jobIN = [(serial, self.data[file_provider]['Job']['JobID']), ]
         # Header List
         # Query used for inserting the data
         sql_insert_query = """
@@ -106,7 +108,8 @@ class xmlParse:
         # List to insert to bundles table
         bundleIN = []
         # Loop through all levels in the job
-        docdata = self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
+        file_provider = list(self.data.keys())[0]
+        docdata = self.data[file_provider]["Job"]
         leveled = docdata["Level"]
         if type(leveled) == dict:
             data = [leveled]

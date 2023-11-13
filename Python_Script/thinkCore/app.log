@@ -25,3 +25,33 @@ INFO : 2023-10-04 13:16:24 - received header: Header(type:b'MSG', chunk_type:b'F
 ERROR : 2023-10-04 13:16:25 - Failed
 INFO : 2023-10-04 13:16:25 - received header: Header(type:b'MSG', chunk_type:b'F', body_size:40, channel:32)
 INFO : 2023-10-04 13:16:25 - Started
+INFO : 2023-11-13 09:28:41 - Started
+INFO : 2023-11-13 09:28:41 - opening connection
+INFO : 2023-11-13 09:28:49 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-11-13 09:28:53 - Failed
+INFO : 2023-11-13 09:28:53 - Started
+INFO : 2023-11-13 09:29:48 - Started
+INFO : 2023-11-13 09:29:48 - opening connection
+INFO : 2023-11-13 09:29:56 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-11-13 09:30:00 - Open Connection Failed
+ERROR : 2023-11-13 09:30:06 - Open Connection Failed
+ERROR : 2023-11-13 09:30:06 - Failed
+INFO : 2023-11-13 09:30:06 - Started
+INFO : 2023-11-13 09:30:14 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-11-13 09:30:48 - Failed
+INFO : 2023-11-13 09:30:48 - Started
+INFO : 2023-11-13 09:30:55 - Started
+INFO : 2023-11-13 09:30:55 - opening connection
+INFO : 2023-11-13 09:31:03 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-11-13 09:31:43 - Failed
+INFO : 2023-11-13 09:31:43 - Started
+INFO : 2023-11-13 09:31:57 - Started
+INFO : 2023-11-13 09:31:57 - opening connection
+INFO : 2023-11-13 09:32:05 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-11-13 09:32:34 - Failed
+INFO : 2023-11-13 09:32:34 - Started
+INFO : 2023-11-13 09:32:39 - Started
+INFO : 2023-11-13 09:32:39 - opening connection
+INFO : 2023-11-13 09:32:47 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-11-13 09:33:43 - Failed
+INFO : 2023-11-13 09:33:43 - Started
