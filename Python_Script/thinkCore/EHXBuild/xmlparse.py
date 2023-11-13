@@ -23,8 +23,9 @@ class xmlParse:
             dataset = f.read()
         # variable data is accessible outside of this function
         self.data = dc.parse(dataset)
-        #self.credentials = app_settings.get('DB_credentials')
-        self.sCadFilepath = str(self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID'])
+        # self.credentials = app_settings.get('DB_credentials')
+        file_provider = list(self.data.keys())[0]
+        self.sCadFilepath = str(self.data[file_provider]['Job']['JobID'])
         # xmlParse.data = self.data
         # xmlParse.credentials = self.credentials
         self.elementIN = []
@@ -79,7 +80,9 @@ class xmlParse:
             )
 
     def append_fastener(self, sheet):
-        self.fastenerIN.append((sheet["PanelGuid"], sheet["BoardGuid"], sheet["TypeOfFastener"], sheet["EdgeSpacing"], sheet["FieldSpacing"], sheet["FastenerEndGap"]))
+        self.fastenerIN.append(
+            (sheet["PanelGuid"], sheet["BoardGuid"], sheet["TypeOfFastener"], sheet["EdgeSpacing"], sheet["FieldSpacing"], sheet["FastenerEndGap"]))
+
     def insert_job(self):
         pgDB = dbc.DB_Connect()
         pgDB.open()
@@ -90,7 +93,8 @@ class xmlParse:
         else:
             serial = 1
         # how to generate the serial number?
-        jobIN = [(serial, self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']['Job']['JobID']), ]
+        file_provider = list(self.data.keys())[0]
+        jobIN = [(serial, self.data[file_provider]['Job']['JobID']), ]
         # Header List
         # Query used for inserting the data
         sql_insert_query = """
@@ -106,7 +110,8 @@ class xmlParse:
         # List to insert to bundles table
         bundleIN = []
         # Loop through all levels in the job
-        docdata = self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
+        file_provider = list(self.data.keys())[0]
+        docdata = self.data[file_provider]["Job"]
         leveled = docdata["Level"]
         if type(leveled) == dict:
             data = [leveled]
@@ -114,7 +119,11 @@ class xmlParse:
             data = leveled
         for level in data:
             # Loop through all bundles in the level
-            for bundle in level["Bundle"]:
+
+            bundled: list = level["Bundle"]
+            if type(bundled) != list:
+                bundled = [bundled]
+            for bundle in bundled:
                 # Data to import to the database
                 bundleIN.append(
                     (bundle['BundleGuid'], bundle['JobID'], level['Description'], bundle['Label'], bundle['Type']), )
@@ -137,7 +146,8 @@ class xmlParse:
         panelIN = []
         HeaderInfo = []
         # Loop through all the levels in the job
-        docdata = self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
+        file_provider = list(self.data.keys())[0]
+        docdata = self.data[file_provider]["Job"]
         leveled = docdata["Level"]
         if type(leveled) == dict:
             data = [leveled]
@@ -145,7 +155,10 @@ class xmlParse:
             data = leveled
         for level in data:
             # Loop through all the bundles in the level
-            for bundle in level["Bundle"]:
+            bundled = level["Bundle"]
+            if type(bundled) != list:
+                bundled = [bundled]
+            for bundle in bundled:
                 # Loop through all the panels in the bundle
                 for panel in bundle['Panel']:
                     self.parse_progress.panels_total += 1
@@ -385,7 +398,7 @@ class xmlParse:
                             # check if the subassembly has a rough opening in the panel
                             subassemblyCT = 1
                             # loop through all the boards in the subassembly
-                            #for boardsub in bundle['Panel']['SubAssembly']['Board']:
+                            # for boardsub in bundle['Panel']['SubAssembly']['Board']:
                             # TODO Determine double board sub looping
                             for boardsub in panel['SubAssembly']['Board']:
                                 # Check if the sub board is the rough opening

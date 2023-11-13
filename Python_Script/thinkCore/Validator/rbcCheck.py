@@ -123,4 +123,7 @@ def check_board_place(place_data) -> bool:
 
 
 def check_fastening(fasten_data) -> bool:
+    #TODO Check fastener object is dictionary
+    #TODO Check valid Mission ID
+    #TODO Check total of keys in fasten object
     pass
