@@ -5,7 +5,7 @@ import logging
 
 def check_json_schema(run_data: dict) -> bool:
     # Load the schema
-    with open('Python_Script/thinkCore/Validator/rbc_schema.json') as schema_file:
+    with open(r'C:\Users\Andrew Murray\source\Copia\22DRX001\Python_Script\thinkCore\Validator\rbc_schema.json') as schema_file:
         schema = json.load(schema_file)
 
     try:
@@ -13,12 +13,6 @@ def check_json_schema(run_data: dict) -> bool:
         return True
     except Exception as e:
         return False
-
-
-def check_layers(run_data: dict):
-    # Loop through Run Data
-    for layer in run_data:
-        pass
 
 
 def check_boards(board_list) -> bool:
