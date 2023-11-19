@@ -7,6 +7,7 @@
 #(panelguid, item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9], item[10], item[11])
 
 def check_opData(items: list):
+    orted_list = sorted(items, key=lambda x: x[12])
 
     for item in items:
         pass
