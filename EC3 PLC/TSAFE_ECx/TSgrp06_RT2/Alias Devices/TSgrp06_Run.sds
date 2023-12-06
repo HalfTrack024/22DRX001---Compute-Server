@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SafetyDeviceDesc Crc="408371340" FileFormatVersion="1.6">
+  <AliasDeviceType>
+    <Type>1</Type>
+    <SubType>1</SubType>
+    <VendorId>0</VendorId>
+  </AliasDeviceType>
+  <SDSID>129</SDSID>
+  <StandardAliasDevice>
+    <LinkingMode>Manual</LinkingMode>
+    <IO>
+      <Name>In</Name>
+      <BitOffsMessage>0</BitOffsMessage>
+      <DataType>BIT</DataType>
+      <BitSize>1</BitSize>
+    </IO>
+  </StandardAliasDevice>
+</SafetyDeviceDesc>

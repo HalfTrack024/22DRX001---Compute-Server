@@ -1,0 +1,161 @@
+Change log for ZL Cell 1, EC2
+
+Date		Sign	POU				GVL				DUT				Comment
+-----------+-------+---------------+---------------+---------------+------------------------------------------------------
+2018-10-15	LHG		-				-				-				Change log created
+2018-10-18	LHG		FB_CWS2_loHi									Added Error Ack in state 150
+2018-10-18	LHG		P_TwinSAFE										Added auto reset for TS groups 2 - "Previous" and 2b - "Next"
+2018-10-24  LHG     FB_ROB1                                         Added FB for staple and nail tools
+2018-10-24  LHG     FB_ROB2                                         Added FB for staple and nail tools
+2018-10-25	PW		FB_ROB2											Fixed typo. "ComRob1.IN.UncoverLaserSensor" was used in FB_ROB2.ActLaserMeasurment replace with "ComRob2.IN.UncoverLaserSensor"
+2018-10-25	PW		FB_ROB2											Fixed typo. "ComRob1.IN.StaplerOn" was used in FB_ROB2.actRT23_StapleTool replace with "ComRob2.IN.StaplerOn"
+2018-10-25	PW		RBC_MAIN_07.Input								Invert logic of sensor. New code --> RBC_Units_07.ROB1_RT13_In.Empty := NOT IO_ROB1_RT13.I_CPX13_A2_I3;
+2018-10-25	PW		RBC_MAIN_07.Input								Invert logic of sensor. New code --> RBC_Units_07.ROB1_RT23_In.Empty := NOT IO_ROB2_RT23.I_CPX23_A2_I3;
+2018-10-26	PW		FB_StapleToolUnit								Remove the pulse that triggers the tool instead just mirror the input to the output: StapleSetTrig:=CmdTrigger AND NOT StaplerIsUp AND NOT StaplerIsDown;
+2018-10-26	PW		RBC_MAIN_07.Output								Remove the "allwaystrue" on Goup & GoDown: IO_ROB2_RT23.Q_CPX23_M1_O1 :=  RBC_Units_07.ROB2_RT23_Out.GoUp ;
+2018-10-26	ARC		FB_StapleToolUnit								Changed the set-point amount for when the "mag-low" sensor changes status from "0 = 270", row 39-42
+2018-10-26	PW		BT3_MAIN_06.Inputs								Added condition to "Infeeding", se local comment
+2018-10-26	ARC		RBC_MAIN_07.Output								Removed signals from robot (1 & 2), to control "staple up / down", boths signals are always true when staple tool is docked (IO_ROB1_RT13.Q_CPX13_M1_O1 := ComRob1.OUT.StapleToolContact) ;
+2018-10-31	ARC		WT3_MAIN_07										Added variables for error handling row 121-123, 192.
+2018-10-31	ARC		WT3_MAIN_07.Prod								Added code for error handling (based of error handling inside robot levels), check for comments 
+2018-10-31	ARC		WT3_Units_07.WAN								Added condition for when exiting "Case 900 error handling", needs to push button to exit (to prevent looping on non-hardware faults) 
+2018-10-31	ARC		WT3_MAIN_O7.Prod								Added new setpos for initial clamping, se comment (CASE 50)
+2018-10-31	ARC		WT3_MAIN_O7.Prod								Seperated WAN clamp from alignment, added additional step
+2018-10-31	ARC		RBC_MAIN_07.Prodlevel20_ROB1					Added reset off "bRob2StartBoard" in "CASE 0, init", to prevent Rob1 and Rob2 sequence from desyncing
+2018-10-31	ARC		RBC_MAIN_07.Prodlevel20_ROB2					Added reset off "bROB2_Start_Place" in "CASE 0, init", to prevent Rob1 and Rob2 sequence from desyncing
+2018-11-01	ARC		RBC_MAIN_07										Moved boardindex etc. to retain
+2018-11-01	ARC		FB_Sort_RBC_RunData								Added swap of Y-coords for Robot 1 missions, only swaps if its needed
+2018-11-05	LHG		FN_SelectBM										Changed BM selection if pre-selected BM not valid			
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel10_ROB1					Added pre-production handling (leave tool)
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel10_ROB2					Added pre-production handling (leave tool)
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel20_ROB1					Added pre-production handling (pick first board)
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel20_ROB2					Added pre-production handling (get initial tool)
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel30_ROB1					Added pre-production handling (get initial tool)
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel30_ROB2					Added pre-production handling (get initial tool)
+2018-10-31	LHG		RBC_MAIN_07.ProdLevel40_ROB2_ROB2				Added pre-production handling (get initial tool)
+2018-11-01	LHG		RBC_Main_07.ProdLevel35_ROB1					Added level 35
+2018-11-01	LHG		RBC_Main_07.ProdLevel35_ROB2					Added level 35
+2018-11-01	LHG		FB_Sort_RBC_RunData								Added Level 35 to separate fastening and routing missions
+2018-11-01	LHG		RBC_MAIN_07.Prod								Added level 35
+2018-11-01	LHG		FB_ScrewToolUnit								st_ScrewTool_Out Added "Too many errors" and error counter
+2018-11-01	LHG		FB_ROB1, FB_ROB2								Changed tool docking and HC group establishment handling			
+2018-11-05	ARC		P_TwinSAFE.actSafetyStatus						Removed "bNoTool for 16 and 26" constant, set constant to always true (GLV_system)
+
+2018-11-05	LHG		RBC_MAIN_07.Inputs								Changed inputs for RT16, RT26
+2018-11-05	LHG		RBC_MAIN_07.Outputs								Changed outputs for RT16, RT26
+2018-11-05	LHG		IO_ROB1_RT16									Changed I/O for RT16
+2018-11-05	LHG		IO_ROB1_RT26									Changed I/O for RT16
+2018-11-05	LHG		FB_NailToolUnit									Changed tilt function
+2018-11-05	LHG		FB_ROB1, FB_ROB2								Added fb for nail tool tilt 2, changed tilt function
+2018-11-05	LHG		ST_NailTool_In									Changed and added inputs
+2018-11-05	LHG		ST_NailTool_Out									Changed and addded outputs
+2018-11-05	LHG		ST_NailTool_FbOut								Changed tilt outputs
+2018-11-05	LHG		Gvl_System										Removed constants for levels to run
+2018-11-05	LHG		Gvl_RBC											Added variabels for levels to run
+2018-11-05	LHG		RBC_MAIN_07.Parameters							Set variabels for levels to run from HMI settings
+2018-11-05	LHG		ZLCellParam.xml									Added settings for levels to run, bypass cell
+2018-11-05	LHG		sRBC_ParamsApplication							Added variabels for levels to run and cell bypass
+
+2018-11-05	PW		FB_ROB1.actSignalCopy							Changed the conditions of setting bScrewToolDocked, bStapleToolDocked,  bNailToolDocked and bPanelToolDocked.
+2018-11-05	PW		FB_ROB2.actSignalCopy							Changed the conditions of setting bScrewToolDocked, bStapleToolDocked,  bNailToolDocked and bScrapToolDocked.
+2018-11-05	PW		RBC_MAIN_07										Decleration of Time out functionblocks added at row 32
+2018-11-05	PW		RBC_HMIcom_07									Decleration of Time out alarms at row 22
+2018-11-05	PW		RBC_MAIN_07.CallUnit							Call on all functionblocks for handeling Time out alarms from row 16
+2018-11-05	PW		RBC_HMIcom_07.SetAlarmStrings					New code handeling alarmstrings for time out alarms.
+
+2018-11-06	LHG		FB_ROB1.actSignalCopy							Added new signals for nail tool sensors
+2018-11-06	LHG		FB_ROB2.actSignalCopy							Added new signals for nail tool sensors
+2018-11-06	LHG		FB_ROB1.actSignalCopy							Added new signals for tool docked and ready (xxxToolEnabled)
+2018-11-06	LHG		FB_ROB2.actSignalCopy							Added new signals for tool docked and ready (xxxToolEnabled)
+2018-11-06	LHG		ST_ToRobot1FromPlc								Added new signals for tool docked and ready (xxxToolEnabled)
+2018-11-06	LHG		ST_ToRobot1FromPlc								Added new signals nail tool tilt and up/down
+2018-11-06	LHG		ST_ToRobot2FromPlc								Added new signals for tool docked and ready (xxxToolEnabled)
+2018-11-06	LHG		ST_ToRobot2FromPlc								Added new signals nail tool tilt and up/down
+2018-11-06	LHG		ST_FromRobot1FromPlc							Added new signal for air ventilation
+2018-11-06	LHG		ST_FromRobot2FromPlc							Added new signal for air ventilation
+2018-11-06	LHG		FB_NailToolUnit									Changed trigger function
+2018-11-06	LHG		FB_ROB1, FB_ROB2								Moved "ToolDocked" and "ToolDockedAndReady" to persistent area
+2018-11-06	LHG		FB_ROB1, FB_ROB2.actCommon						Added default ElementHeight (if rElementTotalHeight = 0)
+2018-11-06	LHG		FB_ROB1, FB_ROB2.actCommon						Added new signal for air ventilation in AirSupply and SafetyAirSupply
+2018-11-06	LHG		TwinSAFE										Changed Watchdog on all connections to 250 ms
+2018-11-06	LHG		FB_ROB1, FB_ROB2								Added code for "InHomePos"
+2018-11-06	LHG		WT3_MAIN_07.Prod, state 20						Change to ROB1_InHomePos and ROB2_InHomePos
+2018-11-06	LHG		RBC_MAIN_07.ProdLevel20_ROB1					State 120: Removed condition Regrip station occupied
+
+2018-11-07	LHG		RBC_MAIN_07, state 100							Added action calls for level 35
+2018-11-07	LHG		RBC_MAIN_07.ProdLevelxx_ROBy					In all level actipons, added "or MissionDone" when checking mission started						
+2018-11-07	LHG		FB_ROB1/2.actCommon								Removed additional 1 mm in milling depth					
+2018-11-07	LHG		RBC_HMIcom_07									Removed some lines at row 108...
+2018-11-07	LHG		FB_Sort_RBC_RunData								Added state 317
+2018-11-07	LHG		BT_MAIN_06.Input								Added test function "MsgToEC1.bBool8"
+2018-11-07	LHG		RBC_MAIN_07.Prod								Added state 450...
+2018-11-07	LHG		FB_Sort_RBC_RunData								State 350, 360: Corrected to use 'Level30_ROBx_Int'
+
+2018-11-08	LHG		WT3_MAIN_07.Prod								Changes in state 55..70
+2018-11-08	LHG		WT3_MAIN_07.Prod								In State 35, Added "OR PanelAtStop"
+
+2018-11-09	ARC		RBC_MAIN_08.Indication							Changed the	indication lights
+2018-11-09	ARC		RBC_MAIN_08.actOutputs							Removed nailgun trigger and staple trigger from service (needs to be removed from panel)
+
+2018-11-11	ARC		RBC_MAIN_08										Added instances for diagnostic blocks in var
+2018-11-11	ARC		RBC_MAIN_08										Added call for "diagnostic" action
+2018-11-11	ARC		RBC_MAIN_08.Diagnostics							Added calls for sequence diagnostics DB
+2018-11-11	ARC		WAN_3000_Servo									Changed and added case structure (Old WAN 300 renamed with _OLD)
+
+2018-11-11	ARC		BT3_Units_08.CCN								Added "Freeze" when not Auto (Auto fwd commands)
+2018-11-11	ARC		WT3_Units_09.CCN								Added "Freeze" when not Auto (Auto fwd commands)
+2018-11-11	ARC		WT3_Units_09.ESU								Added "Freeze" when not Auto (Auto fwd commands)
+2018-11-11	ARC		WT3_Units_09.CDP								Added "Freeze" when not Auto (Auto fwd commands)
+2018-11-11	ARC		WT3_Units_09.WAN								Added "Freeze" when not Auto
+
+2018-11-12	ARC		FB_ScrewToolUnit								Added "Var_In" for AutoMode (only blow and cut in auto)
+2018-11-12	ARC		WT3_actOutput									Changed to match cpx (changed both pysichal and logical, was wrongly connected on cylinder)
+2018-11-12	LHG		RBC_MAIN_07.Prod								State 0: Added reset of "bMissionLevel35_ROBx_Start"
+2018-11-12	LHG		RBC_MAIN_07.Input								Line 301: Removed bSimAutoRob frpm RobotStart
+2018-11-12	LHG		RBC_MAIN_07.MachineMode							Added "bDoPreProduction" and "bDoProduction" to condition for bRobotStart, rung 3
+
+2018-11-22	ARC		RBC_MAIN										Changes made
+2018-11-26	ARC		P_TwinSAFE										Changes made
+2018-11-26	ARC		FB_ROB1											Changes made
+2018-11-26	ARC		FB_ROB2											Changes made
+2018-11-26	ARC		WT3_MAIN										Changes made
+2018-11-26	ARC		WT3_MAIN.prod									Changes made
+2018-11-26	ARC		FB_Euchner										Changes made
+2018-11-26	ARC		WT3_HMI											Changes made
+
+2018-12-10	PEW		RBC_MAIN.Parameters								Some parameters regarding CWS1 & CWS2 are connected to the HMI-parameters instead of the local parameters in the PLC.
+2018-12-10	PEW		FB_CWS2_LoHi									Reset the variable Ax2Status.bCalibrationInProgress and Ax1Status.bCalibrationInProgress in FB_CWS2_LoHi when exiting the steps where it should be high. Also reset them when restarting the case-statement.
+2018-12-11	PEW		FB_CWS2_LoHi									Reset sequence activated 
+2018-12-13	PEW		RBC_MAIN.ProdLevel20_ROB2						Conditions added on state 30 in the state machine
+2018-12-13	PEW		RBC_MAIN.ProdLevel20_ROB1						Conditions added on state 30 in the state machine
+2018-12-14	PEW		IO_RWT											Comments added on outputs in CPX30M2, CPX30M3 and CPX30M4
+2018-12-14	PEW		RBC_Units.actCWS								Added functionallity to disable CWS from the HMI.
+
+2018-12-17	LHG		sWT3_ParamsTable								Added MaxClampTorque
+2018-12-17	LHG		WT3_MAIN.Parameters								Added MaxTorque and MacClampTorque setting from HMI
+2018-12-17	LHG		sBT3_ParamsTable								Removed all params except for CCN
+
+2018-12-18	LHG		CheckEtherCAT, CheckEtherCATState				Added and modified EtherCAT node check, HC node handling
+2018-12-18	LHG		Gvl_System										Added constant for max number of HC nodes
+2018-12-18	LHG		RBC_HMIcom.SetAlarmStrings						Added alarm string for all EtherCAT nodes
+2018-12-18	LHG		BT3_MAIN.Input									Change for bEtherCatOk flag
+2018-12-18	LHG		WT3_MAIN.Input									Change for bEtherCatOk flag
+2018-12-18	LHG		RBC_MAIN.Input									Change for bEtherCatOk flag
+2018-12-18	LHG		BT3_HMIcom.SetAlarmsToHMI						Killed all alarms while station not installed
+2018-12-18	LHG		sWT3toHM										Removed "AlarmStrings""
+2018-12-18	LHG		sWT3_ParamsTable								Removed "WAN_Scaling", "WAN_AbsOffset"
+
+2018-12-19	LHG		FB_CurrentMeasurement_EL3403					Added input "iCurrentTransformerRatio"
+2018-12-19	LHG		Gvl_System										Changed "iCurrentWarningLevel" 30 -> 100 (A)
+2018-12-19	LHG		Gvl_System										Added "iCurrentTrafoRatio" (A)
+2018-12-19	LHG		RBC_MAIN.Input									Added "bEcatOK" and "tofDelEcatOK" to filter short error at tool change
+
+2018-12-20	LHG		WT3_MAIN.Prod									Changed condition for outfeed TO timer
+2018-12-19	LHG		RBC_MAIN.Output, WT3_MAIN.Output				Moved Start indication from WT3_MAIN.Output to RBC_MAIN.Output
+
+2019-01-16	LHG		RBC_Main.Prod									Added new variable (nLayerToRun) in case of multiple layers to run 
+2019-01-16	LHG		RBC_Main.Prod									Added new variable (bSecondLayer) in case of multiple layers to run 
+2019-01-16	LHG		RBC_Main.Prod									Added state 420 to check for multiple layers and eventually start 2nd layer
+2019-01-16	LHG		Gvl_System										Added new variable (bRunMultipleLayersInCell) in case of multiple layers to run 
+
+2019-01-23	LHG		RBC_Main.Prod, state 450						Added tool preparation ROB2. Leave tool if Scrap tool contact, else HomePos
