@@ -1,2 +1,52 @@
 INFO : 2023-11-19 20:03:25 - Started
 WARNING : 2023-11-19 20:03:25 - Failed Validation Framer - Image Required at xpos 0
+INFO : 2023-12-20 08:26:33 - Started
+INFO : 2023-12-20 08:26:33 - opening connection
+INFO : 2023-12-20 08:26:41 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 08:29:39 - Failed
+INFO : 2023-12-20 08:29:39 - Started
+INFO : 2023-12-20 08:30:14 - Started
+INFO : 2023-12-20 08:30:14 - opening connection
+INFO : 2023-12-20 08:30:21 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 08:35:14 - Failed
+INFO : 2023-12-20 08:35:14 - Started
+INFO : 2023-12-20 08:35:19 - Started
+INFO : 2023-12-20 08:35:19 - opening connection
+INFO : 2023-12-20 08:35:22 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 08:37:16 - Failed
+INFO : 2023-12-20 08:37:16 - Started
+INFO : 2023-12-20 08:37:23 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+INFO : 2023-12-20 08:37:30 - Started
+INFO : 2023-12-20 08:37:30 - opening connection
+INFO : 2023-12-20 08:37:33 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 08:37:45 - Failed
+INFO : 2023-12-20 08:37:45 - Started
+INFO : 2023-12-20 08:37:49 - Started
+INFO : 2023-12-20 08:37:49 - opening connection
+INFO : 2023-12-20 08:37:56 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 08:38:17 - Failed
+INFO : 2023-12-20 08:38:17 - Started
+INFO : 2023-12-20 08:39:09 - Started
+INFO : 2023-12-20 08:39:09 - opening connection
+INFO : 2023-12-20 08:39:16 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+INFO : 2023-12-20 08:40:01 - SELECT * 
+                            FROM cad2fab.system_panels sp 
+                            JOIN cad2fab.system_bundles sb  ON sp.bundleguid  = sb.bundleguid 
+                            WHERE sb.jobid = '232895W'
+INFO : 2023-12-20 08:40:01 - SELECT se.panelguid, jsonb_build_array(se.panelguid, se.elementguid, se."type" , se.e1x, se.e1y, se.e2x, se.e2y, se.e3x, se.e3y, se.e4x, se.e4y)
+                            FROM cad2fab.system_elements se
+                            inner JOIN cad2fab.system_panels sp ON se.panelguid  = sp.panelguid
+                            inner join cad2fab.system_bundles sb on sb.bundleguid = sp.bundleguid
+                            WHERE sb.jobid = '232895W' and description != 'Rough cutout'
+ERROR : 2023-12-20 08:40:01 - Failed
+INFO : 2023-12-20 08:40:01 - Started
+INFO : 2023-12-20 08:40:12 - Started
+INFO : 2023-12-20 08:40:12 - opening connection
+INFO : 2023-12-20 08:40:15 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 08:41:17 - Failed
+INFO : 2023-12-20 08:41:17 - Started
+INFO : 2023-12-20 09:15:02 - Started
+INFO : 2023-12-20 09:15:02 - opening connection
+INFO : 2023-12-20 09:15:09 - ('Current directory:', 'C:\\Users\\Andrew Murray\\source\\Copia\\22DRX001\\Python_Script\\thinkCore')
+ERROR : 2023-12-20 09:18:56 - Failed
+INFO : 2023-12-20 09:18:56 - Started

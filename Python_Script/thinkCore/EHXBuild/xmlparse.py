@@ -13,6 +13,11 @@ def round_data(element_line):
 
     return element_line
 
+def convert_2_list(obj):
+    if list is not type(obj):
+        return [obj]
+    else:
+        return obj
 
 class xmlParse:
     # app_settings: dict
@@ -112,18 +117,12 @@ class xmlParse:
         # Loop through all levels in the job
         file_provider = list(self.data.keys())[0]
         docdata = self.data[file_provider]["Job"]
-        leveled = docdata["Level"]
-        if type(leveled) == dict:
-            data = [leveled]
-        else:
-            data = leveled
-        for level in data:
-            # Loop through all bundles in the level
 
-            bundled: list = level["Bundle"]
-            if type(bundled) != list:
-                bundled = [bundled]
-            for bundle in bundled:
+        levels = convert_2_list(docdata["Level"])
+        for level in levels:
+            # Loop through all bundles in the level
+            bundles = convert_2_list(level["Bundle"])
+            for bundle in bundles:
                 # Data to import to the database
                 bundleIN.append(
                     (bundle['BundleGuid'], bundle['JobID'], level['Description'], bundle['Label'], bundle['Type']), )
@@ -148,23 +147,20 @@ class xmlParse:
         # Loop through all the levels in the job
         file_provider = list(self.data.keys())[0]
         docdata = self.data[file_provider]["Job"]
-        leveled = docdata["Level"]
-        if type(leveled) == dict:
-            data = [leveled]
-        else:
-            data = leveled
-        for level in data:
+
+        lvldata = convert_2_list(docdata["Level"])
+        for level in lvldata:
             # Loop through all the bundles in the level
-            bundled = level["Bundle"]
-            if type(bundled) != list:
-                bundled = [bundled]
+
+            bundled = convert_2_list(level["Bundle"])
             for bundle in bundled:
                 # Loop through all the panels in the bundle
-                for panel in bundle['Panel']:
+                panels = convert_2_list(bundle['Panel'])
+                for panel in panels:
                     self.parse_progress.panels_total += 1
                     # Check if the panel is a string
                     # The panel is a string if it is the only panel in a bundle
-                    if type(panel) == str:
+                    if str is type(panel):
                         # This would remove very top plates from the panel height
                         height = float(bundle['Panel']['Height'])
                         if height == 97.125 or height == 109.125 or height == 113.125:
@@ -233,22 +229,22 @@ class xmlParse:
         # List of data for elements table
         # loop through all the levels in the job
         docdata = self.data['MITEK_SHOPNET_MARKUP_LANGUAGE_FILE']["Job"]
-        leveled = docdata["Level"]
-        if type(leveled) == dict:
-            data = [leveled]
-        else:
-            data = leveled
-        for level in data:
+
+        levels = convert_2_list(docdata["Level"])
+        for level in levels:
             # loop through all the bundles in the level
-            for bundle in level["Bundle"]:
+            bundles = convert_2_list(level["Bundle"])
+            for bundle in bundles:
                 # loop through all the panels in the bundle
-                for panel in bundle['Panel']:
+                panels = convert_2_list(bundle['Panel'])
+                for panel in panels:
                     # check if the panel is a string type
-                    if type(panel) != str:
+                    if str is not type(panel):
                         # Add boards to the list if they exist
                         if 'Board' in panel.keys():
                             # loop through all the boards in the panel
-                            for board in panel['Board']:
+                            panel_data = convert_2_list(panel['Board'])
+                            for board in panel_data:
                                 if board['FamilyMemberName'] != 'TopPlate':
                                     # add the board data to the list
                                     xmlParse.append_element(self, board, 'Board', None)
@@ -260,11 +256,7 @@ class xmlParse:
                                     if 'Holes' in board.keys():
                                         holeCnt = 1
                                         subassemblyCT = 1
-                                        data = board['Holes']['CircularHoleFeature']
-                                        if type(data) == dict:
-                                            holes = [data]
-                                        else:
-                                            holes = data
+                                        holes = convert_2_list(board['Holes']['CircularHoleFeature'])
                                         for hole in holes:
                                             holeSet = {
                                                 'PanelGuid': board['PanelGuid'],
@@ -280,7 +272,8 @@ class xmlParse:
                         if 'Sheet' in panel.keys():
                             self.parse_progress.panels_exterior += 1
                             # loop through all the sheets in the panel
-                            for sheet in panel['Sheet']:
+                            sheets = convert_2_list(panel['Sheet'])
+                            for sheet in sheets:
                                 # add the sheet data to the list
                                 xmlParse.append_element(self, sheet, 'Sheet', None)
                                 # Add Fastener Data to Fastener Table
@@ -289,14 +282,16 @@ class xmlParse:
                             self.parse_progress.panels_interior += 1
                         # Add SubAssemblies to the list if they exist and are in a list format
                         # SubAssemblies will be in list format if there are >1 in the current panel
-                        if 'SubAssembly' in panel.keys() and type(panel['SubAssembly']) == list:
+                        if 'SubAssembly' in panel.keys() and list is type(panel['SubAssembly']):
                             # loop through the SubAssemblies
                             subassemblyCT = 1
-                            for subassembly in panel['SubAssembly']:
+                            subs = convert_2_list(panel['SubAssembly'])
+                            for subassembly in subs:
                                 # are there boards in the subassembly?
                                 if 'Board' in subassembly.keys():
                                     # loop through all the boards in the subassembly
-                                    for boardsub in subassembly['Board']:
+                                    subboards = convert_2_list(subassembly['Board'])
+                                    for boardsub in subboards:
                                         # when the board isn't the rough opening board add it to the list
                                         if boardsub['FamilyMemberName'] != 'RoughOpening':
                                             xmlParse.append_element(self, boardsub, 'Sub-Assembly Board', subassemblyCT)
@@ -319,7 +314,8 @@ class xmlParse:
                             # check for a rough opening sub-board
                             subassemblyCT = 1
                             # loop through all the boards in the subassembly
-                            for boardsub in panel['SubAssembly']['Board']:
+                            subboards = convert_2_list(panel['SubAssembly']['Board'])
+                            for boardsub in subboards:
                                 # Check if the sub board is the rough opening
                                 if boardsub['FamilyMemberName'] != 'RoughOpening':
 
@@ -349,17 +345,19 @@ class xmlParse:
                             xmlParse.append_element(self, subassembly, 'Sub Assembly', subassemblyCT)
 
                     # if the panel is a string (only 1 panel in the bundle)
-                    elif type(panel) == str:
+                    elif str is type(panel):
                         # add the boards to the list if they exist
                         if 'Board' in bundle['Panel'].keys() and c2 == 0:
                             # loop through all the boards in the panel
-                            for board in bundle['Panel']['Board']:
+                            boards = convert_2_list(bundle['Panel']['Board'])
+                            for board in boards:
                                 # add the data to the list
                                 xmlParse.append_element(self, board, 'Board', None)
                         # add the sheets to the list if they exist
                         if 'Sheet' in bundle['Panel'].keys() and c2 == 0:
                             # loop through the sheets in the panel
-                            for sheet in bundle['Panel']['Sheet']:
+                            sheets = convert_2_list(bundle['Panel']['Sheet'])
+                            for sheet in sheets:
                                 # add the data for the sheets to the list
                                 xmlParse.append_element(self, sheet, 'Sheet', None)
                                 xmlParse.append_fastener(self, sheet)
@@ -368,11 +366,13 @@ class xmlParse:
                                 bundle['Panel']['SubAssembly']) == list and c2 == 0:
                             # loop through all the subassemblies
                             subassemblyCT = 1
-                            for subassembly in bundle['Panel']['SubAssembly']:
+                            subs = convert_2_list(bundle['Panel']['SubAssembly'])
+                            for subassembly in subs:
                                 # are there boards in the subassembly?
                                 if 'Board' in subassembly.keys():
                                     # loop through all the boards in the subassembly
-                                    for boardsub in subassembly['Board']:
+                                    subboards = convert_2_list(subassembly['Board'])
+                                    for boardsub in subboards:
                                         # when the board isn't the rough opening board add it to the list
                                         if boardsub['FamilyMemberName'] != 'RoughOpening':
                                             xmlParse.append_element(self, boardsub, 'Sub-Assembly Board', subassemblyCT)
@@ -400,7 +400,8 @@ class xmlParse:
                             # loop through all the boards in the subassembly
                             # for boardsub in bundle['Panel']['SubAssembly']['Board']:
                             # TODO Determine double board sub looping
-                            for boardsub in panel['SubAssembly']['Board']:
+                            subboards = convert_2_list(panel['SubAssembly']['Board'])
+                            for boardsub in subboards:
                                 # Check if the sub board is the rough opening
                                 if boardsub['FamilyMemberName'] != 'RoughOpening':
                                     xmlParse.append_element(self, boardsub, 'Sub-Assembly Board', subassemblyCT)
