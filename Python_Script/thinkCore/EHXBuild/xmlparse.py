@@ -19,6 +19,14 @@ def convert_2_list(obj):
     else:
         return obj
 
+def check_boards_family_member(text, boards: list):
+    for board in boards:
+        if board['FamilyMemberName'] == text:
+            return True
+
+    return False
+
+
 class xmlParse:
     # app_settings: dict
     def __init__(self, filepath):
@@ -185,9 +193,13 @@ class xmlParse:
                         continue
                     # Get the data for non-string panels
                     # This would remove very top plates from the panel height
+                    boards = convert_2_list(panel['Board'])
+
                     height = float(panel['Height'])
-                    if height == 97.125 or height == 109.125 or height == 113.125:
+                    if check_boards_family_member('VeryTopPlate', boards):
                         height = str(height - 1.5)
+                    else:
+                        height = float(panel['Height'])
                     panelIN.append((panel['BundleGuid'], panel['PanelGuid'], panel['Label'],
                                     height, panel['Thickness'], panel['StudSpacing'],
                                     panel['StudHeight'], panel['WallLength'], panel['Category'],

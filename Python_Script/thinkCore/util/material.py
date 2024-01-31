@@ -38,6 +38,8 @@ class Material:
             self._length = 96
         elif "108" in sheet["size"]:
             self._length = 108
+        else:
+            self._length = 0
 
         # Thickness
         self._thickness = sheet["actual_thickness"]

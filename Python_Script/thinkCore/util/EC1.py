@@ -254,7 +254,7 @@ class JobData:
                     for var in subElemList[:-1]:
                         var[-1] = obj_count
                     # get the nailing data, add it to the op data list and update the counter
-                    tmp = self.nail_sub_element(subElemList[:-1], pgDB)
+                    tmp = self.nail_sub_element(subElemList, pgDB)
                     for var in tmp[:-1]:
                         OpData.append(var)
                     obj_count = tmp[-1]
@@ -365,7 +365,7 @@ class JobData:
                     OpFS[5] = True
                     OpMS[5] = True
             # if element is a sub assembly
-            elif element[2] == 'Sub Assembly':
+            elif element[2] == 'Sub Assembly' or element[2] == 'Sub-Assembly Board':
                 # set operator confirm
                 OpFS[5] = True
                 OpMS[5] = True

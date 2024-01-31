@@ -5,14 +5,14 @@ import EHXBuild.xmlparse as pEHX # Parse Data to System Tables
 import util.General_Help as gHelp
 
 
-imageBuild = False
+imageBuild = True
 stlBuild = False
-xmlparse = True
+xmlparse = False
 
 app_settings = gHelp.get_app_config()
 
 if imageBuild:
-    img = dThumb.GenPreview('RANDEK TEST PANELS', app_settings.get('ImageDropFolder'))
+    img = dThumb.GenPreview('233126RANDEK DZ', app_settings.get('ImageDropFolder'))
     img.previewMain()
 
 	
@@ -24,7 +24,7 @@ if stlBuild:
 if xmlparse:
     #get filepath to XML file from user
     #filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
-    filepath = r"C:\Users\Andrew Murray\source\Copia\22DRX001\Python_Script\thinkCore\EHXBuild\xmlFiles\DREXEL_DREXEL VTP.ehx"
+    filepath = r"C:\Users\Andrew Murray\Desktop\233126RANDEK DZ.EHX"
     fileParse = pEHX.xmlParse(filepath)
     #init the class
     fileParse = pEHX.xmlParse(filepath)

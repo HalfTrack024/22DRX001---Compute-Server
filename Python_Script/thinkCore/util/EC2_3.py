@@ -149,17 +149,15 @@ class RunData:
         missionSmallRoute = [None, None, None, None, None]
         match load_balance.get('oEC2_SmallRouting'):
             case 100:
-                pass
-                # missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
-                # self.build_rbc_progress.ec2_operations.append('Route Layer 1')
+                missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                self.build_rbc_progress.ec2_operations.append('Route Layer 1')
             case 200:
                 missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
             case 123:
-                pass
-                # for i in range(self.panel.get_layer_count()):
-                #    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
-                # self.build_rbc_progress.ec2_operations.append('Route All Layers')
+                for i in range(self.panel.get_layer_count()):
+                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                self.build_rbc_progress.ec2_operations.append('Route All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
                 logging.info('no material is Routed with EC2')
@@ -435,7 +433,8 @@ class RunData:
         # Get parameters to determine min and max window to temp fasten material
         sql_vMin = 0  # machine.ec3.parmData.getParm('ZL Core', 'Y Min Vertical') /25.4
         sql_vMax = working_station.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4
-
+        sql_panelMax = self.panel.panelLength
+        sql_panelMin = 1.5
         sql_select_query = f"""
                             select to_jsonb(se) 
                             from cad2fab.system_elements se 
@@ -446,6 +445,7 @@ class RunData:
                             and e1x < '{sql_wEnd}' 
                             and e4x > '{sql_wStart}' 
                             and b2y = 0 
+                            and ((e1x > '{sql_panelMin}' and e4x < '{sql_panelMax}') or description like '%Plate%')
                             order by b3x  
                             """
         results = pgDB.query(sql_statement=sql_select_query)
@@ -486,7 +486,7 @@ class RunData:
                     fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                 else:
                     fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB)
+                studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                 if fasten.missionID == 110:
                     fasten.Info_11 = self.machine.toolIndex
@@ -506,7 +506,7 @@ class RunData:
                     fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB)
+                studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                 if fasten.missionID == 110:
                     fasten.Info_11 = self.machine.toolIndex
@@ -574,7 +574,8 @@ class RunData:
             sql_wStart = sheet.get('e1x')
             sql_wEnd = sheet.get('e4x')
             sql_vMax = sheet.get('e2y')
-
+            sql_panelMax = self.panel.panelLength
+            sql_panelMin = 1.5
             sql_select_query = f"""
                                 select to_jsonb(se) 
                                 from cad2fab.system_elements se
@@ -584,6 +585,7 @@ class RunData:
                                     and e2y <= '{sql_vMax}' and e2y >= '{sql_vMin}' 
                                     and e1x < '{sql_wEnd}' and e4x > '{sql_wStart}' 
                                     and b2y = 0 
+                                    and ((e1x > '{sql_panelMin}' and e4x < '{sql_panelMax}') or description like '%Plate%')
                                     order by b3x 
                                 """
             results = pgDB.query(sql_statement=sql_select_query)
@@ -617,7 +619,7 @@ class RunData:
                         fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                     else:
                         fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB)
+                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                     if fasten.missionID == 110:
                         fasten.Info_11 = self.machine.toolIndex
@@ -637,7 +639,7 @@ class RunData:
                         fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                     else:
                         fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB)
+                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                     if fasten.missionID == 110:
                         fasten.Info_11 = self.machine.toolIndex
@@ -789,9 +791,9 @@ class RunData:
         for result in results:
             result: dict = result[0]
 
-            route = rDH.missionData_RBC(210)
+            route = rDH.missionData_RBC(160)
             # R1 Cut
-            if result.get('e1x') == 0:
+            if result.get('e1x') == 0 and result.get('actual_width') < 48:
                 # Cut Material off that is in negative panel space
                 route.Info_01 = round((result.get('e1x')) * 25.4, 2)
                 route.Info_02 = 0
@@ -807,7 +809,7 @@ class RunData:
                 # Cut Material off that is in positive panel space
                 route.Info_01 = round((result.get('e4x')) * 25.4, 2)
                 route.Info_02 = 0
-                route.Info_03 = round((result.get('e1x') + 48) * 25.4, 2)
+                route.Info_03 = round((48-result.get('actual_width')) * 25.4, 2)
                 route.Info_04 = round((result.get('e3y')) * 25.4, 2)
                 route.Info_05 = 1
                 if self.panel.get_layer_index(layer) == 0:
@@ -859,7 +861,7 @@ class RunData:
         return cwsPos
 
 
-def get_shot_designed_spacing(element: dict, pos, direction, station: Station, connect: dBC.DB_Connect) -> float:
+def get_shot_designed_spacing(element: dict, pos, direction, station: Station, connect: dBC.DB_Connect, stud_element) -> float:
     # Determine if sheet has defined stud spacing
     stud_space = 304
     sql_var1 = element.get('elementguid')
@@ -903,7 +905,7 @@ def get_shot_designed_spacing(element: dict, pos, direction, station: Station, c
         """
 
     results = connect.query(sql_find)
-    if len(results) > 0:
+    if len(results) > 0 or stud_element.get("description") == 'TopPlate' or stud_element.get("description") == 'BottomPlate':
         stud_space = edge
     elif results is None:
         errr = True
