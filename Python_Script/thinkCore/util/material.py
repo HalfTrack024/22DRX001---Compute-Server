@@ -84,15 +84,13 @@ class Material:
     def get_default_fastener(self, parms):
         # Searches the parameters to determine what fastener should be used with the specified material
         matParms = parms._parmList.get("Material")
-        for matType in matParms:
-            if self.material in matType:
-                if str(self._length) in matType:
-                    if str(self._width) in matType:
-                        if self.getThickFraction() in matType:
-                            self.fastener = matParms.get(matType)["value"]
-                            self.placeNum = self.refFastener[self.fastener][1]
-                            self.fastenNum = self.refFastener[self.fastener][0]
-                            break
+        filtered_matParms = {key: value for key, value in matParms.items() if "Fastener" in key}
+        for matType in filtered_matParms:
+            if self.material in matType.upper():
+                self.fastener = matParms.get(matType)["value"]
+                self.placeNum = self.refFastener[self.fastener][1]
+                self.fastenNum = self.refFastener[self.fastener][0]
+                break
 
     def getWidth(self, units: str):
         """unit options: inch, mm."""

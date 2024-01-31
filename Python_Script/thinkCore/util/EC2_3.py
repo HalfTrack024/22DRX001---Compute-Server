@@ -877,8 +877,18 @@ def get_shot_designed_spacing(element: dict, pos, direction, station: Station, c
         edge = round(float(results[0][0]) * 25.4, 2)
         field = round(float(results[0][1]) * 25.4, 2)
     else:
-        edge = station.default_fasten_edge
-        field = station.default_fasten_field
+        parms = station.parmData
+        matParms = parms._parmList.get('Material')
+        nested_matParms = {}
+        for key, value in matParms.items():
+            key_text = key.rsplit(' ', 2)
+            nested_matParms.setdefault(key_text[0], {})[key_text[1]] = value
+        sheetType = element.get('materialdesc')
+        for matType in nested_matParms:
+            if matType.upper() in sheetType.upper():
+                edge = int(nested_matParms[matType]['Edge']['value'])
+                field = int(nested_matParms[matType]['Field']['value'])
+                break
     sql_var2 = 0.75
     sql_var3 = round(pos / 25.4, 2)
     if direction == 'Vertical':
