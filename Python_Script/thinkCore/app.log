@@ -319,3 +319,70 @@ WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__2
 WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__d6181d3e-4107-4b4b-b156-29151a3335c3
 WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__313715bd-cdd4-4319-8753-7394cb0ecc8d
 WARNING:root:Did not add Route for member26200fc1-01a2-4c2d-9cbd-5e376bae7a05__01c380fb-82e8-4968-9590-6931e569bbe0
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '21c00899-895d-4454-93b0-a5d54d4a759f' 
+                        AND elementguid in ('2af8ac14-461b-4e47-ae4e-c3885cb8d25f',)
+                        AND "type" = 'Sheet' 
+                        AND actual_width between 11.81 and 48
+                        order by b1x;
+                        
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '21c00899-895d-4454-93b0-a5d54d4a759f' 
+                        AND elementguid in ('2af8ac14-461b-4e47-ae4e-c3885cb8d25f',)
+                        AND "type" = 'Sheet' 
+                        AND actual_width between 11.81 and 48
+                        order by b1x;
+                        
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.437, 'b2x': 0.0, 'b2y': 1.562, 'b3x': 48.0, 'b3y': 1.562, 'b4x': 48.0, 'b4y': 0.437, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd7b7f985-7338-4a7a-bba4-01c24db73f0f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '4x8 NEOPOR', 'actual_thickness': 1.125},)]
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.437, 'b2x': 0.0, 'b2y': 1.562, 'b3x': 48.0, 'b3y': 1.562, 'b4x': 48.0, 'b4y': 0.437, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd7b7f985-7338-4a7a-bba4-01c24db73f0f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '4x8 NEOPOR', 'actual_thickness': 1.125},)]
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '21c00899-895d-4454-93b0-a5d54d4a759f' 
+                        AND elementguid in ('2af8ac14-461b-4e47-ae4e-c3885cb8d25f',)
+                        AND "type" = 'Sheet' 
+                        AND actual_width between 11.81 and 48
+                        order by b1x;
+                        
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.437, 'b2x': 0.0, 'b2y': 1.562, 'b3x': 48.0, 'b3y': 1.562, 'b4x': 48.0, 'b4y': 0.437, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd7b7f985-7338-4a7a-bba4-01c24db73f0f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '4x8 NEOPOR', 'actual_thickness': 1.125},)]
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '21c00899-895d-4454-93b0-a5d54d4a759f' 
+                        AND elementguid in ('2af8ac14-461b-4e47-ae4e-c3885cb8d25f',)
+                        AND "type" = 'Sheet' 
+                        AND actual_width between 11.81 and 48
+                        order by b1x;
+                        
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.437, 'b2x': 0.0, 'b2y': 1.562, 'b3x': 48.0, 'b3y': 1.562, 'b4x': 48.0, 'b4y': 0.437, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd7b7f985-7338-4a7a-bba4-01c24db73f0f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '4x8 NEOPOR', 'actual_thickness': 1.125},)]
+INFO:root:Started
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:
+                        SELECT to_jsonb(panel)
+                        from cad2fab.system_elements panel
+                        where panelguid = '21c00899-895d-4454-93b0-a5d54d4a759f' 
+                        AND elementguid in ('2af8ac14-461b-4e47-ae4e-c3885cb8d25f',)
+                        AND "type" = 'Sheet' 
+                        AND actual_width between 11.81 and 48
+                        order by b1x;
+                        
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.0, 'b2x': 0.0, 'b2y': 0.437, 'b3x': 48.0, 'b3y': 0.437, 'b4x': 48.0, 'b4y': 0.0, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': '2af8ac14-461b-4e47-ae4e-c3885cb8d25f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '7/16" OSB', 'actual_thickness': 0.437},)]
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.437, 'b2x': 0.0, 'b2y': 1.562, 'b3x': 48.0, 'b3y': 1.562, 'b4x': 48.0, 'b4y': 0.437, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd7b7f985-7338-4a7a-bba4-01c24db73f0f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '4x8 NEOPOR', 'actual_thickness': 1.125},)]
+WARNING:root:Did not add Route for member21c00899-895d-4454-93b0-a5d54d4a759f__2af8ac14-461b-4e47-ae4e-c3885cb8d25f
+WARNING:root:Did not add Route for member21c00899-895d-4454-93b0-a5d54d4a759f__d7b7f985-7338-4a7a-bba4-01c24db73f0f
+INFO:root:results: [({'b1x': 0.0, 'b1y': 0.437, 'b2x': 0.0, 'b2y': 1.562, 'b3x': 48.0, 'b3y': 1.562, 'b4x': 48.0, 'b4y': 0.437, 'e1x': 0.0, 'e1y': 0.5, 'e2x': 0.0, 'e2y': 96.5, 'e3x': 48.0, 'e3y': 96.5, 'e4x': 48.0, 'e4y': 0.5, 'size': '48X96', 'type': 'Sheet', 'species': None, 'panelguid': '21c00899-895d-4454-93b0-a5d54d4a759f', 'assembly_id': None, 'description': 'Sheathing', 'elementguid': 'd7b7f985-7338-4a7a-bba4-01c24db73f0f', 'actual_width': 48.0, 'familymember': 40, 'materialdesc': '4x8 NEOPOR', 'actual_thickness': 1.125},)]

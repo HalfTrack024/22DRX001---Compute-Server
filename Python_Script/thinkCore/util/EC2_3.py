@@ -152,11 +152,11 @@ class RunData:
                 missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec2_operations.append('Route Layer 1')
             case 200:
-                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(1), station)
                 self.build_rbc_progress.ec2_operations.append('Route Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(i), station)
                 self.build_rbc_progress.ec2_operations.append('Route All Layers')
             case default:
                 self.build_rbc_progress.ec2_operations.append('No Routing on EC2')
@@ -261,11 +261,11 @@ class RunData:
                 missionSmallRoute[0] = self.get_end_cut(self.panel.get_layer_position(0), station)
                 self.build_rbc_progress.ec3_operations.append('Route Layer 1')
             case 200:
-                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                missionSmallRoute[1] = self.get_end_cut(self.panel.get_layer_position(1), station)
                 self.build_rbc_progress.ec3_operations.append('Route Layer 1/2')
             case 123:
                 for i in range(self.panel.get_layer_count()):
-                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(0), station)
+                    missionSmallRoute[i] = self.get_end_cut(self.panel.get_layer_position(i), station)
                 self.build_rbc_progress.ec3_operations.append('Route All Layers')
             case default:
                 self.build_rbc_progress.ec3_operations.append('No Routing on EC3')
@@ -787,40 +787,41 @@ class RunData:
         results = pgDB.query(sql_statement=sql_select_query)
         pgDB.close()
         route_list: list[rDH.missionData_RBC] = []
+        if results is not None:
+            if len(results) > 0:
+                for result in results:
+                    result: dict = result[0]
 
-        for result in results:
-            result: dict = result[0]
+                    route = rDH.missionData_RBC(160)
+                    # R1 Cut
+                    if result.get('e1x') == 0 and result.get('actual_width') < 48:
+                        # Cut Material off that is in negative panel space
+                        route.Info_01 = round((result.get('e1x')) * 25.4, 2)
+                        route.Info_02 = 0
+                        route.Info_03 = round((result.get('actual_width') - 48) * 25.4, 2)
+                        route.Info_04 = round((result.get('e3y')) * 25.4, 2)
+                        route.Info_05 = 1
+                        if self.panel.get_layer_index(layer) == 0:
+                            route.Info_07 = round(layer * 25.4, 1)
+                        else:
+                            route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
 
-            route = rDH.missionData_RBC(160)
-            # R1 Cut
-            if result.get('e1x') == 0 and result.get('actual_width') < 48:
-                # Cut Material off that is in negative panel space
-                route.Info_01 = round((result.get('e1x')) * 25.4, 2)
-                route.Info_02 = 0
-                route.Info_03 = round((result.get('actual_width') - 48) * 25.4, 2)
-                route.Info_04 = round((result.get('e3y')) * 25.4, 2)
-                route.Info_05 = 1
-                if self.panel.get_layer_index(layer) == 0:
-                    route.Info_07 = round(layer * 25.4, 1)
-                else:
-                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
-
-            elif result.get('e4x') == self.panel.panelLength:
-                # Cut Material off that is in positive panel space
-                route.Info_01 = round((result.get('e4x')) * 25.4, 2)
-                route.Info_02 = 0
-                route.Info_03 = round((48-result.get('actual_width')) * 25.4, 2)
-                route.Info_04 = round((result.get('e3y')) * 25.4, 2)
-                route.Info_05 = 1
-                if self.panel.get_layer_index(layer) == 0:
-                    route.Info_07 = round(layer * 25.4, 1)
-                else:
-                    route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
-            else:
-                logging.warning(
-                    'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
-            if hasattr(route, 'Info_01'):
-                route_list.append(route)
+                    elif result.get('e4x') == self.panel.panelLength and result.get('actual_width') < 48:
+                        # Cut Material off that is in positive panel space
+                        route.Info_01 = round((result.get('e4x')) * 25.4, 2)
+                        route.Info_02 = 0
+                        route.Info_03 = round((48-result.get('actual_width')) * 25.4, 2)
+                        route.Info_04 = round((result.get('e3y')) * 25.4, 2)
+                        route.Info_05 = 1
+                        if self.panel.get_layer_index(layer) == 0:
+                            route.Info_07 = round(layer * 25.4, 1)
+                        else:
+                            route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
+                    else:
+                        logging.warning(
+                            'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
+                    if hasattr(route, 'Info_01'):
+                        route_list.append(route)
 
         return route_list
 

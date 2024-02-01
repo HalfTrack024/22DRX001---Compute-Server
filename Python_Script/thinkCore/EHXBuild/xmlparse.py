@@ -170,9 +170,9 @@ class xmlParse:
                     # The panel is a string if it is the only panel in a bundle
                     if str is type(panel):
                         # This would remove very top plates from the panel height
-                        height = float(bundle['Panel']['Height'])
-                        if height == 97.125 or height == 109.125 or height == 113.125:
-                            height = str(height - 1.5)
+                        height = float(bundle['Panel']['StudHeight']) + 3
+                        # if height == 97.125 or height == 109.125 or height == 113.125:
+                        #     height = str(height - 1.5)
                         # All params of the panel are a different string, only add one data to the query
                         if c == 0:
                             panelIN.append((bundle['Panel']['BundleGuid'], bundle['Panel']['PanelGuid'],
@@ -195,11 +195,11 @@ class xmlParse:
                     # This would remove very top plates from the panel height
                     boards = convert_2_list(panel['Board'])
 
-                    height = float(panel['Height'])
-                    if check_boards_family_member('VeryTopPlate', boards):
-                        height = str(height - 1.5)
-                    else:
-                        height = float(panel['Height'])
+                    height = float(panel['StudHeight']) + 3
+                    # if check_boards_family_member('VeryTopPlate', boards):
+                    #     height = str(height - 1.5)
+                    # else:
+                    #     height = float(panel['Height'])
                     panelIN.append((panel['BundleGuid'], panel['PanelGuid'], panel['Label'],
                                     height, panel['Thickness'], panel['StudSpacing'],
                                     panel['StudHeight'], panel['WallLength'], panel['Category'],
