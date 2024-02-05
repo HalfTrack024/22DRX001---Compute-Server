@@ -22,7 +22,7 @@ if stlBuild:
 if xmlparse:
     #get filepath to XML file from user
     #filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
-    filepath = r"C:\Users\Andrew Murray\Downloads\TEST WALLS - RANDEK - 1.31.EHX"
+    filepath = r"C:\Users\Andrew Murray\Downloads\RANDEK.EHX"
     fileParse = pEHX.xmlParse(filepath)
     #init the class
     fileParse = pEHX.xmlParse(filepath)
@@ -30,5 +30,5 @@ if xmlparse:
     fileParse.xml_main()
 
 if imageBuild:
-    img = dThumb.GenPreview('TEST WALLS - RANDEK - 1.24.24', app_settings.get('ImageDropFolder'))
+    img = dThumb.GenPreview('RANDEK', app_settings.get('ImageDropFolder'))
     img.previewMain()

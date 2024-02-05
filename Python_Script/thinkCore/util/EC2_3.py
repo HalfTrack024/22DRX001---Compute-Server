@@ -381,9 +381,10 @@ class RunData:
             pick.Info_11 = material.getMaterialCode()
             pick.Info_12 = material.getMaterial()
             layer_index = self.panel.get_layer_index(layer)
-            if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[working_station.station_id-2]:
-                self.build_rbc_progress.materials_required[working_station.station_id-2].append(pick.Info_12)
-            self.build_rbc_progress.material_count[working_station.station_id-2] += 1
+            if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[
+                working_station.station_id - 2]:
+                self.build_rbc_progress.materials_required[working_station.station_id - 2].append(pick.Info_12)
+            self.build_rbc_progress.material_count[working_station.station_id - 2] += 1
             # Board Place
             place = rDH.missionData_RBC(material.getPlaceType())  # self.fastenTypes
             # place = rdh.missionData_RBC(material.placeNum) #self.fastenTypes
@@ -420,7 +421,8 @@ class RunData:
 
         return layerData
 
-    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, sheet, working_station: Station) -> list[rDH.missionData_RBC]:
+    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, sheet, working_station: Station) -> list[
+        rDH.missionData_RBC]:
         studSpace = 406
         shiftspace = round(28 / 25.4, 2)
         # Open Database Connection
@@ -488,12 +490,16 @@ class RunData:
                     fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
                 studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
-                if fasten.missionID == 110:
-                    fasten.Info_11 = self.machine.toolIndex
-                    if self.machine.toolIndex >= 8:
-                        self.machine.toolIndex = 1
-                    else:
-                        self.machine.toolIndex = self.machine.toolIndex << 1
+                if fasten.missionID == 110:  # Screw Tool Selection
+                    fasten.Info_11 = get_screw_index(studSpace)
+                    if studSpace == 110 or studSpace == 220:
+                        fasten.Info_10 = studSpace * 2
+                # if fasten.missionID == 110:
+                #     fasten.Info_11 = self.machine.toolIndex
+                #     if self.machine.toolIndex >= 8:
+                #         self.machine.toolIndex = 1
+                #     else:
+                #         self.machine.toolIndex = self.machine.toolIndex << 1
             # Horizontal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -508,12 +514,15 @@ class RunData:
                     fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
                 studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
-                if fasten.missionID == 110:
-                    fasten.Info_11 = self.machine.toolIndex
-                    if self.machine.toolIndex >= 8:
-                        self.machine.toolIndex = 1
-                    else:
-                        self.machine.toolIndex = self.machine.toolIndex << 1
+                if fasten.missionID == 110:  # Screw Tool Selection
+                    fasten.Info_11 = get_screw_index(studSpace)
+                    if studSpace == 110 or studSpace == 220:
+                        fasten.Info_10 = studSpace * 2
+                    # fasten.Info_11 = self.machine.toolIndex
+                    # if self.machine.toolIndex >= 8:
+                    #     self.machine.toolIndex = 1
+                    # else:
+                    #     self.machine.toolIndex = self.machine.toolIndex << 1
 
                 fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
 
@@ -527,8 +536,9 @@ class RunData:
             fastenlst.append(fasten)
         pgDB.close()
         layer_index = self.panel.get_layer_index(active_layer)
-        if len(self.build_rbc_progress.fasteners_required) == 0 or i_material.fastener not in self.build_rbc_progress.fasteners_required[working_station.station_id-2]:
-            self.build_rbc_progress.fasteners_required[working_station.station_id-2].append(i_material.fastener)
+        if len(self.build_rbc_progress.fasteners_required) == 0 or i_material.fastener not in self.build_rbc_progress.fasteners_required[
+            working_station.station_id - 2]:
+            self.build_rbc_progress.fasteners_required[working_station.station_id - 2].append(i_material.fastener)
         return fastenlst
 
     def get_fastener(self, layer, working_station: Station) -> list[rDH.missionData_RBC]:
@@ -621,12 +631,16 @@ class RunData:
                         fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
                     studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
-                    if fasten.missionID == 110:
-                        fasten.Info_11 = self.machine.toolIndex
-                        if self.machine.toolIndex >= 8:
-                            self.machine.toolIndex = 1
-                        else:
-                            self.machine.toolIndex = self.machine.toolIndex << 1
+                    if fasten.missionID == 110:  # Screw Tool Selection
+                        fasten.Info_11 = get_screw_index(studSpace)
+                        if studSpace == 110 or studSpace == 220:
+                            fasten.Info_10 = studSpace * 2
+                    # if fasten.missionID == 110:
+                    #     fasten.Info_11 = self.machine.toolIndex
+                    #     if self.machine.toolIndex >= 8:
+                    #         self.machine.toolIndex = 1
+                    #     else:
+                    #         self.machine.toolIndex = self.machine.toolIndex << 1
                 # Horizontal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -641,12 +655,16 @@ class RunData:
                         fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
                     studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
-                    if fasten.missionID == 110:
-                        fasten.Info_11 = self.machine.toolIndex
-                        if self.machine.toolIndex >= 8:
-                            self.machine.toolIndex = 1
-                        else:
-                            self.machine.toolIndex = self.machine.toolIndex << 1
+                    if fasten.missionID == 110:  # Screw Tool Selection
+                        fasten.Info_11 = get_screw_index(studSpace)
+                        if studSpace == 110 or studSpace == 220:
+                            fasten.Info_10 = studSpace * 2
+                    # if fasten.missionID == 110:
+                    #     fasten.Info_11 = self.machine.toolIndex
+                    #     if self.machine.toolIndex >= 8:
+                    #         self.machine.toolIndex = 1
+                    #     else:
+                    #         self.machine.toolIndex = self.machine.toolIndex << 1
                     fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
                 else:
                     logging.warning(
@@ -774,11 +792,13 @@ class RunData:
         sql_var1 = self.panel.guid
         sql_var2 = tuple(self.track_sheets)
         sql_var3 = round(working_station.off_cut / 25.4, 2)
+        sql_var4 = layer
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
                         where panelguid = '{sql_var1}' 
                         AND elementguid in {sql_var2}
+                        AND b2y = {sql_var4}
                         AND "type" = 'Sheet' 
                         AND actual_width between {sql_var3} and 48
                         order by b1x;
@@ -806,11 +826,11 @@ class RunData:
                         else:
                             route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
 
-                    elif result.get('e4x') == self.panel.panelLength and result.get('actual_width') < 48:
+                    elif round(result.get('e4x'), 1) == round(self.panel.panelLength, 1) and result.get('actual_width') < 48:
                         # Cut Material off that is in positive panel space
                         route.Info_01 = round((result.get('e4x')) * 25.4, 2)
                         route.Info_02 = 0
-                        route.Info_03 = round((48-result.get('actual_width')) * 25.4, 2)
+                        route.Info_03 = round((48 - result.get('actual_width')) * 25.4, 2)
                         route.Info_04 = round((result.get('e3y')) * 25.4, 2)
                         route.Info_05 = 1
                         if self.panel.get_layer_index(layer) == 0:
@@ -926,6 +946,40 @@ def get_shot_designed_spacing(element: dict, pos, direction, station: Station, c
     return stud_space
 
 
+index_edge = 0
+index_field = 0
+index_single = 1
+
+
+def get_screw_index(spacing) -> int:
+    global index_edge
+    global index_field
+    global index_single
+    index_select = 1
+    choice = {
+        '110': [3, 12, 6],
+        '220': [5, 10]}
+    if spacing == 110:
+        index_select = choice['110'][index_edge]
+        index_edge += 1
+        if index_edge == 2:
+            index_edge = 0
+    elif spacing == 220:
+        index_select = choice['220'][index_field]
+        index_field += 1
+        if index_field == 2:
+            index_field = 0
+    else:
+        if index_single >= 8:
+            index_single = 1
+            index_select = index_single
+        else:
+            index_single = index_single << 1
+            index_select = index_single
+
+    return index_select
+
+
 def get_shot_spacing(start, end, design_spacing):
     motion_length = end - start
     fastenCount = round(motion_length / design_spacing)
@@ -935,6 +989,7 @@ def get_shot_spacing(start, end, design_spacing):
     if result_spacing < 75:
         result_spacing = design_spacing
     return result_spacing
+
 
 def check_fasten_mission(fasten: rDH.missionData_RBC) -> rDH.missionData_RBC:
     # Check if mission values are ordered correctly and make sense

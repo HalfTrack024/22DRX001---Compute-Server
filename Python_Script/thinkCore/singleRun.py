@@ -19,7 +19,7 @@ panelIDs = ["b1d788b3-5d67-4d35-8ebb-8e198820ee7d",
 "1639c3a4-febf-4f99-80f8-b1fd8c6b9e9a",
 "458e5496-c82b-4564-bc56-354be671548c"]
 
-panelID = "21c00899-895d-4454-93b0-a5d54d4a759f"
+panelID = "c451ba23-70c9-4f55-9f6c-6abe74c76f53"
 machine = Line(app_settings)
 
 #for panelID in panelIDs:
