@@ -18,8 +18,9 @@ class Clear:
 
         self.pgDB = connect
 
-    def studStopFS(self, elementguid):
+    def studStopFS(self, element):
         # self.pgDB.open()
+        elementguid = element[1]
         # query the e1x, panelid and type from the current element
         sql_select_query = f"""
                         SELECT e1x, panelguid, type
@@ -47,9 +48,17 @@ class Clear:
                         or ({MinX} <= (e4x) and (e4x) <= {MaxX} and (e4y) <= {MaxY}));
                         """
         results2 = self.pgDB.query(sql_select_query)
+
+        sql_select_query = f"""
+                            SELECT to_jsonb(elements)
+                            from cad2fab.system_elements elements
+                            where panelguid = '{element[0]}' 
+                            AND elementguid = '{elementguid}';
+                            """
+        results3 = self.pgDB.query(sql_select_query)[0][0]
         # self.pgDB.close()
         # if there aren't any results the SS is clear
-        if results2 == []:
+        if results2 == [] and round(element[16]/25.4, 1) > float(MaxY):
             SSF_Clear = True
         else:
             SSF_Clear = False

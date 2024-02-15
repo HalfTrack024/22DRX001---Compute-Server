@@ -324,6 +324,7 @@ class RunData:
         sql_var2 = layer
         sql_var3 = round(working_station.partial_board / 25.4, 0)
 
+        # Adjusted the e1x position from having to be greater e1x >= 0 changed to using parameter of partial board
         sql_select_query = f"""
                         SELECT to_jsonb(panel)
                         from cad2fab.system_elements panel
@@ -331,7 +332,7 @@ class RunData:
                         and "type" = 'Sheet' 
                         and b2y = '{sql_var2}'
                         and "actual_width" > {sql_var3} 
-                        and e1x >= 0
+                        and e1x >= {sql_var3 - 48}
                         order by b1x 
                         """
         # sql_select_query=f"""
@@ -354,7 +355,7 @@ class RunData:
 
             # Board Pick
             pick = rDH.missionData_RBC(400)
-            if sheet.get('e1x') == 0 and sheet.get('actual_width') < 48:
+            if (sheet.get('e1x') == 0 or sheet.get('e1x') < 0) and sheet.get('actual_width') < 48:
                 pick.Info_01 = round((sheet.get('e4x') - 48) * 25.4, 2)
             else:
                 pick.Info_01 = round(sheet.get('e1x') * 25.4, 2)  # e1x
@@ -391,13 +392,18 @@ class RunData:
 
             if sheet.get('e1x') == 0 and sheet.get('actual_width') < 48:
                 place.Info_01 = round((sheet.get('e4x') - 48) * 25.4, 2)  # Condition if
+            elif sheet.get('e1x') < 0 and sheet.get('actual_width') < 48:
+                place.Info_01 = round((sheet.get('e4x') - 48) * 25.4, 2)  # Condition if
             else:
                 place.Info_01 = round(sheet.get('e1x') * 25.4, 2)  # e1x
             place.Info_02 = round(sheet.get('e1y') * 25.4, 2)  # e1y
             place.Info_03 = 0
             place.Info_04 = 0
             place.Info_05 = 29
-            place.Info_06 = round((sheet.get('e1x') + 0.75) * 25.4, 2)
+            if (sheet.get('e1x') == 0 or sheet.get('e1x') < 0) and sheet.get('actual_width') < 48:
+                place.Info_06 = round(0.75 * 25.4, 2)
+            else:
+                place.Info_06 = round((sheet.get('e1x') + 0.75) * 25.4, 2)
             if place.missionID == 401:
                 place.Info_11 = 1
             else:
@@ -457,8 +463,13 @@ class RunData:
         shiftEND = [shiftspace, shiftspace + 0.5, shiftspace + 0.5]
         offsetStart = shiftSTART[self.panel.get_layer_index(active_layer)]
         offsetEnd = shiftEND[self.panel.get_layer_index(active_layer)]
+        # Remove any boards that are not atleast 3/4 inch under sheet
+        result2 = check_edge_case(sheet, results)
 
-        # Process Results
+        if len(results) != len(result2):
+            print('Adjusted')
+        results = result2
+        # Process Boards Results
         fastenlst: list[rDH.missionData_RBC] = []
         for result in results:
             result: dict = result[0]
@@ -565,6 +576,7 @@ class RunData:
                             and e1y < '{sql_vMin}' 
                             and e2y < '{sql_vMax}' 
                             and e1x <= '{sql_wEnd}' 
+                            and e1x >= {sql_var3 - 48}
                             and e4x > '{sql_wStart}' 
                             and "actual_width" > '{sql_var3}'
                             and e1x >= 0
@@ -599,6 +611,14 @@ class RunData:
                                     order by b3x 
                                 """
             results = pgDB.query(sql_statement=sql_select_query)
+
+            # Remove any boards that are not atleast 3/4 inch under sheet
+            result2 = check_edge_case(sheet, results)
+
+            if len(results) != len(result2):
+                print('Adjusted')
+            results = result2
+
             # Process Results
             for result in results:
                 result: dict = result[0]
@@ -674,6 +694,7 @@ class RunData:
 
         pgDB.close()
         return fastenlst
+
 
     def cross_ref_cut_out(self, panelID, mission: rDH.missionData_RBC, dbConnection: dBC.DB_Connect):
         sql_var1 = panelID
@@ -814,7 +835,7 @@ class RunData:
 
                     route = rDH.missionData_RBC(160)
                     # R1 Cut
-                    if result.get('e1x') == 0 and result.get('actual_width') < 48:
+                    if (result.get('e1x') == 0 or result.get('e1x') < 0) and result.get('actual_width') < 48:
                         # Cut Material off that is in negative panel space
                         route.Info_01 = round((result.get('e1x')) * 25.4, 2)
                         route.Info_02 = 0
@@ -826,7 +847,7 @@ class RunData:
                         else:
                             route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
 
-                    elif round(result.get('e4x'), 1) == round(self.panel.panelLength, 1) and result.get('actual_width') < 48:
+                    elif round(result.get('e4x'), 1) >= round(self.panel.panelLength, 1) and result.get('actual_width') < 48:
                         # Cut Material off that is in positive panel space
                         route.Info_01 = round((result.get('e4x')) * 25.4, 2)
                         route.Info_02 = 0
@@ -880,6 +901,22 @@ class RunData:
                 cwsPos = round((leadEdge + (trailEdge - leadEdge) / 2) * 25.4, 2)
 
         return cwsPos
+
+
+def check_edge_case(sheet, board_list) -> list:
+    for result in board_list[:]:
+        dict_result: dict = result[0]
+        sheet_start = round(sheet.get('e1x'), 2)
+        sheet_end = round((sheet.get('e1x') + sheet.get('e4x')), 2)
+        board_start = dict_result.get('e1x')
+        board_end = dict_result.get('e4x')
+        if (board_start + 0.74) < sheet_start and abs(board_end - sheet_start) < 0.75:
+            board_list.remove(result)
+            print('sheet lead removed' + str(dict_result.get('e1x')))
+        if (board_start + 0.74) > sheet_end and abs(board_start - sheet_end) < 0.75:
+            board_list.remove(result)
+            print('sheet end removed' + str(dict_result.get('e1x')))
+    return board_list
 
 
 def get_shot_designed_spacing(element: dict, pos, direction, station: Station, connect: dBC.DB_Connect, stud_element) -> float:

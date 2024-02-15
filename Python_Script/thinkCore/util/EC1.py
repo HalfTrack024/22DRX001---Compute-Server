@@ -342,14 +342,14 @@ class JobData:
 
             # check if the stud stops are clear for standard elements
             if sub_element is None:
-                if clear.studStopFS(element[1]):
+                if clear.studStopFS(element):
                     OpFS[0] = True
 
                 if clear.studStopMS(element[1]):
                     OpMS[0] = True
             # check if the stud stops are clear for sub assemblies
             else:
-                if clear.studStopFS(sub_element[1]):
+                if clear.studStopFS(sub_element):
                     OpFS[0] = True
 
                 if clear.studStopMS(sub_element[1]):
@@ -421,14 +421,14 @@ class JobData:
                 OpJob = [element[5]]
                 # X_pos
                 # check if the stud stops are clear
-                if clear.studStopFS(element[1]):
+                if clear.studStopFS(element):
                     OpFS[0] = True
 
                 if clear.studStopMS(element[1]):
                     OpMS[0] = True
 
                 # if element is a stud enable hammer, autostud, and nailing
-                if element[2] == 'Board' and element[3] == 'Stud':
+                if element[2] == 'Board' and (element[3] == 'Stud' or element[3] == 'CriticalStud'):
                     OpFS[1] = True
                     OpFS[4] = True
                     OpFS[6] = True
@@ -445,7 +445,7 @@ class JobData:
                     if ct == 0:
                         OpJob = [element[5]]
                         # check if the stud stops are clear
-                        if clear.studStopFS(element[1]):
+                        if clear.studStopFS(element):
                             OpFS[0] = True
 
                         if clear.studStopMS(element[1]):
@@ -490,14 +490,14 @@ class JobData:
                 OpJob = [element[5]]
                 # Xpos
                 # check if the stud stops are clear
-                if clear.studStopFS(element[1]):
+                if clear.studStopFS(element):
                     OpFS[0] = True
 
                 if clear.studStopMS(element[1]):
                     OpMS[0] = True
 
                 # if element is a stud enable hammer, autostud and nailing
-                if element[2] == 'Board' and element[3] == 'Stud':
+                if element[2] == 'Board' and (element[3] == 'Stud' or element[3] == 'CriticalStud'):
                     OpFS[1] = True
                     OpFS[4] = True
                     OpFS[6] = True
@@ -514,7 +514,7 @@ class JobData:
                     if ct == 0:
                         OpJob = [element[5]]
                         # check if the stud stops are clear
-                        if clear.studStopFS(element[1]):
+                        if clear.studStopFS(element):
                             OpFS[0] = True
 
                         if clear.studStopMS(element[1]):
@@ -580,9 +580,8 @@ class JobData:
                 # Check if StudStop and Hammer are being used for TopPlate side
                 if clear.studStopMS(elem[1]):
                     OpMS[0] = True
-
-                if clear.hammerMS(elem[1]):
-                    OpMS[1] = True
+                    if clear.hammerMS(elem[1]):
+                        OpMS[1] = True
 
                 # Set Nailing TopPlate Side in Opcode
                 OpMS[6] = True
@@ -674,11 +673,10 @@ class JobData:
             # Sub Assembly Element is only Touching Bottom Plate
             if elem[14] == BottomPlate and elem[16] != TopPlate:
                 # Check if StudStop and Hammer are being used for Bottom Plate side
-                if clear.studStopFS(elem[1]):
+                if clear.studStopFS(elem):
                     OpFS[0] = True
-
-                if clear.hammerFS(elem[1]):
-                    OpFS[1] = True
+                    if clear.hammerFS(elem[1]):
+                        OpFS[1] = True
 
                 # Set Nailing Bottom Plate Side in Opcode
                 OpFS[6] = True
@@ -776,7 +774,7 @@ class JobData:
                 if elem[5] == 5772.1:
                     pass
                 # Check if StudStop and Hammer are being used for Bottom Plate side
-                if clear.studStopFS(elem[1]):
+                if clear.studStopFS(elem):
                     OpFS[0] = True
 
                 if clear.hammerFS(elem[1]):
@@ -831,10 +829,14 @@ class JobData:
 
                 # Is the element in the sub assembly Flat stud orientation
                 if (elem[17] - elem[13]) > 50.8:
+                    top = (self.panelThickness * 25.4) + elem[8]
+                    bottom = (self.panelThickness * 25.4) + elem[6]
                     if elem[4] == "2X4":
                         NailCounter = 0
                         XposOffset2X4 = [0, 70]
-                        Zpos = round((elem[8] - elem[6]) / 2, 0)
+                        #Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
+                        #new method
+                        Zpos = round((bottom + top)/2, 0)
                         while NailCounter < 2:
                             if NailCounter > 0:
                                 OpFS[0] = False
@@ -853,7 +855,9 @@ class JobData:
                     if elem[4] == "2X6":
                         NailCounter = 0
                         XposOffset2X6 = [15, 70, 125]
-                        Zpos = round((elem[8] - elem[6]) / 2, 0)
+                        #Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
+                        #new method
+                        Zpos = round((bottom + top)/2, 0)
                         while NailCounter < 2:
                             OpJob = [elem[5] + XposOffset2X6[NailCounter]]
                             # Xpos
