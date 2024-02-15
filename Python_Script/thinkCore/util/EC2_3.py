@@ -792,6 +792,8 @@ class RunData:
                 route = rDH.missionData_RBC(200)
                 route.Info_01 = p1['x']
                 route.Info_02 = p1['y']
+                if route.Info_02 <= 38:
+                    route.Info_02 = 38
                 route.Info_03 = round(p2['x'] - p1['x'], 2)
                 route.Info_04 = round(p2['y'] - p1['y'], 2)
                 route.Info_05 = 1
