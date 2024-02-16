@@ -502,7 +502,7 @@ class RunData:
                 studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                 if fasten.missionID == 110:  # Screw Tool Selection
-                    fasten.Info_11 = get_screw_index(studSpace)
+                    fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                     if studSpace == 110 or studSpace == 220:
                         fasten.Info_10 = studSpace * 2
             # Horizontal
@@ -520,7 +520,7 @@ class RunData:
                 studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                 if fasten.missionID == 110:  # Screw Tool Selection
-                    fasten.Info_11 = get_screw_index(studSpace)
+                    fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                     if studSpace == 110 or studSpace == 220:
                         fasten.Info_10 = studSpace * 2
 
@@ -643,7 +643,7 @@ class RunData:
                     studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                     if fasten.missionID == 110:  # Screw Tool Selection
-                        fasten.Info_11 = get_screw_index(studSpace)
+                        fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                         if studSpace == 110 or studSpace == 220:
                             fasten.Info_10 = studSpace * 2
                 # Horizontal
@@ -661,7 +661,7 @@ class RunData:
                     studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                     if fasten.missionID == 110:  # Screw Tool Selection
-                        fasten.Info_11 = get_screw_index(studSpace)
+                        fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                         if studSpace == 110 or studSpace == 220:
                             fasten.Info_10 = studSpace * 2
 
@@ -692,7 +692,7 @@ class RunData:
         studSpace = get_shot_designed_spacing(last_sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, results[0][0])
         fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
         if fasten.missionID == 110:  # Screw Tool Selection
-            fasten.Info_11 = get_screw_index(studSpace)
+            fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
             if studSpace == 110 or studSpace == 220:
                 fasten.Info_10 = studSpace * 2
         fastenlst.append(fasten)
@@ -742,7 +742,7 @@ class RunData:
             studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
             fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
             if fasten.missionID == 110:  # Screw Tool Selection
-                fasten.Info_11 = get_screw_index(studSpace)
+                fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                 if studSpace == 110 or studSpace == 220:
                     fasten.Info_10 = studSpace * 2
 
@@ -761,7 +761,7 @@ class RunData:
             studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
             fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
             if fasten.missionID == 110:  # Screw Tool Selection
-                fasten.Info_11 = get_screw_index(studSpace)
+                fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                 if studSpace == 110 or studSpace == 220:
                     fasten.Info_10 = studSpace * 2
 
@@ -1066,7 +1066,7 @@ index_field = 0
 index_single = 1
 
 
-def get_screw_index(spacing) -> int:
+def get_screw_index(spacing):
     global index_edge
     global index_field
     global index_single
@@ -1092,7 +1092,7 @@ def get_screw_index(spacing) -> int:
             index_single = index_single << 1
             index_select = index_single
 
-    return index_select
+    return index_select, spacing
 
 
 def get_shot_spacing(start, end, design_spacing):
