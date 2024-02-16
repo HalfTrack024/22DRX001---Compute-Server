@@ -505,12 +505,6 @@ class RunData:
                     fasten.Info_11 = get_screw_index(studSpace)
                     if studSpace == 110 or studSpace == 220:
                         fasten.Info_10 = studSpace * 2
-                # if fasten.missionID == 110:
-                #     fasten.Info_11 = self.machine.toolIndex
-                #     if self.machine.toolIndex >= 8:
-                #         self.machine.toolIndex = 1
-                #     else:
-                #         self.machine.toolIndex = self.machine.toolIndex << 1
             # Horizontal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -529,20 +523,16 @@ class RunData:
                     fasten.Info_11 = get_screw_index(studSpace)
                     if studSpace == 110 or studSpace == 220:
                         fasten.Info_10 = studSpace * 2
-                    # fasten.Info_11 = self.machine.toolIndex
-                    # if self.machine.toolIndex >= 8:
-                    #     self.machine.toolIndex = 1
-                    # else:
-                    #     self.machine.toolIndex = self.machine.toolIndex << 1
 
                 fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
 
             else:
                 logging.warning('Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
 
-            fasten.Info_09 = self.get_cws(result, pgDB, self.storeCWSFound)
-            if fasten.Info_09 > 0:
-                self.storeCWSFound = fasten.Info_09
+            if self.panel.get_layer_index(active_layer) == 0:
+                fasten.Info_09 = self.get_cws(result, pgDB, self.storeCWSFound)
+                if fasten.Info_09 > 0:
+                    self.storeCWSFound = fasten.Info_09
 
             fastenlst.append(fasten)
         pgDB.close()
@@ -590,9 +580,10 @@ class RunData:
         offsetEnd = shiftEND[self.panel.get_layer_index(layer)]
         resultSheath = pgDB.query(sql_statement=sql_select_query)  # Look at Sheaths for Edge Conditions
         fastenlst: list[rDH.missionData_RBC] = []
+        last_sheet = ''
         for sheet in resultSheath:
             sheet: dict = sheet[0]
-
+            last_sheet = sheet
             sql_wStart = sheet.get('e1x')
             sql_wEnd = sheet.get('e4x')
             sql_vMax = sheet.get('e2y')
@@ -603,7 +594,7 @@ class RunData:
                                 from cad2fab.system_elements se
                                 where 
                                     panelguid = '{sql_var1}' 
-                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout','FillerBtmNailer','HeaderSill','Header') 
+                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout','FillerBtmNailer','HeaderSill','Header', 'TopPlate') 
                                     and e2y <= '{sql_vMax}' and e2y >= '{sql_vMin}' 
                                     and e1x < '{sql_wEnd}' and e4x > '{sql_wStart}' 
                                     and b2y = 0 
@@ -655,12 +646,6 @@ class RunData:
                         fasten.Info_11 = get_screw_index(studSpace)
                         if studSpace == 110 or studSpace == 220:
                             fasten.Info_10 = studSpace * 2
-                    # if fasten.missionID == 110:
-                    #     fasten.Info_11 = self.machine.toolIndex
-                    #     if self.machine.toolIndex >= 8:
-                    #         self.machine.toolIndex = 1
-                    #     else:
-                    #         self.machine.toolIndex = self.machine.toolIndex << 1
                 # Horizontal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -679,12 +664,7 @@ class RunData:
                         fasten.Info_11 = get_screw_index(studSpace)
                         if studSpace == 110 or studSpace == 220:
                             fasten.Info_10 = studSpace * 2
-                    # if fasten.missionID == 110:
-                    #     fasten.Info_11 = self.machine.toolIndex
-                    #     if self.machine.toolIndex >= 8:
-                    #         self.machine.toolIndex = 1
-                    #     else:
-                    #         self.machine.toolIndex = self.machine.toolIndex << 1
+
                     fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
                 else:
                     logging.warning(
@@ -692,9 +672,105 @@ class RunData:
                 #  Apply
                 fastenlst.append(fasten)
 
+        sql_select_query = f"""
+                            select to_jsonb(se) 
+                            from cad2fab.system_elements se
+                            where 
+                                panelguid = '{sql_var1}' 
+                                and description = 'TopPlate'
+                                order by b1x
+                            """
+
+        results = pgDB.query(sql_statement=sql_select_query)
+        fasten = rDH.missionData_RBC(self.panel.get_layer_fastener(self.panel.get_layer_index(layer)))
+        fasten.Info_02 = round((results[0][0].get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
+        fasten.Info_04 = round((results[0][0].get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
+
+        fasten.Info_01 = round((results[0][0].get('e1x') + offsetStart) * 25.4, 2)
+        fasten.Info_03 = round((results[0][-1].get('e4x') - offsetEnd) * 25.4, 2)
+
+        studSpace = get_shot_designed_spacing(last_sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, results[0][0])
+        fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
+        if fasten.missionID == 110:  # Screw Tool Selection
+            fasten.Info_11 = get_screw_index(studSpace)
+            if studSpace == 110 or studSpace == 220:
+                fasten.Info_10 = studSpace * 2
+        fastenlst.append(fasten)
         pgDB.close()
         return fastenlst
 
+    def add_fasten_list(self, working_station, result, sheet, layer, pgDB):
+        # Determine Start End Shift
+        shiftSTART = [4, 3.5, 1.25]
+        shiftEND = [0.75, 1.25, 1.25]
+
+        offsetStart = shiftSTART[self.panel.get_layer_index(layer)]
+        offsetEnd = shiftEND[self.panel.get_layer_index(layer)]
+        sql_vMin = round(working_station.parmData.getParm('ZL Core', 'Y Middle Vertical') / 25.4, 2)
+        sql_vMax = round(working_station.parmData.getParm('ZL Core', 'Y Build Max') / 25.4, 2)
+        sql_var3 = round(working_station.partial_board / 25.4, 0)
+        sql_wStart = sheet.get('e1x')
+        sql_wEnd = sheet.get('e4x')
+        sql_vMax = sheet.get('e2y')
+        fasten = rDH.missionData_RBC(self.panel.get_layer_fastener(self.panel.get_layer_index(layer)))
+        # Vertical vs Horizontal Vertical dimension is less than 6inch
+        # Vertical
+        if result.get('e2y') - result.get('e1y') > 3:
+            if sql_wEnd > result.get('e4x') and sql_wStart <= result.get('e1x'):
+                fasten.Info_01 = round((result.get('e1x') + 0.75) * 25.4, 2)  # X Start Position
+                fasten.Info_03 = round((result.get('e1x') + 0.75) * 25.4, 2)  # X End Position
+            elif sql_wEnd < result.get(
+                    'e4x'):  # Condition when stud is overhanging the board on the positive side
+                fasten.Info_01 = round((result.get('e1x') + 0.375) * 25.4, 2)  # X Start Position
+                fasten.Info_03 = round((result.get('e1x') + 0.375) * 25.4, 2)  # X End Position
+            elif sql_wStart > result.get(
+                    'e1x'):  # Condition when stud is overhanging the board on the positive side
+                fasten.Info_01 = round((result.get('e4x') - 0.375) * 25.4, 2)  # X Start Position
+                fasten.Info_03 = round((result.get('e4x') - 0.375) * 25.4, 2)  # X End Position
+            else:
+                logging.warning(
+                    'Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
+                return None
+            if result.get('e1y') < sql_vMin:
+                fasten.Info_02 = round((sql_vMin + offsetStart) * 25.4, 2)  # Y Start Position
+            else:
+                fasten.Info_02 = round((result.get('e1y') + offsetStart) * 25.4, 2)  # Y Start Position
+            if result.get('e2y') > sql_vMax:
+                fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
+            else:
+                fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
+            studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
+            fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
+            if fasten.missionID == 110:  # Screw Tool Selection
+                fasten.Info_11 = get_screw_index(studSpace)
+                if studSpace == 110 or studSpace == 220:
+                    fasten.Info_10 = studSpace * 2
+
+        # Horizontal
+        elif result.get('e4x') - result.get('e1x') > 3:
+            fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
+            fasten.Info_04 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
+            if result.get('e1x') < sql_wStart:
+                fasten.Info_01 = round((sql_wStart + offsetStart) * 25.4, 2)
+            else:
+                fasten.Info_01 = round((result.get('e1x') + offsetStart) * 25.4, 2)
+            if result.get('e4x') > sql_wEnd:
+                fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
+            else:
+                fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
+            studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
+            fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
+            if fasten.missionID == 110:  # Screw Tool Selection
+                fasten.Info_11 = get_screw_index(studSpace)
+                if studSpace == 110 or studSpace == 220:
+                    fasten.Info_10 = studSpace * 2
+
+            fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
+        else:
+            logging.warning(
+                'Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
+
+        return fasten
 
     def cross_ref_cut_out(self, panelID, mission: rDH.missionData_RBC, dbConnection: dBC.DB_Connect):
         sql_var1 = panelID

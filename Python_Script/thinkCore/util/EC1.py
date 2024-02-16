@@ -293,6 +293,8 @@ class JobData:
             jdQueryData.append((panelguid, item[0], item[1], item[2], item[3], item[4],
                                 item[5], item[6], item[7], item[8], item[9], item[10], item[11]))
 
+        #updated_QueryList = reOrderList(jdQueryData)
+
         pgDB.query_many(sql_JobData_query, jdQueryData)
         # close the DB connection
         pgDB.close()
@@ -972,3 +974,12 @@ def gen_op_code(op_in: list):
             opcode[0] = opcode[0][:-3]
 
     return opcode
+
+def reOrderList(opList) -> list:
+    for i in range(len(opList) - 1, 0, -1):
+        if opList[1][i - 1] > opList[1][i]:
+
+            opList[1][i - 1], opList[1][i] = opList[1][i], opList[1][i - 1]
+
+    new_list = []
+    return new_list
