@@ -427,8 +427,7 @@ class RunData:
 
         return layerData
 
-    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, sheet, working_station: Station) -> list[
-        rDH.missionData_RBC]:
+    def get_board_fasten(self, board: rDH.missionData_RBC, active_layer, i_material: Material, sheet, working_station: Station) -> list[rDH.missionData_RBC]:
         studSpace = 406
         shiftspace = round(28 / 25.4, 2)
         # Open Database Connection

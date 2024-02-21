@@ -1,3 +1,5 @@
+import math
+
 import util.dataBaseConnect as dbc
 from util.framingCheck import Clear
 from util.globals import Build_EC1_Progress
@@ -192,19 +194,19 @@ class JobData:
             if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate' and elem[2] != 'Nog':
                 # if the element is a normal stud
                 if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout' and elem[1] != 'Hole':
-                        # get opData for placing the element
-                        tmp = self.place_element(element, pgDB)
-                        # Add to OpDatas and increase the count
-                        OpData.append(tmp[0])
-                        # Add get OpDatas for nailing
-                        tmp = self.nail_element(element, pgDB)
-                        # loop through the Op Datas from the function and append to the list
-                        # exclude the last list item because that is the counter
-                        for var in tmp[:-1]:
-                            OpData.append(var)
-                        # update counter
-                        obj_count = tmp[-1]
-                        self.build_progress.auto_stud_count += 1
+                    # get opData for placing the element
+                    tmp = self.place_element(element, pgDB)
+                    # Add to OpDatas and increase the count
+                    OpData.append(tmp[0])
+                    # Add get OpDatas for nailing
+                    tmp = self.nail_element(element, pgDB)
+                    # loop through the Op Datas from the function and append to the list
+                    # exclude the last list item because that is the counter
+                    for var in tmp[:-1]:
+                        OpData.append(var)
+                    # update counter
+                    obj_count = tmp[-1]
+                    self.build_progress.auto_stud_count += 1
                 # if the element isn't in a placed sub assembly and is a sub assembly board or cutout
                 elif elem[-1] not in placedSubAssembly and (
                         elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout'):
@@ -290,16 +292,15 @@ class JobData:
         # make a list of tuples for query many
         jdQueryData = []
         for item in OpData:
-            jdQueryData.append((panelguid, item[0], item[1], item[2], item[3], item[4],
+            jdQueryData.append((panelguid, math.floor(item[0]), item[1], item[2], item[3], item[4],
                                 item[5], item[6], item[7], item[8], item[9], item[10], item[11]))
 
-        #updated_QueryList = reOrderList(jdQueryData)
+        updated_jdQueryData = re_order_list(jdQueryData)
 
-        pgDB.query_many(sql_JobData_query, jdQueryData)
+        pgDB.query_many(sql_JobData_query, updated_jdQueryData)
         # close the DB connection
         pgDB.close()
         self.build_progress.fm3_status = "Complete"
-
 
     def place_element(self, element, pg_db, sub_element=None):
         # call function with (self,element, subassembly board if applicable)
@@ -773,7 +774,7 @@ class JobData:
 
             # Sub Assembly Element is Touching Top and Bottom Plate
             if elem[14] == BottomPlate and elem[16] == TopPlate:
-                if elem[5] == 5772.1:
+                if elem[5] > 5000.1:
                     pass
                 # Check if StudStop and Hammer are being used for Bottom Plate side
                 if clear.studStopFS(elem):
@@ -836,9 +837,9 @@ class JobData:
                     if elem[4] == "2X4":
                         NailCounter = 0
                         XposOffset2X4 = [0, 70]
-                        #Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
-                        #new method
-                        Zpos = round((bottom + top)/2, 0)
+                        # Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
+                        # new method
+                        Zpos = round((bottom + top) / 2, 0)
                         while NailCounter < 2:
                             if NailCounter > 0:
                                 OpFS[0] = False
@@ -856,11 +857,14 @@ class JobData:
 
                     if elem[4] == "2X6":
                         NailCounter = 0
-                        XposOffset2X6 = [15, 70, 125]
-                        #Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
-                        #new method
-                        Zpos = round((bottom + top)/2, 0)
+                        XposOffset2X6 = [0, 70, 125]
+                        # Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
+                        # new method
+                        Zpos = round((bottom + top) / 2, 0)
                         while NailCounter < 2:
+                            if NailCounter > 0:
+                                OpFS[0] = False
+                                OpMS[0] = False
                             OpJob = [elem[5] + XposOffset2X6[NailCounter]]
                             # Xpos
                             # generate OpText and OpCodes from list of bools
@@ -975,11 +979,23 @@ def gen_op_code(op_in: list):
 
     return opcode
 
-def reOrderList(opList) -> list:
-    for i in range(len(opList) - 1, 0, -1):
-        if opList[1][i - 1] > opList[1][i]:
 
-            opList[1][i - 1], opList[1][i] = opList[1][i], opList[1][i - 1]
+def re_order_list(op_list) -> list:
+    # This function is used to reorder the operation list to ensure merged
+    # sub assemblies can be executed correctly in accordance to the x position only increasing
+    for i in range(len(op_list)):
+        for j in range(len(op_list) - 1):
+            if op_list[j][1] > op_list[j + 1][1]:
+                op_list[j], op_list[j + 1] = op_list[j + 1], op_list[j]
 
-    new_list = []
-    return new_list
+    indexed_list = [(*item[:-1], index + 1) for index, item in enumerate(op_list)]
+
+    return indexed_list
+
+def check_sub_install_x(op_list):
+    # This function is used to check and update first nailing position
+    #  when sub assemblies get loaded that the grippers don't move to a second location
+    #  without first attaching the assembly to the plates
+    pass
+    for i in range(len(op_list)):
+        pass

@@ -45,17 +45,12 @@ class Clear:
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate','Nog')
                         and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e1x) and (e1x) <= {MaxX} and (e1y) <= {MaxY}) 
-                        or ({MinX} <= (e4x) and (e4x) <= {MaxX} and (e4y) <= {MaxY}));
+                        or ({MinX} <= (e4x) and (e4x) <= {MaxX} and (e4y) <= {MaxY})
+                        or ((e1x) < {MinX} and (e4x) >= {MaxX} and (e4y) <= {MaxY}));
                         """
         results2 = self.pgDB.query(sql_select_query)
 
-        sql_select_query = f"""
-                            SELECT to_jsonb(elements)
-                            from cad2fab.system_elements elements
-                            where panelguid = '{element[0]}' 
-                            AND elementguid = '{elementguid}';
-                            """
-        results3 = self.pgDB.query(sql_select_query)[0][0]
+
         # self.pgDB.close()
         # if there aren't any results the SS is clear
         if results2 == [] and round(element[16]/25.4, 1) > float(MaxY):
@@ -142,7 +137,8 @@ class Clear:
                         WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate','Nog')
                         and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e2x) and (e2x) <= {MaxX} and (e2y) <= {MaxY}) 
-                        or ({MinX} <= (e3x) and (e3x) <= {MaxX} and (e3y) <= {MaxY}));
+                        or ({MinX} <= (e3x) and (e3x) <= {MaxX} and (e3y) <= {MaxY})
+                        or ((e2x) < {MinX} and (e3x) >= {MaxX} and (e2y) <= {MaxY}));
                         """
         results2 = self.pgDB.query(sql_select_query)
         # self.pgDB.close()
