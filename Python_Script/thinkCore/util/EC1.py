@@ -1,3 +1,5 @@
+import math
+
 import util.dataBaseConnect as dbc
 from util.framingCheck import Clear
 from util.globals import Build_EC1_Progress
@@ -192,19 +194,19 @@ class JobData:
             if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate' and elem[2] != 'Nog':
                 # if the element is a normal stud
                 if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout' and elem[1] != 'Hole':
-                        # get opData for placing the element
-                        tmp = self.place_element(element, pgDB)
-                        # Add to OpDatas and increase the count
-                        OpData.append(tmp[0])
-                        # Add get OpDatas for nailing
-                        tmp = self.nail_element(element, pgDB)
-                        # loop through the Op Datas from the function and append to the list
-                        # exclude the last list item because that is the counter
-                        for var in tmp[:-1]:
-                            OpData.append(var)
-                        # update counter
-                        obj_count = tmp[-1]
-                        self.build_progress.auto_stud_count += 1
+                    # get opData for placing the element
+                    tmp = self.place_element(element, pgDB)
+                    # Add to OpDatas and increase the count
+                    OpData.append(tmp[0])
+                    # Add get OpDatas for nailing
+                    tmp = self.nail_element(element, pgDB)
+                    # loop through the Op Datas from the function and append to the list
+                    # exclude the last list item because that is the counter
+                    for var in tmp[:-1]:
+                        OpData.append(var)
+                    # update counter
+                    obj_count = tmp[-1]
+                    self.build_progress.auto_stud_count += 1
                 # if the element isn't in a placed sub assembly and is a sub assembly board or cutout
                 elif elem[-1] not in placedSubAssembly and (
                         elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout'):
@@ -290,14 +292,15 @@ class JobData:
         # make a list of tuples for query many
         jdQueryData = []
         for item in OpData:
-            jdQueryData.append((panelguid, item[0], item[1], item[2], item[3], item[4],
+            jdQueryData.append((panelguid, math.floor(item[0]), item[1], item[2], item[3], item[4],
                                 item[5], item[6], item[7], item[8], item[9], item[10], item[11]))
 
-        pgDB.query_many(sql_JobData_query, jdQueryData)
+        updated_jdQueryData = re_order_list(jdQueryData)
+
+        pgDB.query_many(sql_JobData_query, updated_jdQueryData)
         # close the DB connection
         pgDB.close()
         self.build_progress.fm3_status = "Complete"
-
 
     def place_element(self, element, pg_db, sub_element=None):
         # call function with (self,element, subassembly board if applicable)
@@ -342,14 +345,14 @@ class JobData:
 
             # check if the stud stops are clear for standard elements
             if sub_element is None:
-                if clear.studStopFS(element[1]):
+                if clear.studStopFS(element):
                     OpFS[0] = True
 
                 if clear.studStopMS(element[1]):
                     OpMS[0] = True
             # check if the stud stops are clear for sub assemblies
             else:
-                if clear.studStopFS(sub_element[1]):
+                if clear.studStopFS(sub_element):
                     OpFS[0] = True
 
                 if clear.studStopMS(sub_element[1]):
@@ -421,14 +424,14 @@ class JobData:
                 OpJob = [element[5]]
                 # X_pos
                 # check if the stud stops are clear
-                if clear.studStopFS(element[1]):
+                if clear.studStopFS(element):
                     OpFS[0] = True
 
                 if clear.studStopMS(element[1]):
                     OpMS[0] = True
 
                 # if element is a stud enable hammer, autostud, and nailing
-                if element[2] == 'Board' and element[3] == 'Stud':
+                if element[2] == 'Board' and (element[3] == 'Stud' or element[3] == 'CriticalStud'):
                     OpFS[1] = True
                     OpFS[4] = True
                     OpFS[6] = True
@@ -445,7 +448,7 @@ class JobData:
                     if ct == 0:
                         OpJob = [element[5]]
                         # check if the stud stops are clear
-                        if clear.studStopFS(element[1]):
+                        if clear.studStopFS(element):
                             OpFS[0] = True
 
                         if clear.studStopMS(element[1]):
@@ -490,14 +493,14 @@ class JobData:
                 OpJob = [element[5]]
                 # Xpos
                 # check if the stud stops are clear
-                if clear.studStopFS(element[1]):
+                if clear.studStopFS(element):
                     OpFS[0] = True
 
                 if clear.studStopMS(element[1]):
                     OpMS[0] = True
 
                 # if element is a stud enable hammer, autostud and nailing
-                if element[2] == 'Board' and element[3] == 'Stud':
+                if element[2] == 'Board' and (element[3] == 'Stud' or element[3] == 'CriticalStud'):
                     OpFS[1] = True
                     OpFS[4] = True
                     OpFS[6] = True
@@ -514,7 +517,7 @@ class JobData:
                     if ct == 0:
                         OpJob = [element[5]]
                         # check if the stud stops are clear
-                        if clear.studStopFS(element[1]):
+                        if clear.studStopFS(element):
                             OpFS[0] = True
 
                         if clear.studStopMS(element[1]):
@@ -580,9 +583,8 @@ class JobData:
                 # Check if StudStop and Hammer are being used for TopPlate side
                 if clear.studStopMS(elem[1]):
                     OpMS[0] = True
-
-                if clear.hammerMS(elem[1]):
-                    OpMS[1] = True
+                    if clear.hammerMS(elem[1]):
+                        OpMS[1] = True
 
                 # Set Nailing TopPlate Side in Opcode
                 OpMS[6] = True
@@ -674,11 +676,10 @@ class JobData:
             # Sub Assembly Element is only Touching Bottom Plate
             if elem[14] == BottomPlate and elem[16] != TopPlate:
                 # Check if StudStop and Hammer are being used for Bottom Plate side
-                if clear.studStopFS(elem[1]):
+                if clear.studStopFS(elem):
                     OpFS[0] = True
-
-                if clear.hammerFS(elem[1]):
-                    OpFS[1] = True
+                    if clear.hammerFS(elem[1]):
+                        OpFS[1] = True
 
                 # Set Nailing Bottom Plate Side in Opcode
                 OpFS[6] = True
@@ -773,10 +774,10 @@ class JobData:
 
             # Sub Assembly Element is Touching Top and Bottom Plate
             if elem[14] == BottomPlate and elem[16] == TopPlate:
-                if elem[5] == 5772.1:
+                if elem[5] > 5000.1:
                     pass
                 # Check if StudStop and Hammer are being used for Bottom Plate side
-                if clear.studStopFS(elem[1]):
+                if clear.studStopFS(elem):
                     OpFS[0] = True
 
                 if clear.hammerFS(elem[1]):
@@ -831,10 +832,14 @@ class JobData:
 
                 # Is the element in the sub assembly Flat stud orientation
                 if (elem[17] - elem[13]) > 50.8:
+                    top = (self.panelThickness * 25.4) + elem[8]
+                    bottom = (self.panelThickness * 25.4) + elem[6]
                     if elem[4] == "2X4":
                         NailCounter = 0
                         XposOffset2X4 = [0, 70]
-                        Zpos = round((elem[8] - elem[6]) / 2, 0)
+                        # Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
+                        # new method
+                        Zpos = round((bottom + top) / 2, 0)
                         while NailCounter < 2:
                             if NailCounter > 0:
                                 OpFS[0] = False
@@ -852,9 +857,14 @@ class JobData:
 
                     if elem[4] == "2X6":
                         NailCounter = 0
-                        XposOffset2X6 = [15, 70, 125]
-                        Zpos = round((elem[8] - elem[6]) / 2, 0)
+                        XposOffset2X6 = [0, 70, 125]
+                        # Zpos = round((elem[8] - elem[6]) / 2, 0) This is old method
+                        # new method
+                        Zpos = round((bottom + top) / 2, 0)
                         while NailCounter < 2:
+                            if NailCounter > 0:
+                                OpFS[0] = False
+                                OpMS[0] = False
                             OpJob = [elem[5] + XposOffset2X6[NailCounter]]
                             # Xpos
                             # generate OpText and OpCodes from list of bools
@@ -968,3 +978,24 @@ def gen_op_code(op_in: list):
             opcode[0] = opcode[0][:-3]
 
     return opcode
+
+
+def re_order_list(op_list) -> list:
+    # This function is used to reorder the operation list to ensure merged
+    # sub assemblies can be executed correctly in accordance to the x position only increasing
+    for i in range(len(op_list)):
+        for j in range(len(op_list) - 1):
+            if op_list[j][1] > op_list[j + 1][1]:
+                op_list[j], op_list[j + 1] = op_list[j + 1], op_list[j]
+
+    indexed_list = [(*item[:-1], index + 1) for index, item in enumerate(op_list)]
+
+    return indexed_list
+
+def check_sub_install_x(op_list):
+    # This function is used to check and update first nailing position
+    #  when sub assemblies get loaded that the grippers don't move to a second location
+    #  without first attaching the assembly to the plates
+    pass
+    for i in range(len(op_list)):
+        pass
