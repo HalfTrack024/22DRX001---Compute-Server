@@ -871,7 +871,7 @@ class RunData:
                     route.Info_02 = 38
                 route.Info_03 = round(p2['x'] - p1['x'], 2)
                 route.Info_04 = round(p2['y'] - p1['y'], 2)
-                route.Info_05 = 1
+                route.Info_05 = 2
                 if self.panel.get_layer_index(layer) == 0:
                     route.Info_07 = round(layer * 25.4, 1)
                 else:
@@ -981,6 +981,7 @@ class RunData:
 
 
 def check_edge_case(sheet, board_list) -> list:
+    # This function is used to remove leading and trailing edge studs being tided into the wall from sheathing
     for result in board_list[:]:
         dict_result: dict = result[0]
         sheet_start = round(sheet.get('e1x'), 2)
@@ -1065,7 +1066,7 @@ index_field = 0
 index_single = 1
 
 
-def get_screw_index(spacing):
+def get_screw_index(start, end,spacing):
     global index_edge
     global index_field
     global index_single
