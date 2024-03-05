@@ -17,7 +17,7 @@ class Parameters:  # This class is designed to fetch all parameters from paramet
                             from (
                                 select 
                                     jsonOBJ.sect psect, 
-                                    json_object_agg(description, jsonOBJ.parms) as varm
+                                    json_object_agg(UPPER(description), jsonOBJ.parms) as varm
                                 from (
                                     select	
                                         sectionname sect,
@@ -38,8 +38,8 @@ class Parameters:  # This class is designed to fetch all parameters from paramet
         pgDB.close()
 
     def getParm(self, secName, description):  # This function is used for retrieving variable name from parameter information
-        dtype = self._parmList.get(secName)[description]["datatype"]
-        dVar = self._parmList.get(secName)[description]["value"]
+        dtype = self._parmList.get(secName)[description.upper()]["datatype"]
+        dVar = self._parmList.get(secName)[description.upper()]["value"]
         match dtype:
             case "string":
                 return str(dVar)

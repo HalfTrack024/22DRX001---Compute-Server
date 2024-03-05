@@ -42,7 +42,7 @@ class Clear:
         sql_select_query = f"""
                         SELECT e1x
                         FROM cad2fab.system_elements
-                        WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate','Nog')
+                        WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate','Nog', 'Hole')
                         and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e1x) and (e1x) <= {MaxX} and (e1y) <= {MaxY}) 
                         or ({MinX} <= (e4x) and (e4x) <= {MaxX} and (e4y) <= {MaxY})
@@ -134,7 +134,7 @@ class Clear:
         sql_select_query = f"""
                         SELECT e2x
                         FROM cad2fab.system_elements
-                        WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate','Nog')
+                        WHERE panelguid = '{results[0][1]}' and description NOT IN ('Sheathing','TopPlate','BottomPlate','VeryTopPlate','Nog', 'Hole')
                         and elementguid != '{elementguid}' and type != 'Sheet'
                         and (({MinX} <= (e2x) and (e2x) <= {MaxX} and (e2y) <= {MaxY}) 
                         or ({MinX} <= (e3x) and (e3x) <= {MaxX} and (e3y) <= {MaxY})

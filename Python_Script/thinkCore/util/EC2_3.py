@@ -1,6 +1,6 @@
 import logging
 import math
-
+import copy
 import util.dataBaseConnect as dBC
 import util.runData_Helper as rDH
 from util.globals import Build_RBC_Progress
@@ -382,6 +382,7 @@ class RunData:
             pick.Info_11 = material.getMaterialCode()
             pick.Info_12 = material.getMaterial()
             layer_index = self.panel.get_layer_index(layer)
+            self.panel.update_layer_material(material.getMaterial(), layer_index)
             if len(self.build_rbc_progress.materials_required) == 0 or pick.Info_12 not in self.build_rbc_progress.materials_required[
                 working_station.station_id - 2]:
                 self.build_rbc_progress.materials_required[working_station.station_id - 2].append(pick.Info_12)
@@ -498,7 +499,7 @@ class RunData:
                     fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                 else:
                     fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
+                studSpace = self.get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                 if fasten.missionID == 110:  # Screw Tool Selection
                     fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -516,7 +517,7 @@ class RunData:
                     fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                 else:
                     fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
+                studSpace = self.get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                 fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                 if fasten.missionID == 110:  # Screw Tool Selection
                     fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -593,7 +594,7 @@ class RunData:
                                 from cad2fab.system_elements se
                                 where 
                                     panelguid = '{sql_var1}' 
-                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout','FillerBtmNailer','HeaderSill','Header', 'TopPlate') 
+                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout','FillerBtmNailer','HeaderSill', 'Header', 'TopPlate') 
                                     and e2y <= '{sql_vMax}' and e2y >= '{sql_vMin}' 
                                     and e1x < '{sql_wEnd}' and e4x > '{sql_wStart}' 
                                     and b2y = 0 
@@ -639,7 +640,7 @@ class RunData:
                         fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
                     else:
                         fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
+                    studSpace = self.get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
                     if fasten.missionID == 110:  # Screw Tool Selection
                         fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -657,7 +658,7 @@ class RunData:
                         fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
                     else:
                         fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-                    studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
+                    studSpace = self.get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
                     fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
                     if fasten.missionID == 110:  # Screw Tool Selection
                         fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -670,6 +671,8 @@ class RunData:
                         'Did not add fastening for member' + self.panel.guid + '__' + result.get('elementguid'))
                 #  Apply
                 fastenlst.append(fasten)
+
+        fastenlst.extend(self.add_header_fasteners(self.panel.guid, layer, pgDB))
 
         sql_select_query = f"""
                             select to_jsonb(se) 
@@ -688,7 +691,7 @@ class RunData:
         fasten.Info_01 = round((results[0][0].get('e1x') + offsetStart) * 25.4, 2)
         fasten.Info_03 = round((results[0][-1].get('e4x') - offsetEnd) * 25.4, 2)
 
-        studSpace = get_shot_designed_spacing(last_sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, results[0][0])
+        studSpace = self.get_shot_designed_spacing(last_sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, results[0][0])
         fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
         if fasten.missionID == 110:  # Screw Tool Selection
             fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -696,8 +699,48 @@ class RunData:
                 fasten.Info_10 = studSpace * 2
         fastenlst.append(fasten)
         pgDB.close()
+
         return fastenlst
 
+    def add_header_fasteners(self, panelguid, layer, pgDB: dBC.DB_Connect):
+        # Open Database Connection
+        offsetStart = [3, 4]
+        offsetEnd = [3, 4]
+        sql_var1 = panelguid
+        sql_select_query = f"""
+                            select to_jsonb(se) 
+                            from cad2fab.system_elements se
+                            where 
+                                panelguid = '{sql_var1}' 
+                                and description = 'Header'
+                                order by b1x
+                            """
+
+        results = pgDB.query(sql_statement=sql_select_query)
+        fastenList: list = []
+        for result in results:
+            result = result[0]
+            height = (result.get('e3y') - result.get('e1y'))
+            centerLine = ((result.get('e3y') - result.get('e1y')) / 2)
+            fasten = rDH.missionData_RBC(self.panel.get_layer_fastener(self.panel.get_layer_index(layer)))
+            fasten.Info_02 = round((result.get('e1y') + centerLine) * 25.4, 2)  # Y Start Position
+            fasten.Info_04 = round((result.get('e1y') + centerLine) * 25.4, 2)  # Y Start Position
+            fasten.Info_01 = round((result.get('e1x') + offsetStart[self.panel.get_layer_index(layer)]) * 25.4, 2)
+            fasten.Info_03 = round((result.get('e4x') - offsetEnd[self.panel.get_layer_index(layer)]) * 25.4, 2)
+            studSpace = self.panel.get_field_spacing(self.panel.get_layer_index(layer))
+            fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
+            if fasten.missionID == 110:  # Screw Tool Selection
+                fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
+                if studSpace == 110 or studSpace == 220:
+                    fasten.Info_10 = 440
+            if height > 12:
+                fasten.Info_02, fasten.Info_04 = fasten.Info_02 + 3
+                fastenList.append(fasten)
+                fasten.Info_02, fasten.Info_04 = fasten.Info_02 - 6
+            else:
+                fastenList.append(fasten)
+        return fastenList
+    
     def add_fasten_list(self, working_station, result, sheet, layer, pgDB):
         # Determine Start End Shift
         shiftSTART = [4, 3.5, 1.25]
@@ -738,7 +781,7 @@ class RunData:
                 fasten.Info_04 = round((sql_vMax - offsetEnd) * 25.4, 2)  # Y End Position
             else:
                 fasten.Info_04 = round((result.get('e2y') - offsetEnd) * 25.4, 2)  # Y End Position
-            studSpace = get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
+            studSpace = self.get_shot_designed_spacing(sheet, fasten.Info_01, 'Vertical', working_station, pgDB, result)
             fasten.Info_10 = get_shot_spacing(fasten.Info_02, fasten.Info_04, studSpace)
             if fasten.missionID == 110:  # Screw Tool Selection
                 fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -757,7 +800,7 @@ class RunData:
                 fasten.Info_03 = round((sql_wEnd - offsetEnd) * 25.4, 2)
             else:
                 fasten.Info_03 = round((result.get('e4x') - offsetEnd) * 25.4, 2)
-            studSpace = get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
+            studSpace = self.get_shot_designed_spacing(sheet, fasten.Info_02, 'Horizontal', working_station, pgDB, result)
             fasten.Info_10 = get_shot_spacing(fasten.Info_01, fasten.Info_03, studSpace)
             if fasten.missionID == 110:  # Screw Tool Selection
                 fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
@@ -825,10 +868,14 @@ class RunData:
                         order by b1x;
                         """
 
+
         results = pgDB.query(sql_statement=sql_select_query)
         pgDB.close()
+        # Get the Tab Size for Material
+        material_callout = self.panel.get_layer_material(self.panel.get_layer_index(layer)) + ' Tab Length'
+        tab_lenth = working_station.parmData.getParm('Material', material_callout)
+        #Loop through cutout data
         route_list: list[rDH.missionData_RBC] = []
-
         for result in results:
             result: dict = result[0]
             cutBottomTop = False
@@ -867,15 +914,19 @@ class RunData:
                 route = rDH.missionData_RBC(200)
                 route.Info_01 = p1['x']
                 route.Info_02 = p1['y']
-                if route.Info_02 <= 38:
-                    route.Info_02 = 38
+
                 route.Info_03 = round(p2['x'] - p1['x'], 2)
                 route.Info_04 = round(p2['y'] - p1['y'], 2)
                 route.Info_05 = 2
+
+                if route.Info_02 <= 38:
+                    route.Info_02 = 38
+                    route.Info_04 -= 38
                 if self.panel.get_layer_index(layer) == 0:
                     route.Info_07 = round(layer * 25.4, 1)
                 else:
                     route.Info_07 = round((layer - self.panel.get_layer_position(0)) * 25.4, 1)
+                route.Info_08 = tab_lenth
                 route_list.append(route)
             else:
                 logging.warning('Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
@@ -904,6 +955,9 @@ class RunData:
 
         results = pgDB.query(sql_statement=sql_select_query)
         pgDB.close()
+        # Get the Tab Size for Material
+        material_callout = self.panel.get_layer_material(self.panel.get_layer_index(layer)) + ' Tab Length'
+        tab_lenth = working_station.parmData.getParm('Material', material_callout)
         route_list: list[rDH.missionData_RBC] = []
         if results is not None:
             if len(results) > 0:
@@ -939,6 +993,7 @@ class RunData:
                         logging.warning(
                             'Did not add Route for member' + self.panel.guid + '__' + result.get('elementguid'))
                     if hasattr(route, 'Info_01'):
+                        route.Info_08 = tab_lenth
                         route_list.append(route)
 
         return route_list
@@ -979,6 +1034,70 @@ class RunData:
 
         return cwsPos
 
+    def get_shot_designed_spacing(self, element: dict, pos, direction, station: Station, connect: dBC.DB_Connect, stud_element) -> float:
+        # Determine if sheet has defined stud spacing
+        stud_space = 304
+        sql_var1 = element.get('elementguid')
+        sql_determine = f"""
+        select edge_spacing, field_spacing
+        from cad2fab.system_fasteners
+        where elementguid = '{sql_var1}'
+        and edge_spacing > 0
+        and field_spacing > 0
+        """
+        results = connect.query(sql_determine)
+        if len(results) > 0:
+            edge = round(float(results[0][0]) * 25.4, 2)
+            field = round(float(results[0][1]) * 25.4, 2)
+            self.panel.update_layer_fastener_space(edge, field, 0)
+        else:
+            parms = station.parmData
+            matParms = parms._parmList.get('Material')
+            nested_matParms = {}
+            for key, value in matParms.items():
+                key_text = key.rsplit(' ', 2)
+                nested_matParms.setdefault(key_text[0], {})[key_text[1]] = value
+            sheetType = element.get('materialdesc')
+            for matType in nested_matParms:
+                if matType.upper() in sheetType.upper():
+                    edge = int(nested_matParms[matType]['Edge'.upper()]['value'])
+                    field = int(nested_matParms[matType]['Field'.upper()]['value'])
+                    self.panel.update_layer_fastener_space(edge, field, 0)
+                    break
+        sql_var2 = 0.75
+        sql_var3 = round(pos / 25.4, 2)
+        if direction == 'Vertical':
+            sql_find = f"""
+                        select * 
+                        from cad2fab.system_elements
+                        where panelguid = '{element.get('panelguid')}'
+                        and (description = 'Rough cutout' or description = 'Sheathing') 
+                        and (ABS(e1x - {sql_var3}) <= {sql_var2}
+                        or ABS(e2x - {sql_var3}) <= {sql_var2}
+                        or ABS(e3x - {sql_var3}) <= {sql_var2}
+                        or ABS(e4x - {sql_var3}) <= {sql_var2})
+            """
+        else:
+            sql_find = f"""
+                        select * 
+                        from cad2fab.system_elements
+                        where panelguid = '{element.get('panelguid')}' 
+                        and (description = 'Rough cutout' or description = 'Sheathing') 
+                        and (ABS(e1y - {sql_var3}) <= {sql_var2}
+                        or ABS(e2y - {sql_var3}) <= {sql_var2}
+                        or ABS(e3y - {sql_var3}) <= {sql_var2}
+                        or ABS(e4y - {sql_var3}) <= {sql_var2})
+            """
+
+        results = connect.query(sql_find)
+        if len(results) > 0 or stud_element.get("description") == 'TopPlate' or stud_element.get("description") == 'BottomPlate':
+            stud_space = edge
+        elif results is None:
+            errr = True
+        else:
+            stud_space = field
+
+        return stud_space
 
 def check_edge_case(sheet, board_list) -> list:
     # This function is used to remove leading and trailing edge studs being tided into the wall from sheathing
@@ -997,68 +1116,7 @@ def check_edge_case(sheet, board_list) -> list:
     return board_list
 
 
-def get_shot_designed_spacing(element: dict, pos, direction, station: Station, connect: dBC.DB_Connect, stud_element) -> float:
-    # Determine if sheet has defined stud spacing
-    stud_space = 304
-    sql_var1 = element.get('elementguid')
-    sql_determine = f"""
-    select edge_spacing, field_spacing
-    from cad2fab.system_fasteners
-    where elementguid = '{sql_var1}'
-    and edge_spacing > 0
-    and field_spacing > 0
-    """
-    results = connect.query(sql_determine)
-    if len(results) > 0:
-        edge = round(float(results[0][0]) * 25.4, 2)
-        field = round(float(results[0][1]) * 25.4, 2)
-    else:
-        parms = station.parmData
-        matParms = parms._parmList.get('Material')
-        nested_matParms = {}
-        for key, value in matParms.items():
-            key_text = key.rsplit(' ', 2)
-            nested_matParms.setdefault(key_text[0], {})[key_text[1]] = value
-        sheetType = element.get('materialdesc')
-        for matType in nested_matParms:
-            if matType.upper() in sheetType.upper():
-                edge = int(nested_matParms[matType]['Edge']['value'])
-                field = int(nested_matParms[matType]['Field']['value'])
-                break
-    sql_var2 = 0.75
-    sql_var3 = round(pos / 25.4, 2)
-    if direction == 'Vertical':
-        sql_find = f"""
-                    select * 
-                    from cad2fab.system_elements
-                    where panelguid = '{element.get('panelguid')}'
-                    and (description = 'Rough cutout' or description = 'Sheathing') 
-                    and (ABS(e1x - {sql_var3}) <= {sql_var2}
-                    or ABS(e2x - {sql_var3}) <= {sql_var2}
-                    or ABS(e3x - {sql_var3}) <= {sql_var2}
-                    or ABS(e4x - {sql_var3}) <= {sql_var2})
-        """
-    else:
-        sql_find = f"""
-                    select * 
-                    from cad2fab.system_elements
-                    where panelguid = '{element.get('panelguid')}' 
-                    and (description = 'Rough cutout' or description = 'Sheathing') 
-                    and (ABS(e1y - {sql_var3}) <= {sql_var2}
-                    or ABS(e2y - {sql_var3}) <= {sql_var2}
-                    or ABS(e3y - {sql_var3}) <= {sql_var2}
-                    or ABS(e4y - {sql_var3}) <= {sql_var2})
-        """
 
-    results = connect.query(sql_find)
-    if len(results) > 0 or stud_element.get("description") == 'TopPlate' or stud_element.get("description") == 'BottomPlate':
-        stud_space = edge
-    elif results is None:
-        errr = True
-    else:
-        stud_space = field
-
-    return stud_space
 
 
 index_edge = 0
@@ -1066,19 +1124,19 @@ index_field = 0
 index_single = 1
 
 
-def get_screw_index(start, end,spacing):
+def get_screw_index(spacing):
     global index_edge
     global index_field
     global index_single
     index_select = 1
     choice = {
-        '110': [3, 12, 6],
+        '110': [15],
         '220': [5, 10]}
     if spacing == 110:
-        index_select = choice['110'][index_edge]
-        index_edge += 1
-        if index_edge == 2:
-            index_edge = 0
+        index_select = 15  # choice['110'][index_edge]
+        #index_edge += 1
+        #if index_edge == 2:
+        #    index_edge = 0
     elif spacing == 220:
         index_select = choice['220'][index_field]
         index_field += 1

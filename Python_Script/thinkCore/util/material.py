@@ -84,7 +84,7 @@ class Material:
     def get_default_fastener(self, parms):
         # Searches the parameters to determine what fastener should be used with the specified material
         matParms = parms._parmList.get("Material")
-        filtered_matParms = {key: value for key, value in matParms.items() if "Fastener" in key}
+        filtered_matParms = {key: value for key, value in matParms.items() if "Fastener".upper() in key}
         for matType in filtered_matParms:
             if self.material in matType.upper():
                 self.fastener = matParms.get(matType)["value"]
