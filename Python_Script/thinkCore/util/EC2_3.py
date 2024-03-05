@@ -504,7 +504,7 @@ class RunData:
                 if fasten.missionID == 110:  # Screw Tool Selection
                     fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                     if studSpace == 110 or studSpace == 220:
-                        fasten.Info_10 = studSpace * 2
+                        fasten.Info_10 = 440
             # Horizontal
             elif result.get('e4x') - result.get('e1x') > 3:
                 fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -522,7 +522,7 @@ class RunData:
                 if fasten.missionID == 110:  # Screw Tool Selection
                     fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                     if studSpace == 110 or studSpace == 220:
-                        fasten.Info_10 = studSpace * 2
+                        fasten.Info_10 = 440
 
                 fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
 
@@ -645,7 +645,7 @@ class RunData:
                     if fasten.missionID == 110:  # Screw Tool Selection
                         fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                         if studSpace == 110 or studSpace == 220:
-                            fasten.Info_10 = studSpace * 2
+                            fasten.Info_10 = 440
                 # Horizontal
                 elif result.get('e4x') - result.get('e1x') > 3:
                     fasten.Info_02 = round((result.get('e1y') + 0.75) * 25.4, 2)  # Y Start Position
@@ -663,7 +663,7 @@ class RunData:
                     if fasten.missionID == 110:  # Screw Tool Selection
                         fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                         if studSpace == 110 or studSpace == 220:
-                            fasten.Info_10 = studSpace * 2
+                            fasten.Info_10 = 440
 
                     fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
                 else:
@@ -696,7 +696,7 @@ class RunData:
         if fasten.missionID == 110:  # Screw Tool Selection
             fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
             if studSpace == 110 or studSpace == 220:
-                fasten.Info_10 = studSpace * 2
+                fasten.Info_10 = 440
         fastenlst.append(fasten)
         pgDB.close()
 
@@ -786,7 +786,7 @@ class RunData:
             if fasten.missionID == 110:  # Screw Tool Selection
                 fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                 if studSpace == 110 or studSpace == 220:
-                    fasten.Info_10 = studSpace * 2
+                    fasten.Info_10 = 440
 
         # Horizontal
         elif result.get('e4x') - result.get('e1x') > 3:
@@ -805,7 +805,7 @@ class RunData:
             if fasten.missionID == 110:  # Screw Tool Selection
                 fasten.Info_11, fasten.Info_10 = get_screw_index(studSpace)
                 if studSpace == 110 or studSpace == 220:
-                    fasten.Info_10 = studSpace * 2
+                    fasten.Info_10 = 440
 
             fasten = self.cross_ref_cut_out(self.panel.guid, fasten, pgDB)
         else:
