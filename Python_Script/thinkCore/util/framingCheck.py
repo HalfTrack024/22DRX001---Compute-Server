@@ -3,8 +3,14 @@ from util.Parameters import Parameters
 
 # this class is designed to check positional okayness of the framing units Hammer and Stud Stop on both the Mobile and Fix Sides
 class Clear:
+    parmData = None
     def __init__(self, connect) -> None:
-        parmData = Parameters([], 1, 2)
+        parmData = self.GetParmData()
+        if parmData is None:
+            parmData = Parameters([], 1, 2)
+            self.updateParmData(parmData)
+
+
 
         # dbc.printResult(results)
         # assign results of query to variables
@@ -17,6 +23,14 @@ class Clear:
         self.hu_Y = round(parmData.getParm('Positions', 'Positions:lrHammerUnitYCenterPosition') / 25.4, 2)
 
         self.pgDB = connect
+
+    @classmethod
+    def updateParmData(cls, data):
+        cls.parmData = data
+
+    @classmethod
+    def GetParmData(cls):
+        return cls.parmData
 
     def studStopFS(self, element):
         # self.pgDB.open()

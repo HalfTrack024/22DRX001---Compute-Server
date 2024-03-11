@@ -5,7 +5,7 @@ import os
 import shutil
 import threading
 import time
-from datetime import date
+from datetime import date, timedelta
 import schedule
 
 
@@ -184,25 +184,26 @@ def move_file(source_file, destination_path):
 def manage_log_files():
 
     # Get the current date
-    current_date = date.today().strftime("%Y-%m-%d")
-
+    yesterday_date = date.today() - timedelta(days=1)
+    yesterday_str = yesterday_date.strftime("%Y-%m-%d")
     # Define the paths for the original file and the sub-folder
     original_file_path = "app.log"
-    subfolder_path = "subfolder"
+    original_opcua_log = "opcua.log"
+    subfolder_path = "past_logs"
 
     # Create the sub-folder if it doesn't exist
     if not os.path.exists(subfolder_path):
         os.makedirs(subfolder_path)
 
     # Construct the new file name with the current date
-    new_file_name = f"{current_date} - app.log"
-
+    new_file_name = f"{yesterday_str} - app.log"
+    yesterday_opcua_log = f"{yesterday_str} - opcua.log"
     # Copy the original file to the sub-folder with the new name
     shutil.copy(original_file_path, os.path.join(subfolder_path, new_file_name))
-
+    shutil.copy(original_file_path, os.path.join(subfolder_path, yesterday_opcua_log))
     # Clear the contents of the original file
     open(original_file_path, 'w').close()
-
+    open(original_opcua_log, 'w').close()
 
 def run():
     opc = OPC_Connect()
@@ -215,16 +216,10 @@ def run():
         app_config_settings = json.load(json_file)
     try:
 
-        logging.basicConfig(encoding='utf-8', format='%(levelname)s : %(asctime)s - %(message)s', datefmt = '%Y-%m-%d %H:%M:%S', filename='app.log', level=logging.INFO)
-        #logging.basicConfig(filename='app.log', level=logging.INFO)
+        logging.basicConfig(encoding='utf-8', format='%(levelname)s : %(name)s - %(asctime)s - %(message)s', datefmt = '%Y-%m-%d %H:%M:%S', filename='app.log', level=logging.INFO)
         logging.info('Started')
         runContinuous = True
         opc.open()
-        ualogger = logging.getLogger('opcua.client.ua_client')
-        ualogger.setLevel(logging.ERROR)
-        opc.client.uaclient.logger.disabled = True
-        ualogger.parent.propagate = False
-        #ualogger.propagate = False
         current_dir = os.getcwd()
         logging.info(msg=("Current directory:", current_dir))
         schedule.every().day.at("00:00").do(manage_log_files)
@@ -241,9 +236,11 @@ def run():
             print("IDLE")
             time.sleep(1)
 
+    except Exception as e:
+        logging.error('Program Error: %s', e)
 
 
     finally:
-        logging.error('Failed')
+        logging.error('Closed')
         opc.close()
         run()

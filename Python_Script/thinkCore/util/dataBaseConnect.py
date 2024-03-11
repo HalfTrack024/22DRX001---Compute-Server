@@ -48,10 +48,11 @@ class DB_Connect:
                 connect_timeout=2
             )
             # print(self.connection.status)
-        except(Exception, psy.Error) as Error:
+        except (Exception, psy.Error) as Error:
             print("Failed to Connect: {}".format(Error))
 
             logging.error('Open Connection Failed')
+            logging.error("Failed to Connect: {}".format(Error))
             sys.exit("Connection Not Found")
         finally:
             # print("Connection Open")

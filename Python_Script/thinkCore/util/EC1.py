@@ -36,7 +36,7 @@ class Mtrl_Data:
 
         sql_select_query = f"""SELECT count(description) 
                     FROM cad2fab.system_elements
-                    WHERE panelguid = '{sql_var}' AND description = 'Stud' AND type = 'Board';
+                    WHERE panelguid = '{sql_var}' AND (description = 'CriticalStud' or description = 'Stud') AND type = 'Board';
         """
         result_count = pgDB.query(sql_select_query)
         pgDB.close()
@@ -166,7 +166,9 @@ class JobData:
         sql_elemData_query = f'''
         SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
         FROM cad2fab.system_elements
-        WHERE panelguid = '{panelguid}'
+        WHERE panelguid = '{panelguid}' and description != 'Sheathing' 
+        and description not like '%Plate%' and description != 'Rough cutout' 
+        and description != 'Nog'
         ORDER BY b1x ASC;
         '''
         elemData = pgDB.query(sql_elemData_query)
@@ -190,91 +192,89 @@ class JobData:
                            float(elem[17]) * 25.4,
                            float(elem[18]) * 25.4, float(elem[19]) * 25.4, elem[-1], obj_count]
 
-            # if the element isn't a sheet, top plate, bottom plate, very top plate or Nog
-            if elem[1] != 'Sheet' and elem[2] != 'BottomPlate' and elem[2] != 'TopPlate' and elem[2] != 'VeryTopPlate' and elem[2] != 'Nog':
-                # if the element is a normal stud
-                if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout' and elem[1] != 'Hole':
-                    # get opData for placing the element
-                    tmp = self.place_element(element, pgDB)
-                    # Add to OpDatas and increase the count
-                    OpData.append(tmp[0])
-                    # Add get OpDatas for nailing
-                    tmp = self.nail_element(element, pgDB)
-                    # loop through the Op Datas from the function and append to the list
-                    # exclude the last list item because that is the counter
-                    for var in tmp[:-1]:
-                        OpData.append(var)
-                    # update counter
-                    obj_count = tmp[-1]
-                    self.build_progress.auto_stud_count += 1
-                # if the element isn't in a placed sub assembly and is a sub assembly board or cutout
-                elif elem[-1] not in placedSubAssembly and (
-                        elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout'):
-                    self.build_progress.sub_assembly_count += 1
-                    # get relevant data of elements that aren't sub assembly cutouts, sort by b1x ascending
-                    sql_sub_elem_query = f'''
-                    SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
-                    e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
-                    FROM cad2fab.system_elements
-                    WHERE panelguid = '{panelguid}' and assembly_id = '{elem[-1]}' and type != 'Sub-Assembly Cutout'
-                    ORDER BY b1x ASC;
-                    '''
-                    sub_elem_data = pgDB.query(sql_sub_elem_query)
-                    # list of all sub elements and the sub assembly element, excluding rough cutouts(they don't need to be nailed)
-                    subElemList = []
-                    # loop through all the sub elements
-                    for sub_elem in sub_elem_data:
-                        # if the sub elem has coordinates (isn't the sub assembly element)
-                        if sub_elem[4] is not None:
-                            sub_element = [panelguid, sub_elem[0], sub_elem[1], sub_elem[2], sub_elem[3],
-                                           round(float(sub_elem[4]) * 25.4, 1), round(float(sub_elem[5]) * 25.4, 1),
-                                           round(float(sub_elem[6]) * 25.4, 1), round(float(sub_elem[7]) * 25.4, 1),
-                                           round(float(sub_elem[8]) * 25.4, 1),
-                                           round(float(sub_elem[9]) * 25.4, 1), round(float(sub_elem[10]) * 25.4, 1),
-                                           round(float(sub_elem[11]) * 25.4, 1),
-                                           round(float(sub_elem[12]) * 25.4, 1), round(float(sub_elem[13]) * 25.4, 1),
-                                           round(float(sub_elem[14]) * 25.4, 1),
-                                           round(float(sub_elem[15]) * 25.4, 1), round(float(sub_elem[16]) * 25.4, 1),
-                                           round(float(sub_elem[17]) * 25.4, 1),
-                                           round(float(sub_elem[18]) * 25.4, 1), round(float(sub_elem[19]) * 25.4, 1),
-                                           sub_elem[-1], obj_count]
-                        else:  # if the sub elem is the subassembly element (always the last in the list due to sort by b1x)
-                            sub_element = [panelguid, sub_elem[0], sub_elem[1], sub_elem[2], sub_elem[3], sub_elem[4],
-                                           sub_elem[5],
-                                           sub_elem[6], sub_elem[7], sub_elem[8], sub_elem[9],
-                                           sub_elem[10], sub_elem[11], sub_elem[12], sub_elem[13],
-                                           sub_elem[14], sub_elem[15], sub_elem[16], sub_elem[17],
-                                           sub_elem[18], sub_elem[19], sub_elem[-1], obj_count]
-                        # add the item to the list
-                        subElemList.append(sub_element)
-                    # place the sub assembly send(sub assembly element, first board in the sub assembly for b1x position)
-                    tmp = self.place_element(subElemList[-1], pgDB, element)
-                    # add to op data and update counter
-                    OpData.append(tmp[0])
-                    obj_count = tmp[1]
-                    # update the counter for all items in the sub elem list
-                    for var in subElemList[:-1]:
-                        var[-1] = obj_count
-                    # get the nailing data, add it to the op data list and update the counter
-                    tmp = self.nail_sub_element(subElemList, pgDB)
-                    for var in tmp[:-1]:
-                        OpData.append(var)
-                    obj_count = tmp[-1]
-                    # add the assembly id to the list of placed sub assemblies
-                    placedSubAssembly.append(elem[-1])
-                elif elem[1] == 'Hole':
-                    # pass
-                    tmp = self.hole_feature(element)
-                    for op in reversed(OpData):
-                        if op[0] > tmp[0][0]:
-                            continue
-                        else:
-                            indexOp = OpData.index(op)
-                            OpData.insert(indexOp + 1, tmp[0])
-                            for i in range(op[-1] - 1, len(OpData)):
-                                OpData[i][-1] = i + 1
-                            break
-                    obj_count = i + 2
+            # if the element is a normal stud
+            if elem[1] != 'Sub-Assembly Board' and elem[1] != 'Sub Assembly' and elem[1] != 'Sub-Assembly Cutout' and elem[1] != 'Hole':
+                # get opData for placing the element
+                tmp = self.place_element(element, pgDB)
+                # Add to OpDatas and increase the count
+                OpData.append(tmp[0])
+                # Add get OpDatas for nailing
+                tmp = self.nail_element(element, pgDB)
+                # loop through the Op Datas from the function and append to the list
+                # exclude the last list item because that is the counter
+                for var in tmp[:-1]:
+                    OpData.append(var)
+                # update counter
+                obj_count = tmp[-1]
+                self.build_progress.auto_stud_count += 1
+            # if the element isn't in a placed sub assembly and is a sub assembly board or cutout
+            elif elem[-1] not in placedSubAssembly and (
+                    elem[1] == 'Sub-Assembly Board' or elem[1] == 'Sub-Assembly Cutout'):
+                self.build_progress.sub_assembly_count += 1
+                # get relevant data of elements that aren't sub assembly cutouts, sort by b1x ascending
+                sql_sub_elem_query = f'''
+                SELECT elementguid, type, description, size, b1x,b1y,b2x,b2y,b3x,b3y,b4x,b4y,
+                e1x,e1y,e2x,e2y,e3x,e3y,e4x,e4y,assembly_id
+                FROM cad2fab.system_elements
+                WHERE panelguid = '{panelguid}' and assembly_id = '{elem[-1]}' and type != 'Sub-Assembly Cutout'
+                ORDER BY b1x ASC;
+                '''
+                sub_elem_data = pgDB.query(sql_sub_elem_query)
+                # list of all sub elements and the sub assembly element, excluding rough cutouts(they don't need to be nailed)
+                subElemList = []
+                # loop through all the sub elements
+                for sub_elem in sub_elem_data:
+                    # if the sub elem has coordinates (isn't the sub assembly element)
+                    if sub_elem[4] is not None:
+                        sub_element = [panelguid, sub_elem[0], sub_elem[1], sub_elem[2], sub_elem[3],
+                                       round(float(sub_elem[4]) * 25.4, 1), round(float(sub_elem[5]) * 25.4, 1),
+                                       round(float(sub_elem[6]) * 25.4, 1), round(float(sub_elem[7]) * 25.4, 1),
+                                       round(float(sub_elem[8]) * 25.4, 1),
+                                       round(float(sub_elem[9]) * 25.4, 1), round(float(sub_elem[10]) * 25.4, 1),
+                                       round(float(sub_elem[11]) * 25.4, 1),
+                                       round(float(sub_elem[12]) * 25.4, 1), round(float(sub_elem[13]) * 25.4, 1),
+                                       round(float(sub_elem[14]) * 25.4, 1),
+                                       round(float(sub_elem[15]) * 25.4, 1), round(float(sub_elem[16]) * 25.4, 1),
+                                       round(float(sub_elem[17]) * 25.4, 1),
+                                       round(float(sub_elem[18]) * 25.4, 1), round(float(sub_elem[19]) * 25.4, 1),
+                                       sub_elem[-1], obj_count]
+                    else:  # if the sub elem is the subassembly element (always the last in the list due to sort by b1x)
+                        sub_element = [panelguid, sub_elem[0], sub_elem[1], sub_elem[2], sub_elem[3], sub_elem[4],
+                                       sub_elem[5],
+                                       sub_elem[6], sub_elem[7], sub_elem[8], sub_elem[9],
+                                       sub_elem[10], sub_elem[11], sub_elem[12], sub_elem[13],
+                                       sub_elem[14], sub_elem[15], sub_elem[16], sub_elem[17],
+                                       sub_elem[18], sub_elem[19], sub_elem[-1], obj_count]
+                    # add the item to the list
+                    subElemList.append(sub_element)
+                # place the sub assembly send(sub assembly element, first board in the sub assembly for b1x position)
+                tmp = self.place_element(subElemList[-1], pgDB, element)
+                # add to op data and update counter
+                OpData.append(tmp[0])
+                obj_count = tmp[1]
+                # update the counter for all items in the sub elem list
+                for var in subElemList[:-1]:
+                    var[-1] = obj_count
+                # get the nailing data, add it to the op data list and update the counter
+                tmp = self.nail_sub_element(subElemList, pgDB)
+                for var in tmp[:-1]:
+                    OpData.append(var)
+                obj_count = tmp[-1]
+                # add the assembly id to the list of placed sub assemblies
+                placedSubAssembly.append(elem[-1])
+            elif elem[1] == 'Hole':
+                # pass
+                tmp = self.hole_feature(element)
+                for op in reversed(OpData):
+                    if op[0] > tmp[0][0]:
+                        continue
+                    else:
+                        indexOp = OpData.index(op)
+                        OpData.insert(indexOp + 1, tmp[0])
+                        for i in range(op[-1] - 1, len(OpData)):
+                            OpData[i][-1] = i + 1
+                        break
+                obj_count = i + 2
         # send OpData to JobData table
         sql_JobData_query = '''
         INSERT INTO cad2fab.fm3_jobdata(panelguid, xpos, optext, opcode_fs, zpos_fs, ypos_fs, ssuppos_fs, 
@@ -358,7 +358,7 @@ class JobData:
                 if clear.studStopMS(sub_element[1]):
                     OpMS[0] = True
             # if element is a stud enable hammer and autostud
-            if element[2] == 'Board' and element[3] == 'Stud':
+            if element[2] == 'Board' and (element[3] == 'Stud' or element[3] == 'CriticalStud'):
                 OpFS[1] = True
                 OpFS[4] = True
                 OpMS[1] = True
@@ -413,7 +413,9 @@ class JobData:
         nailCount_2x4 = self.get_nail_count('2x4', 'FS')[0]
         nailCount_2x6 = self.get_nail_count('2x6', 'FS')[0]
         z_pos_2x4 = self.get_nail_count('2x4', 'FS')[1]
+        x_pos_2x4 = z_pos_2x4
         z_pos_2x6 = self.get_nail_count('2x6', 'FS')[1]
+        x_pos_2x6 = z_pos_2x6
         # list of bools for FS & MS containing [StudStop,Hammer,Multi-Device,Option,Autostud,Operator Confirm, Nailing, Insulation, Drill]
         OpFS = [False, False, False, False, False, False, False, False, False]
         OpMS = [False, False, False, False, False, False, False, False, False]
@@ -440,7 +442,7 @@ class JobData:
                     OpMS[6] = True
                 #  Flat Stud Operations
                 elif element[2] == 'Board' and element[3] == 'FlatStud':
-                    x_pos_2x4 = z_pos_2x4
+                    #x_pos_2x4 = z_pos_2x4
                     # Always Nail
                     OpFS[6] = True
                     OpMS[6] = True
@@ -460,8 +462,8 @@ class JobData:
                         OpMS[5] = False
 
                         # No Stud Stop or Hammer required after first Nail
-                    if ct > 1:
-                        OpJob = [element[5] + x_pos_2x4[ct]]
+                    if ct >= 1:
+                        OpJob = [element[5] + x_pos_2x4[ct-1]]
                         OpFS[0] = False
                         OpFS[1] = False
                         OpMS[0] = False
@@ -509,7 +511,7 @@ class JobData:
                     OpMS[6] = True
                 #  Flat Stud Operations
                 elif element[2] == 'Board' and element[3] == 'FlatStud':
-                    x_pos_2x6 = z_pos_2x6
+                    #x_pos_2x6 = z_pos_2x6
                     # Always Nail
                     OpFS[6] = True
                     OpMS[6] = True
@@ -529,8 +531,8 @@ class JobData:
                         OpMS[5] = False
 
                     # No Stud Stop or Hammer required after first Nail
-                    if ct > 1:
-                        OpJob = [element[5] + x_pos_2x6[ct]]
+                    if ct >= 1:
+                        OpJob = [element[5] + x_pos_2x6[ct-1]]
                         OpFS[0] = False
                         OpFS[1] = False
                         OpMS[0] = False
@@ -991,6 +993,7 @@ def re_order_list(op_list) -> list:
     indexed_list = [(*item[:-1], index + 1) for index, item in enumerate(op_list)]
 
     return indexed_list
+
 
 def check_sub_install_x(op_list):
     # This function is used to check and update first nailing position

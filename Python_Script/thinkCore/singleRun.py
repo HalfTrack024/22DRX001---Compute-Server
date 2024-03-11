@@ -9,12 +9,12 @@ from util.machineData import Line
 from util.panelData import Panel
 
 EC1_Yes = True
-EC23_Yes = True
+EC23_Yes = False
 
 app_settings = gHelp.get_app_config()
 
 
-panelID = "46bb2522-7b21-4c71-88bf-e248d2afc21f"
+panelID = "9ad2d7b5-b929-4a2f-b3e0-c7990f015be5"
 machine = Line(app_settings)
 
 #for panelID in panelIDs:

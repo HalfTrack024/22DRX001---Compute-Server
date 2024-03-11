@@ -1,3 +1,5 @@
+import logging
+
 from opcua import Client
 
 import util.General_Help as gHelp
@@ -10,7 +12,14 @@ class OPC_Connect:
         server_address = app_settings.get('IgnitionServer')
         # Creates a client object and connect to the OPC UA server
         self.client = Client(server_address)
-
+        handler = logging.FileHandler(r"opcua.log")
+        formatter = logging.Formatter('%(levelname)s : %(name)s - %(asctime)s - %(message)s')
+        handler.setLevel(logging.INFO)
+        handler.setFormatter(formatter)
+        self.client.uaclient.logger.addHandler(handler)
+        serverlogger = logging.getLogger('opcua')
+        serverlogger.addHandler(handler)
+        serverlogger.setLevel(logging.WARN)
     def open(self):
         try:
             self.client.connect()
