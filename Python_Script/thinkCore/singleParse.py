@@ -22,7 +22,7 @@ if stlBuild:
 if xmlparse:
     #get filepath to XML file from user
     #filepath = "Python_Script/dataExtract_EHX/xmlFiles/231769W2.xml"
-    filepath = r"C:\Users\Andrew Murray\Downloads\RANDEK.EHX"
+    filepath = r"C:\Users\Andrew Murray\Desktop\RANDEK4.EHX"
     fileParse = pEHX.xmlParse(filepath)
     #init the class
     fileParse = pEHX.xmlParse(filepath)

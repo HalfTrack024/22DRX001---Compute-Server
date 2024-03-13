@@ -1,8 +1,8 @@
 {
   "DB_credentials": {
     "user": "postgres",
-    "password": 1,
-    "host": "10.11.20.20",
+    "password": "Brav39955",
+    "host": "192.168.150.209",
     "port": 5433,
     "database": "Drexel"
   },

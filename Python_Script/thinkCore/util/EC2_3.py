@@ -569,7 +569,6 @@ class RunData:
                             and e1x >= {sql_var3 - 48}
                             and e4x > '{sql_wStart}' 
                             and "actual_width" > '{sql_var3}'
-                            and e1x >= 0
                             """
         #   and elementguid in '{sql_var2}'
         # Determine Start End Shift
@@ -594,7 +593,7 @@ class RunData:
                                 from cad2fab.system_elements se
                                 where 
                                     panelguid = '{sql_var1}' 
-                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout','FillerBtmNailer','HeaderSill', 'Header', 'TopPlate') 
+                                    and description not in ('Nog', 'Sheathing','VeryTopPlate','Rough cutout', 'Header', 'TopPlate') 
                                     and e2y <= '{sql_vMax}' and e2y >= '{sql_vMin}' 
                                     and e1x < '{sql_wEnd}' and e4x > '{sql_wStart}' 
                                     and b2y = 0 
@@ -672,6 +671,8 @@ class RunData:
                 #  Apply
                 fastenlst.append(fasten)
 
+
+
         fastenlst.extend(self.add_header_fasteners(self.panel.guid, layer, pgDB))
 
         sql_select_query = f"""
@@ -734,9 +735,10 @@ class RunData:
                 if studSpace == 110 or studSpace == 220:
                     fasten.Info_10 = 440
             if height > 12:
-                fasten.Info_02, fasten.Info_04 = fasten.Info_02 + 3
+                fasten.Info_02, fasten.Info_04 = round(fasten.Info_02 + 3*25.4), round(fasten.Info_02 + 3*25.4)
                 fastenList.append(fasten)
-                fasten.Info_02, fasten.Info_04 = fasten.Info_02 - 6
+                fasten.Info_02, fasten.Info_04 = round(fasten.Info_02 - 6*25.4), round(fasten.Info_02 - 6*25.4)
+                fastenList.append(fasten)
             else:
                 fastenList.append(fasten)
         return fastenList
@@ -1049,7 +1051,7 @@ class RunData:
         if len(results) > 0:
             edge = round(float(results[0][0]) * 25.4, 2)
             field = round(float(results[0][1]) * 25.4, 2)
-            self.panel.update_layer_fastener_space(edge, field, 0)
+            self.panel.update_layer_fastener_space(edge, field, self.panel.get_layer_index(element.get('b2y')))
         else:
             parms = station.parmData
             matParms = parms._parmList.get('Material')
@@ -1062,7 +1064,7 @@ class RunData:
                 if matType.upper() in sheetType.upper():
                     edge = int(nested_matParms[matType]['Edge'.upper()]['value'])
                     field = int(nested_matParms[matType]['Field'.upper()]['value'])
-                    self.panel.update_layer_fastener_space(edge, field, 0)
+                    self.panel.update_layer_fastener_space(edge, field, self.panel.get_layer_index(element.get('b2y')))
                     break
         sql_var2 = 0.75
         sql_var3 = round(pos / 25.4, 2)
@@ -1115,6 +1117,33 @@ def check_edge_case(sheet, board_list) -> list:
             print('sheet end removed' + str(dict_result.get('e1x')))
     return board_list
 
+def check_horizantal_join(fasten_list: list[rDH.missionData_RBC]) -> list:
+    h_indexes = []
+    h_missions: list[rDH.missionData_RBC] = []
+    for i, fasten in enumerate(fasten_list):
+        if fasten.Info_01 != fasten.Info_03 and fasten.Info_02 == fasten.Info_04:
+            # Mission is horizantal
+            h_indexes.append(i)
+            h_missions.append(fasten)
+
+    for h in h_indexes:
+        fasten_list.pop(h)
+
+    mod_h_mission = []
+
+
+    for i in range(len(h_missions)):
+        seen = []
+        for j in range(len(h_missions)):
+            if i == j or i in seen:
+                continue
+            validate = h_missions[j]
+            if h_missions[i].Info_02 == h_missions[j].Info_02:
+                if bounds(h_missions[i].Info_03, h_missions[j].Info_01):
+                    h_missions[i].Info_03 = h_missions[j].Info_03
+                    seen.append(j)
+
+        mod_h_mission.append(h_missions[i])
 
 
 
@@ -1123,6 +1152,8 @@ index_edge = 0
 index_field = 0
 index_single = 1
 
+def bounds(value1, value2):
+    return abs(value1 - value2) <= 5
 
 def get_screw_index(spacing):
     global index_edge

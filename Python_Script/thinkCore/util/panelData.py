@@ -47,8 +47,8 @@ class Panel:
         self._layerPos = []
         self._layerMat = []
         self._LayerFastener = []
-        self._EdgeFastener = [152]
-        self._FieldFastener = [300]
+        self._EdgeFastener = []
+        self._FieldFastener = []
         for layer in results:
             self._layerPos.append(float(layer[0]))
             self._layerMat.append(layer[1])
@@ -67,8 +67,12 @@ class Panel:
         self._layerMat[index] = material
 
     def update_layer_fastener_space(self, edge, field, index):
-        self._FieldFastener[index] = field
-        self._EdgeFastener[index] = edge
+        if len(self._FieldFastener) < index+1:
+            self._FieldFastener.append(field)
+            self._EdgeFastener.append(edge)
+        else:
+            self._FieldFastener[index] = field
+            self._EdgeFastener[index] = edge
 
     def get_edge_spacing(self, index):
         return self._EdgeFastener[index]
